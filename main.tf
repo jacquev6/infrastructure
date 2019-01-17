@@ -9,3 +9,7 @@ provider "gandi" {
 module "etcavole_fr" {
   source = "./etcavole.fr"
 }
+
+module "jacquev6_net" {
+  source = "./jacquev6.net"
+}
