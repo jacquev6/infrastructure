@@ -4,60 +4,25 @@ module "jacquev6_net" {
   zone_name = "jacquev6.net-2"
 }
 
-resource "gandi_zonerecord" "a_box_home_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "box.home"
-  type = "A"
-  ttl = 3600
-  values = ["192.168.0.1"]
+locals {
+  home_machines = [
+    "box:1",
+    "nas2:50",
+    "doorman:51",
+    "idee:52",
+    "kodi:53",
+    "eeepc:54",
+    "nas1:55"
+  ]
 }
 
-resource "gandi_zonerecord" "a_doorman_home_jacquev6_net" {
+resource "gandi_zonerecord" "home_machine" {
+  count = "${length(local.home_machines)}"
   zone = "${module.jacquev6_net.zone_id}"
-  name = "doorman.home"
+  name = "${element(split(":", element(local.home_machines, count.index)), 0)}.home"
   type = "A"
   ttl = 3600
-  values = ["192.168.0.51"]
-}
-
-resource "gandi_zonerecord" "a_eeepc_home_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "eeepc.home"
-  type = "A"
-  ttl = 3600
-  values = ["192.168.0.54"]
-}
-
-resource "gandi_zonerecord" "a_idee_home_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "idee.home"
-  type = "A"
-  ttl = 3600
-  values = ["192.168.0.52"]
-}
-
-resource "gandi_zonerecord" "a_kodi_home_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "kodi.home"
-  type = "A"
-  ttl = 3600
-  values = ["192.168.0.53"]
-}
-
-resource "gandi_zonerecord" "a_nas1_home_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "nas1.home"
-  type = "A"
-  ttl = 3600
-  values = ["192.168.0.55"]
-}
-
-resource "gandi_zonerecord" "a_nas2_home_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "nas2.home"
-  type = "A"
-  ttl = 3600
-  values = ["192.168.0.50"]
+  values = ["192.168.0.${element(split(":", element(local.home_machines, count.index)), 1)}"]
 }
 
 resource "gandi_zonerecord" "cname_home_jacquev6_net" {
