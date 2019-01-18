@@ -5,11 +5,3 @@ variable "gandi_api_key" {}
 provider "gandi" {
   key = "${var.gandi_api_key}"
 }
-
-module "etcavole_fr" {
-  source = "./etcavole.fr"
-}
-
-module "jacquev6_net" {
-  source = "./jacquev6.net"
-}
