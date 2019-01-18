@@ -49,7 +49,7 @@ resource "gandi_zonerecord" "cname_smtp" {
   name = "smtp"
   type = "CNAME"
   ttl = 3600
-  values = ["relay.mail.gandi.net"]
+  values = ["relay.mail.gandi.net."]
 }
 
 resource "gandi_zonerecord" "cname_webmail" {
