@@ -13,6 +13,11 @@ locals {
     "kodi:53",
     "eeepc:54",
     "nas1:55"
+  ],
+  aliases = [
+    "home:home-jacquev6-net.synology.me.",
+    "parents:parents-jacquev6-net.synology.me.",
+    "shared:c.storage.googleapis.com."
   ]
 }
 
@@ -25,26 +30,11 @@ resource "gandi_zonerecord" "home_machine" {
   values = ["192.168.0.${element(split(":", element(local.home_machines, count.index)), 1)}"]
 }
 
-resource "gandi_zonerecord" "cname_home_jacquev6_net" {
+resource "gandi_zonerecord" "alias" {
+  count = "${length(local.aliases)}"
   zone = "${module.jacquev6_net.zone_id}"
-  name = "home"
+  name = "${element(split(":", element(local.aliases, count.index)), 0)}"
   type = "CNAME"
   ttl = 3600
-  values = ["home-jacquev6-net.synology.me."]
-}
-
-resource "gandi_zonerecord" "cname_parents_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "parents"
-  type = "CNAME"
-  ttl = 3600
-  values = ["parents-jacquev6-net.synology.me."]
-}
-
-resource "gandi_zonerecord" "cname_shared_jacquev6_net" {
-  zone = "${module.jacquev6_net.zone_id}"
-  name = "shared"
-  type = "CNAME"
-  ttl = 3600
-  values = ["c.storage.googleapis.com."]
+  values = ["${element(split(":", element(local.aliases, count.index)), 1)}"]
 }
