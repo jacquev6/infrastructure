@@ -1,10 +1,7 @@
 variable "domain_name" {}
-variable "zone_name" {
-  default = ""
-}
 
 resource "gandi_zone" "zone" {
-  name = "${coalesce(var.zone_name, var.domain_name)}"
+  name = "${var.domain_name}"
 }
 
 resource "gandi_domainattachment" "attachment" {

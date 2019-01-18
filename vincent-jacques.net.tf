@@ -1,7 +1,6 @@
 module "vincent_jacques_net" {
   source = "modules/gandi-dns"
   domain_name = "vincent-jacques.net"
-  zone_name = "vincent-jacques.net-2"
 }
 
 resource "gandi_zonerecord" "wildcard" {

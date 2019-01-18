@@ -1,7 +1,6 @@
 module "jacquev6_net" {
   source = "modules/gandi-dns"
   domain_name = "jacquev6.net"
-  zone_name = "jacquev6.net-2"
 }
 
 locals {
