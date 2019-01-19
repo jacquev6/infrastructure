@@ -9,7 +9,7 @@ set -o errexit
 PASSWORD_ENC=XwH9JDk0QBH3WO09r7g+/nzU+ypn51/bpconrGDTq94ydSu1D7dTxD7fZwfSTf+iVdd6OmKqXsPWQNH1EGxRbNf8QV+jBGVPTG56WgHAix3gTOpKnn9gMvKvpPu3AEeE9Tyzdl7s1SxeIwlNkLQR/LjllCDKmyJIuacalk/B5qwo5mgCpzArG1UPQEYaEGekL+Gd0p0CejtZlX7YX8VKTC41WN3DqRQ/HUA9dFqWlv3iM1uwQOLWc42cL3xNH/yTUan1IWJWzgyNsvsbB+YeigF7dnG942jSUSvqDYS8MDRIo13KVLLz3A9FI8bcyyC7uRJ/T3HxFBl1ru7nLOGP2Q==
 
 function crypt {
-  openssl aes-256-cbc -pass "pass:$(echo $PASSWORD_ENC | base64 --decode | openssl rsautl -decrypt -oaep -inkey ~/.ssh/id_rsa)" "$@"
+  openssl aes-256-cbc -md sha256 -pass "pass:$(echo $PASSWORD_ENC | base64 --decode | openssl rsautl -decrypt -oaep -inkey ~/.ssh/id_rsa)" "$@"
 }
 
 function ensure {
