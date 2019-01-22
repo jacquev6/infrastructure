@@ -1,6 +1,0 @@
-/.terraform
-/terraform.tfstate.backup
-/terraform.tfstate.*.backup
-
-# Secrets
-/secrets.auto.tfvars

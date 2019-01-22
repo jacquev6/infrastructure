@@ -35,4 +35,5 @@ function ensure {
   fi
 }
 
+cd sources
 ensure secrets.auto.tfvars
