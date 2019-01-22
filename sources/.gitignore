@@ -3,3 +3,4 @@
 
 # Secrets
 /secrets.auto.tfvars
+/terraform.tfstate
