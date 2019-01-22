@@ -15,7 +15,7 @@ function crypt {
 function ensure {
   local NAME=$1
   local NAME_ENC=$1.enc
-  grep "/$NAME" .gitignore >/dev/null || echo "/$NAME" >>.gitignore
+  grep "^/$NAME$" .gitignore >/dev/null || echo "/$NAME" >>.gitignore
   if [ -f $NAME ]
   then
     if ! ([ -f $NAME_ENC ] && diff $NAME <(crypt -d -in $NAME_ENC) >/dev/null)

@@ -9,6 +9,7 @@ resource "gandi_domainattachment" "attachment" {
     zone = "${gandi_zone.zone.id}"
 }
 
+# @todo Could we ensure the enforce_https setting on the GitHub repository?
 resource "gandi_zonerecord" "a_at" {
   zone = "${gandi_zone.zone.id}"
   name = "@"
