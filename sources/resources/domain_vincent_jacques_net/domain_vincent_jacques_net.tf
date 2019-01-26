@@ -8,5 +8,5 @@ resource "gandi_zonerecord" "wildcard" {
   name = "*"
   type = "A"
   ttl = 3600
-  values = ["52.6.169.30"]
+  values = ["35.210.187.225"]
 }

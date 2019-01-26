@@ -17,3 +17,15 @@ spec:
           image: jacquev6/draw-turks-head-demo:20190126-155210
           ports:
             - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: draw-turks-head-demo
+spec:
+  type: LoadBalancer
+  selector:
+    app: draw-turks-head-demo
+  loadBalancerIP: 35.210.187.225
+  ports:
+    - port: 80

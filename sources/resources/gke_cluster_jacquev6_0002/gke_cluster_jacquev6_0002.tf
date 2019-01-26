@@ -4,9 +4,6 @@ resource "google_container_cluster" "cluster" {
 
   initial_node_count = 1
   remove_default_node_pool = "true"
-
-  # @todo Remove
-  enable_legacy_abac = true
 }
 
 resource "google_container_node_pool" "node_pool_0001" {
