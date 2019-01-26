@@ -17,4 +17,4 @@ docker push jacquev6/infrastructure-tools:$HOST_TAG
 # Images tagged with a date can all be deleted except the last one.
 docker push jacquev6/infrastructure-tools:$DATE_TAG
 
-sed -i -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$DATE_TAG/" ../infra.sh
+sed -i -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$DATE_TAG/" ../infra
