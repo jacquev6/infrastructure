@@ -10,4 +10,7 @@ docker run --interactive --tty \
   jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_TAG \
   -- "$@"
 
-sudo chown -R vincent sources
+# @todo Could we avoid that?
+# Internet doesn't seem to know how to make `docker --mount` use current user.
+# Maybe we should pass numerical user and group ids to the container and do the change there?
+sudo chown -R $(id -nu):$(id -ng) sources
