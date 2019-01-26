@@ -10,11 +10,16 @@ RUN cd /usr/local/bin \
     && wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip \
     && unzip terraform_0.11.11_linux_amd64.zip
 
-RUN go get github.com/tiramiseb/terraform-provider-gandi
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -a -tags netgo -ldflags '-w -extldflags "-static"' github.com/tiramiseb/terraform-provider-gandi
 
-RUN pip3 install click==7.0
 
-# @todo Use multi-stage build: https://docs.docker.com/develop/develop-images/multistage-build/ (for terraform itself, terraform-provider-gandi, and python dependencies)
+FROM python:3.7.2-alpine3.8
+
+RUN pip install click==7.0
+RUN apk add --no-cache openssl
+
+COPY --from=0 /usr/local/bin/terraform /usr/local/bin/
+COPY --from=0 /root/go/bin/terraform-provider-gandi /usr/local/bin/
 
 VOLUME /ssh
 VOLUME /sources
@@ -23,6 +28,6 @@ WORKDIR /sources
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-ENTRYPOINT ["/usr/bin/env", "python3", "/entry-point.py"]
+ENTRYPOINT ["python", "/entry-point.py"]
 
 COPY entry-point.py /

@@ -75,12 +75,6 @@ secrets = Secrets()
 
 @cli.command()
 def init():
-    try:
-        shutil.rmtree(".terraform")
-    except FileNotFoundError:
-        pass
-    os.makedirs(".terraform/plugins/linux_amd64")
-    shutil.copy("/root/go/bin/terraform-provider-gandi", ".terraform/plugins/linux_amd64")
     with secrets():
         subprocess.run(["terraform", "init"], check=True)
 
