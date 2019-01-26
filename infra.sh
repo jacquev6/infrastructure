@@ -2,7 +2,7 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_TAG=20190126-080813
+INFRASTRUCTURE_TOOLS_TAG=20190126-082503
 
 docker run --interactive --tty \
   --mount type=bind,src=$PWD/sources,dst=/sources \
