@@ -1,10 +1,10 @@
-module "vincent_jacques_net" {
-  source = "modules/gandi-dns"
+module "gandi_dns" {
+  source = "../../modules/gandi_dns"
   domain_name = "vincent-jacques.net"
 }
 
 resource "gandi_zonerecord" "wildcard" {
-  zone = "${module.vincent_jacques_net.zone_id}"
+  zone = "${module.gandi_dns.zone_id}"
   name = "*"
   type = "A"
   ttl = 3600

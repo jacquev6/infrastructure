@@ -1,5 +1,5 @@
-module "jacquev6_net" {
-  source = "modules/gandi-dns"
+module "gandi_dns" {
+  source = "../../modules/gandi_dns"
   domain_name = "jacquev6.net"
 }
 
@@ -22,7 +22,7 @@ locals {
 
 resource "gandi_zonerecord" "home_machine" {
   count = "${length(local.home_machines)}"
-  zone = "${module.jacquev6_net.zone_id}"
+  zone = "${module.gandi_dns.zone_id}"
   name = "${element(split(":", element(local.home_machines, count.index)), 0)}.home"
   type = "A"
   ttl = 3600
@@ -31,7 +31,7 @@ resource "gandi_zonerecord" "home_machine" {
 
 resource "gandi_zonerecord" "alias" {
   count = "${length(local.aliases)}"
-  zone = "${module.jacquev6_net.zone_id}"
+  zone = "${module.gandi_dns.zone_id}"
   name = "${element(split(":", element(local.aliases, count.index)), 0)}"
   type = "CNAME"
   ttl = 3600

@@ -2,6 +2,9 @@ variable "domain_name" {}
 
 resource "gandi_zone" "zone" {
   name = "${var.domain_name}"
+  lifecycle = {
+    create_before_destroy = true
+  }
 }
 
 resource "gandi_domainattachment" "attachment" {
