@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+from __future__ import absolute_import, division, print_function
 
 import base64
 import contextlib
 import itertools
 import os
 import shutil
-import subprocess
+import subprocess32 as subprocess
 import sys
 
 sys.argv[0] = "./infra.sh"
@@ -102,6 +102,9 @@ def plan():
 def apply():
     with secrets():
         subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
+        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["kubectl", "apply", "-f", "resources/gke_cluster_jacquev6_0002/workloads/draw-turks-head-demo.yml"], check=True)
 
 
 @cli.command(context_settings=dict(
@@ -112,6 +115,35 @@ def apply():
 def terraform(args):
     with secrets():
         subprocess.run(["terraform"] + list(args), check=True)
+
+
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+    help_option_names=[],
+))
+@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+def gcloud(args):
+    with secrets():
+        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["gcloud"] + list(args), check=True)
+
+
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+    help_option_names=[],
+))
+@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+def kubectl(args):
+    with secrets():
+        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["kubectl"] + list(args), check=True)
+
+
+@cli.command()
+def shell():
+    with secrets():
+        subprocess.run(["sh"], check=True)
 
 
 if __name__ == "__main__":

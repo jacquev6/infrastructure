@@ -3,3 +3,5 @@
 
 # Secrets
 /secrets.auto.tfvars
+/terraform.tfstate
+/gcp-account.json

@@ -12,14 +12,27 @@ RUN cd /usr/local/bin \
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -a -tags netgo -ldflags '-w -extldflags "-static"' github.com/tiramiseb/terraform-provider-gandi
 
+RUN cd /usr/local/bin \
+    && wget https://storage.googleapis.com/kubernetes-release/release/v1.13.2/bin/linux/amd64/kubectl \
+    && chmod +x kubectl
 
-FROM python:3.7.2-alpine3.8
+RUN cd / \
+    && wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-231.0.0-linux-x86_64.tar.gz \
+    && tar xzf google-cloud-sdk-231.0.0-linux-x86_64.tar.gz
 
-RUN pip install click==7.0
-RUN apk add --no-cache openssl
+
+# @todo Why do we have wget? Is it from the base image? Seems unnecessary
+FROM python:2.7.15-alpine3.8
+
+# @todo Don't add gcc and musl-dev. We should be able to use multi-stage build to run pip and copy the installed packages
+RUN apk add --no-cache openssl gcc musl-dev
+RUN pip install click==7.0 subprocess32==3.5.3
 
 COPY --from=0 /usr/local/bin/terraform /usr/local/bin/
 COPY --from=0 /root/go/bin/terraform-provider-gandi /usr/local/bin/
+COPY --from=0 /usr/local/bin/kubectl /usr/local/bin/
+COPY --from=0 /google-cloud-sdk/ /
+RUN cd /usr/local/bin && ln -s /google-cloud-sdk/bin/gcloud .
 
 VOLUME /ssh
 VOLUME /sources
