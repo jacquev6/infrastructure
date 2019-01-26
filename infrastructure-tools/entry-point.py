@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 
-import os
+import base64
 import contextlib
+import itertools
+import os
 import shutil
 import subprocess
 import sys
-import base64
 
 sys.argv[0] = "./infra.sh"
 
 import click
-
-@click.group()
-def cli():
-    pass
 
 
 class Secrets:
@@ -47,6 +44,11 @@ class Secrets:
             yield
         finally:
             self.__encrypt()
+            uid = int(os.environ["INFRA_UID"])
+            gid = int(os.environ["INFRA_GID"])
+            for (root, dirs, files) in os.walk("."):
+                for name in itertools.chain(dirs, files):
+                    os.chown(os.path.join(root, name), uid, gid)
 
     def __decrypt(self):
         for secret in self.__secrets:
@@ -71,6 +73,11 @@ class Secrets:
 
 
 secrets = Secrets()
+
+
+@click.group()
+def cli():
+    pass
 
 
 @cli.command()
@@ -105,7 +112,6 @@ def apply():
 def terraform(args):
     with secrets():
         subprocess.run(["terraform"] + list(args), check=True)
-
 
 
 if __name__ == "__main__":
