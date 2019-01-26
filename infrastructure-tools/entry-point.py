@@ -82,7 +82,7 @@ def init():
     os.makedirs(".terraform/plugins/linux_amd64")
     shutil.copy("/root/go/bin/terraform-provider-gandi", ".terraform/plugins/linux_amd64")
     with secrets():
-        subprocess.run(["/usr/local/bin/terraform", "init"], check=True)
+        subprocess.run(["terraform", "init"], check=True)
 
 
 @cli.command(name="secrets")
@@ -94,13 +94,13 @@ def secrets_():
 @cli.command()
 def plan():
     with secrets():
-        subprocess.run(["/usr/local/bin/terraform", "plan"], check=True)
+        subprocess.run(["terraform", "plan"], check=True)
 
 
 @cli.command()
 def apply():
     with secrets():
-        subprocess.run(["/usr/local/bin/terraform", "apply", "-auto-approve"], check=True)
+        subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
 
 
 @cli.command(context_settings=dict(
@@ -110,7 +110,7 @@ def apply():
 @click.argument('args', nargs=-1, type=click.UNPROCESSED)
 def terraform(args):
     with secrets():
-        subprocess.run(["/usr/local/bin/terraform"] + list(args), check=True)
+        subprocess.run(["terraform"] + list(args), check=True)
 
 
 
