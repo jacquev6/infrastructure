@@ -99,12 +99,17 @@ def plan():
 
 
 @cli.command()
-def apply():
+@click.option("--terraform-only", is_flag=True)
+@click.option("--kubectl-only", is_flag=True)
+def apply(terraform_only, kubectl_only):
     with secrets():
-        subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
-        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["kubectl", "apply", "-f", "resources/gke_cluster_jacquev6_0002/workloads/draw-turks-head-demo.yml"], check=True)
+        if not kubectl_only:
+            subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
+        if not terraform_only:
+            subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(["kubectl", "apply", "-f", "resources/gke_cluster_jacquev6_0002/workloads/draw-turks-head-demo.yml"], check=True)
+            subprocess.run(["kubectl", "apply", "-f", "resources/gke_cluster_jacquev6_0002/workloads/datadog-agent.yml"], check=True)
 
 
 @cli.command(context_settings=dict(
