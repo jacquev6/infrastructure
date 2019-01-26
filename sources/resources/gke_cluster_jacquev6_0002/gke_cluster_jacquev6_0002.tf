@@ -9,7 +9,7 @@ resource "google_container_cluster" "cluster" {
 resource "google_container_node_pool" "node_pool_0001" {
   name = "${google_container_cluster.cluster.name}-0001"
   cluster = "${google_container_cluster.cluster.name}"
-  node_count = 3
+  node_count = 2
 
   node_config {
     machine_type = "g1-small"
