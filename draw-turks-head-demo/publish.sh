@@ -16,3 +16,5 @@ docker tag jacquev6/draw-turks-head-demo:$DATE_TAG jacquev6/draw-turks-head-demo
 docker push jacquev6/draw-turks-head-demo:$HOST_TAG
 # Images tagged with a date can all be deleted except the last one.
 docker push jacquev6/draw-turks-head-demo:$DATE_TAG
+
+sed -i -e "s|image: jacquev6/draw-turks-head-demo:.*|image: jacquev6/draw-turks-head-demo:$DATE_TAG|" ../sources/resources/gke_cluster_jacquev6_0002/workloads/draw-turks-head-demo.yml

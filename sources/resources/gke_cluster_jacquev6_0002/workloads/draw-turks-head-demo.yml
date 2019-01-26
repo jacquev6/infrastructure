@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: draw-turks-head-demo
+spec:
+  selector:
+    matchLabels:
+      app: draw-turks-head-demo
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: draw-turks-head-demo
+    spec:
+      containers:
+        - name: draw-turks-head-demo
+          image: jacquev6/draw-turks-head-demo:20190126-155210
+          ports:
+            - containerPort: 80
