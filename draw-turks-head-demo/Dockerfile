@@ -1,30 +1,29 @@
-FROM python:2.7.15-stretch
+FROM alpine:3.8 AS builder
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends --yes \
-        build-essential \
-        libcairomm-1.0-dev \
-        libboost1.62-dev \
-        libboost-python1.62-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add boost-dev
+RUN apk add python2-dev
+RUN apk add cairomm-dev
+RUN apk add g++
+RUN apk add pkgconf-dev
 
-WORKDIR /app
-
+RUN apk add py2-pip
 RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
 
 
-FROM python:2.7.15-stretch
+FROM alpine:3.8 AS collector
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends --yes \
-        libcairomm-1.0-1v5 \
-        libboost-python1.62.0 \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache boost-python cairomm
 
-COPY --from=0 /usr/local/lib/python2.7/site-packages/DrawTurksHead/ /usr/local/lib/python2.7/site-packages/DrawTurksHead/
-COPY --from=0 /usr/local/lib/python2.7/site-packages/cairo/ /usr/local/lib/python2.7/site-packages/cairo/
-COPY --from=0 /usr/local/lib/python2.7/site-packages/gunicorn/ /usr/local/lib/python2.7/site-packages/gunicorn/
-COPY --from=0 /usr/local/bin/gunicorn /usr/local/bin/
+COPY --from=builder /usr/lib/python2.7/site-packages/DrawTurksHead/ /usr/lib/python2.7/site-packages/DrawTurksHead/
+COPY --from=builder /usr/lib/python2.7/site-packages/cairo/ /usr/lib/python2.7/site-packages/cairo/
+COPY --from=builder /usr/lib/python2.7/site-packages/gunicorn/ /usr/lib/python2.7/site-packages/gunicorn/
+COPY --from=builder /usr/lib/python2.7/site-packages/pkg_resources/ /usr/lib/python2.7/site-packages/pkg_resources/
+COPY --from=builder /usr/bin/gunicorn /usr/bin/
+
+
+FROM scratch
+
+COPY --from=collector / /
 
 WORKDIR /app
 
