@@ -5,30 +5,27 @@ RUN apk add python2-dev
 RUN apk add cairomm-dev
 RUN apk add g++
 RUN apk add pkgconf-dev
-
 RUN apk add py2-pip
 RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
+RUN apk add strace
 
-
-FROM alpine:3.8 AS collector
-
-RUN apk add --no-cache boost-python cairomm
-
-COPY --from=builder /usr/lib/python2.7/site-packages/DrawTurksHead/ /usr/lib/python2.7/site-packages/DrawTurksHead/
-COPY --from=builder /usr/lib/python2.7/site-packages/cairo/ /usr/lib/python2.7/site-packages/cairo/
-COPY --from=builder /usr/lib/python2.7/site-packages/gunicorn/ /usr/lib/python2.7/site-packages/gunicorn/
-COPY --from=builder /usr/lib/python2.7/site-packages/pkg_resources/ /usr/lib/python2.7/site-packages/pkg_resources/
-COPY --from=builder /usr/bin/gunicorn /usr/bin/
+# Make a list of files actually required
+# This is the tricky part. The following can help:
+# - cat /proc/1/maps
+# - strace -f -e trace=open -o trace.log /usr/bin/gunicorn -w 3 -b :80 wsgi:app
+# - docker run --security-opt seccomp:unconfined --rm --name demo -p 8080:80 jacquev6/draw-turks-head-demo:latest-built-on-idee
+# (Required to run strace inside Docker)
+COPY list.txt /list.txt
+WORKDIR /collected
+RUN for f in $(grep "^/" /list.txt); do mkdir -p .$(dirname $f); cp $f .$(dirname $f); done
 
 
 FROM scratch
 
-COPY --from=collector / /
-
-WORKDIR /app
+COPY --from=builder /collected /
 
 EXPOSE 80
 
-CMD ["gunicorn", "-w 3", "-b :80", "wsgi:app"]
+CMD ["/usr/bin/gunicorn", "-w", "3", "-b", ":80", "wsgi:app"]
 
 COPY wsgi.py .
