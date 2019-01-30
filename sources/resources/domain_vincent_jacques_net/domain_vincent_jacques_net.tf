@@ -8,5 +8,6 @@ resource "gandi_zonerecord" "wildcard" {
   name = "*"
   type = "A"
   ttl = 3600
-  values = ["35.210.187.225"]
+  # @todo How to use module.gke_cluster_jacquev6_0002.google_compute_global_address.fanout.address
+  values = ["35.244.252.247"]
 }
