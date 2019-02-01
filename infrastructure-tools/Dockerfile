@@ -20,6 +20,10 @@ RUN cd / \
     && wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-231.0.0-linux-x86_64.tar.gz \
     && tar xzf google-cloud-sdk-231.0.0-linux-x86_64.tar.gz
 
+RUN cd /usr/local/bin \
+    && wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.7.0/kubeseal-linux-amd64 \
+    && chmod +x kubeseal-linux-amd64
+
 
 # @todo Why do we have wget? Is it from the base image? Seems unnecessary
 FROM python:2.7.15-alpine3.8
@@ -31,6 +35,7 @@ RUN pip install click==7.0 subprocess32==3.5.3
 COPY --from=0 /usr/local/bin/terraform /usr/local/bin/
 COPY --from=0 /root/go/bin/terraform-provider-gandi /usr/local/bin/
 COPY --from=0 /usr/local/bin/kubectl /usr/local/bin/
+COPY --from=0 /usr/local/bin/kubeseal-linux-amd64 /usr/local/bin/kubeseal
 COPY --from=0 /google-cloud-sdk/ /
 RUN cd /usr/local/bin && ln -s /google-cloud-sdk/bin/gcloud .
 

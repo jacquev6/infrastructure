@@ -2,9 +2,16 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_TAG=20190126-193123
+INFRASTRUCTURE_TOOLS_TAG=20190202-083237
 
-docker run --interactive --tty \
+TTY_OPTION=""
+
+if [ -t 0 ]
+then
+  TTY_OPTION="--tty"
+fi
+
+docker run --interactive $TTY_OPTION \
   --mount type=bind,src=$PWD/sources,dst=/sources \
   --mount type=bind,src=$HOME/.ssh,dst=/ssh,readonly \
   --env INFRA_UID=$(id -u) --env INFRA_GID=$(id -g) \

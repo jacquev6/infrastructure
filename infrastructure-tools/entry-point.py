@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function
 
 import base64
+import glob
 import contextlib
 import itertools
 import os
@@ -108,8 +109,9 @@ def apply(terraform_only, kubectl_only):
         if not terraform_only:
             subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.run(["kubectl", "apply", "-f", "resources/gke_cluster_jacquev6_0002/workloads/draw-turks-head-demo.yml"], check=True)
-            subprocess.run(["kubectl", "apply", "-f", "resources/gke_cluster_jacquev6_0002/workloads/datadog-agent.yml"], check=True)
+            for f in glob.glob("resources/gke_cluster_jacquev6_0002/workloads/*.yml"):
+                print("Applying", f)
+                subprocess.run(["kubectl", "apply", "-f", f], check=True)
 
 
 @cli.command(context_settings=dict(
@@ -143,6 +145,18 @@ def kubectl(args):
         subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         subprocess.run(["kubectl"] + list(args), check=True)
+
+
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+    help_option_names=[],
+))
+@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+def kubeseal(args):
+    with secrets():
+        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["kubeseal"] + list(args), check=True)
 
 
 @cli.command()
