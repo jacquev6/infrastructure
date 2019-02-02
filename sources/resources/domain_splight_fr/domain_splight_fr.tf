@@ -8,5 +8,5 @@ resource "gandi_zonerecord" "admin" {
   name = "admin"
   type = "A"
   ttl = 3600
-  values = ["35.210.122.49"]
+  values = ["35.244.252.247"]
 }

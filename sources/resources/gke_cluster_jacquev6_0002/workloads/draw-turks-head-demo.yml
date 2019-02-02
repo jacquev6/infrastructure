@@ -28,18 +28,3 @@ spec:
     app: draw-turks-head-demo
   ports:
     - port: 80
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: fanout
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: "fanout"
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /turkshead
-            backend:
-              serviceName: draw-turks-head-demo
-              servicePort: 80

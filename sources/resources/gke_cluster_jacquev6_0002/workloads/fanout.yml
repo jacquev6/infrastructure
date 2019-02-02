@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fanout
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "fanout"
+spec:
+  rules:
+    - host: dyn.vincent-jacques.net
+      http:
+        paths:
+          - path: /turkshead
+            backend:
+              serviceName: draw-turks-head-demo
+              servicePort: 80
+    - host: admin.splight.fr
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: splight-admin
+              servicePort: 80
