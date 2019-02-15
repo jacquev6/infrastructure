@@ -10,3 +10,11 @@ resource "gandi_zonerecord" "admin" {
   ttl = 3600
   values = ["35.244.252.247"]
 }
+
+resource "gandi_zonerecord" "api_v1" {
+  zone = "${module.gandi_dns.zone_id}"
+  name = "api-v1"
+  type = "A"
+  ttl = 3600
+  values = ["35.244.252.247"]
+}

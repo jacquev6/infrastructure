@@ -1,6 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: splight-api-v1
+spec:
+  selector:
+    matchLabels:
+      app: splight-api-v1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: splight-api-v1
+    spec:
+      containers:
+        - name: splight-api-v1
+          image: jacquev6/splight:api_20190215-191857
+          ports:
+            - containerPort: 80
+          env:
+            - name: SPLIGHT_MONGODB_URL
+              value: "mongodb://splight-mongo:27017/"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: splight-api-v1
+spec:
+  type: NodePort
+  selector:
+    app: splight-api-v1
+  ports:
+    - port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: splight-admin
 spec:
   selector:
@@ -14,9 +48,12 @@ spec:
     spec:
       containers:
         - name: splight-admin
-          image: jacquev6/splight:admin-20190202-165641
+          image: jacquev6/splight:admin-frontend_20190215-191857
           ports:
             - containerPort: 80
+          env:
+            - name: SPLIGHT_API_URL
+              value: "http://api-v1.splight.fr/graphql"
 ---
 apiVersion: v1
 kind: Service

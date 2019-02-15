@@ -20,3 +20,10 @@ spec:
             backend:
               serviceName: splight-admin
               servicePort: 80
+    - host: api-v1.splight.fr
+      http:
+        paths:
+          - path: /graphql
+            backend:
+              serviceName: splight-api-v1
+              servicePort: 80
