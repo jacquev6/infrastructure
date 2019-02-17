@@ -20,6 +20,10 @@ spec:
             backend:
               serviceName: splight-admin
               servicePort: 80
+          - path: /preview/*
+            backend:
+              serviceName: splight-preview
+              servicePort: 80
     - host: api-v1.splight.fr
       http:
         paths:
