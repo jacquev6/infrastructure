@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: splight-api-v1
-          image: jacquev6/splight:20190216-215444.api
+          image: jacquev6/splight:20190218-185234.api
           ports:
             - containerPort: 80
           env:
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: splight-admin
-          image: jacquev6/splight:20190216-215444.admin-frontend
+          image: jacquev6/splight:20190218-185234.admin-frontend
           ports:
             - containerPort: 80
           env:
@@ -69,6 +69,40 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: splight-public
+spec:
+  selector:
+    matchLabels:
+      app: splight-public
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: splight-public
+    spec:
+      containers:
+        - name: splight-public
+          image: jacquev6/splight:20190218-185234.public-frontend.public
+          ports:
+            - containerPort: 80
+          env:
+            - name: SPLIGHT_API_URL
+              value: "http://api-v1.splight.fr/graphql"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: splight-public
+spec:
+  type: NodePort
+  selector:
+    app: splight-public
+  ports:
+    - port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: splight-preview
 spec:
   selector:
@@ -82,7 +116,7 @@ spec:
     spec:
       containers:
         - name: splight-preview
-          image: jacquev6/splight:20190216-215444.public-frontend.preview
+          image: jacquev6/splight:20190218-185234.public-frontend.preview
           ports:
             - containerPort: 80
           env:

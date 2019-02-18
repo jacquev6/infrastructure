@@ -13,6 +13,13 @@ spec:
             backend:
               serviceName: draw-turks-head-demo
               servicePort: 80
+    - host: splight.fr
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: splight-public
+              servicePort: 80
     - host: admin.splight.fr
       http:
         paths:
