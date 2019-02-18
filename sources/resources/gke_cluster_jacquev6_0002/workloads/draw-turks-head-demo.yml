@@ -17,6 +17,9 @@ spec:
           image: jacquev6/draw-turks-head-demo:20190130-180822
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
 ---
 apiVersion: v1
 kind: Service

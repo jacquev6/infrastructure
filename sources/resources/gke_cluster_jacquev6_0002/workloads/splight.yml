@@ -20,6 +20,9 @@ spec:
           env:
             - name: SPLIGHT_MONGODB_URL
               value: "mongodb://splight-mongo:27017/"
+          resources:
+            requests:
+              cpu: 10m
 ---
 apiVersion: v1
 kind: Service
@@ -54,6 +57,9 @@ spec:
           env:
             - name: SPLIGHT_API_URL
               value: "http://api-v1.splight.fr/graphql"
+          resources:
+            requests:
+              cpu: 10m
 ---
 apiVersion: v1
 kind: Service
@@ -88,6 +94,9 @@ spec:
           env:
             - name: SPLIGHT_API_URL
               value: "http://api-v1.splight.fr/graphql"
+          resources:
+            requests:
+              cpu: 10m
 ---
 apiVersion: v1
 kind: Service
@@ -122,6 +131,9 @@ spec:
           env:
             - name: SPLIGHT_API_URL
               value: "http://api-v1.splight.fr/graphql"
+          resources:
+            requests:
+              cpu: 10m
 ---
 apiVersion: v1
 kind: Service
@@ -154,6 +166,9 @@ spec:
           volumeMounts:
             - mountPath: /data/db
               name: splight-mongo
+          resources:
+            requests:
+              cpu: 10m
       volumes:
         - name: splight-mongo
           gcePersistentDisk:
@@ -198,6 +213,9 @@ spec:
               image: jacquev6/splight:backup-20190202-165641
               args:
                 - backup
+              resources:
+                requests:
+                  cpu: 10m
               volumeMounts:
                 - mountPath: /app/jacquev6-0001-430328cf0505.json
                   name: splight-backups-service-account
