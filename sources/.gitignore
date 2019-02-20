@@ -1,7 +1,2 @@
 /.terraform
 /terraform.tfstate.backup
-
-# Secrets
-/secrets.auto.tfvars
-/terraform.tfstate
-/gcp-account.json

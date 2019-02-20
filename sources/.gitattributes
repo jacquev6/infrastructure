@@ -1,0 +1,4 @@
+# https://github.com/AGWA/git-crypt
+/gcp-account.json diff=git-crypt filter=git-crypt
+/secrets.auto.tfvars diff=git-crypt filter=git-crypt
+/terraform.tfstate diff=git-crypt filter=git-crypt

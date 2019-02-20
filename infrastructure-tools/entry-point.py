@@ -14,69 +14,6 @@ sys.argv[0] = "./infra.sh"
 import click
 
 
-# @todo Evaluate https://github.com/AGWA/git-crypt
-class Secrets:
-    # See https://bjornjohansen.no/encrypt-file-using-ssh-key
-
-    # PASSWORD_ENC generated once with
-    # openssl rand 32 | openssl rsautl -encrypt -oaep -pubin -inkey <(ssh-keygen -e -f ~/.ssh/id_rsa.pub -m PKCS8) | base64 --wrap=0
-    PASSWORD_ENC = "XwH9JDk0QBH3WO09r7g+/nzU+ypn51/bpconrGDTq94ydSu1D7dTxD7fZwfSTf+iVdd6OmKqXsPWQNH1EGxRbNf8QV+jBGVPTG56WgHAix3gTOpKnn9gMvKvpPu3AEeE9Tyzdl7s1SxeIwlNkLQR/LjllCDKmyJIuacalk/B5qwo5mgCpzArG1UPQEYaEGekL+Gd0p0CejtZlX7YX8VKTC41WN3DqRQ/HUA9dFqWlv3iM1uwQOLWc42cL3xNH/yTUan1IWJWzgyNsvsbB+YeigF7dnG942jSUSvqDYS8MDRIo13KVLLz3A9FI8bcyyC7uRJ/T3HxFBl1ru7nLOGP2Q=="
-
-    PASSWORD = b"pass:" + subprocess.run(
-        ["openssl", "rsautl", "-decrypt", "-oaep", "-inkey", "/ssh/id_rsa"],
-        stdout=subprocess.PIPE,
-        input=base64.b64decode(PASSWORD_ENC),
-        check=True,
-    ).stdout
-
-    def __init__(self):
-        with open(".gitignore") as f:
-            self.__secrets = []
-            record = False
-            for line in f:
-                if record:
-                    self.__secrets.append(line.strip().lstrip("/"))
-                if line.strip() == "# Secrets":
-                    record = True
-
-    @contextlib.contextmanager
-    def __call__(self):
-        self.__decrypt()
-        try:
-            yield
-        finally:
-            self.__encrypt()
-            uid = int(os.environ["INFRA_UID"])
-            gid = int(os.environ["INFRA_GID"])
-            for (root, dirs, files) in os.walk("."):
-                for name in itertools.chain(dirs, files):
-                    os.chown(os.path.join(root, name), uid, gid)
-
-    def __decrypt(self):
-        for secret in self.__secrets:
-            if not os.path.isfile(secret):
-                print("Decrypting", secret + ".enc")
-                self.__crypt("-d", "-in", secret + ".enc", "-out", secret)
-
-    def __encrypt(self):
-        for secret in self.__secrets:
-            with open(secret) as f:
-                content = f.read()
-            if not (os.path.exists(secret + ".enc") and self.__crypt("-d", "-in", secret + ".enc").decode("latin-1") == content):
-                print("Encrypting", secret)
-                self.__crypt("-in", secret, "-out", secret + ".enc")
-
-    def __crypt(self, *args):
-        return subprocess.run(
-            ["openssl", "aes-256-cbc", "-md", "sha256", "-pass", self.PASSWORD] + list(args),
-            stdout=subprocess.PIPE,
-            check=True,
-        ).stdout
-
-
-secrets = Secrets()
-
-
 @click.group()
 def cli():
     pass
@@ -84,19 +21,11 @@ def cli():
 
 @cli.command()
 def init():
-    with secrets():
-        subprocess.run(["terraform", "init"], check=True)
-
-
-@cli.command(name="secrets")
-def secrets_():
-    with secrets():
-        pass
+    subprocess.run(["terraform", "init"], check=True)
 
 
 @cli.command()
 def plan():
-    with secrets():
         subprocess.run(["terraform", "plan"], check=True)
 
 
@@ -104,15 +33,14 @@ def plan():
 @click.option("--terraform-only", is_flag=True)
 @click.option("--kubectl-only", is_flag=True)
 def apply(terraform_only, kubectl_only):
-    with secrets():
-        if not kubectl_only:
-            subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
-        if not terraform_only:
-            subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            for f in glob.glob("resources/gke_cluster_jacquev6_0002/workloads/*.yml"):
-                print("Applying", f)
-                subprocess.run(["kubectl", "apply", "-f", f], check=True)
+    if not kubectl_only:
+        subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
+    if not terraform_only:
+        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        for f in glob.glob("resources/gke_cluster_jacquev6_0002/workloads/*.yml"):
+            print("Applying", f)
+            subprocess.run(["kubectl", "apply", "-f", f], check=True)
 
 
 @cli.command(context_settings=dict(
@@ -121,8 +49,7 @@ def apply(terraform_only, kubectl_only):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def terraform(args):
-    with secrets():
-        subprocess.run(["terraform"] + list(args), check=True)
+    subprocess.run(["terraform"] + list(args), check=True)
 
 
 @cli.command(context_settings=dict(
@@ -131,9 +58,8 @@ def terraform(args):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def gcloud(args):
-    with secrets():
-        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["gcloud"] + list(args), check=True)
+    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud"] + list(args), check=True)
 
 
 @cli.command(context_settings=dict(
@@ -142,10 +68,9 @@ def gcloud(args):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def kubectl(args):
-    with secrets():
-        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["kubectl"] + list(args), check=True)
+    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["kubectl"] + list(args), check=True)
 
 
 @cli.command(context_settings=dict(
@@ -154,15 +79,13 @@ def kubectl(args):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def kubeseal(args):
-    with secrets():
-        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["kubeseal"] + list(args), check=True)
+    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["kubeseal"] + list(args), check=True)
 
 
 @cli.command()
 def shell():
-    with secrets():
         subprocess.run(["sh"], check=True)
 
 
