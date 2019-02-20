@@ -14,3 +14,12 @@ provider "google" {
 }
 
 # https://console.aws.amazon.com/iam/home?#/users/infrastructure-as-code Not used yet
+
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+resource "acme_registration" "registration" {
+  account_key_pem = "${file("/ssh/id_rsa")}"
+  email_address = "letsencrypt.org@vincent-jacques.net"
+}

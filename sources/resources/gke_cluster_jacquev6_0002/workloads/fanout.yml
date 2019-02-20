@@ -4,6 +4,9 @@ metadata:
   name: fanout
   annotations:
     kubernetes.io/ingress.global-static-ip-name: "fanout"
+    # Limit: 10 certificates (https://cloud.google.com/load-balancing/docs/ssl-certificates#ssl-certificate-limits)
+    # Check certificates are applied: https://serverfault.com/a/661982/221556
+    ingress.gcp.kubernetes.io/pre-shared-cert: "wildcard-vincent-jacques-net,splight-fr,wildcard-splight-fr"
 spec:
   # Current quota: 15 backends (https://console.cloud.google.com/iam-admin/quotas?project=jacquev6-0001)
   rules:

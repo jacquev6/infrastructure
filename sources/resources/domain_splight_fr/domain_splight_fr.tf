@@ -1,3 +1,5 @@
+variable "gandi_api_key" {}
+
 module "gandi_dns" {
   source = "../../modules/gandi_dns"
   domain_name = "splight.fr"
@@ -17,4 +19,52 @@ resource "gandi_zonerecord" "api_v1" {
   type = "A"
   ttl = 3600
   values = ["35.244.252.247"]
+}
+
+resource "acme_certificate" "certificate" {
+  account_key_pem = "${file("/ssh/id_rsa")}"
+  common_name = "splight.fr"
+
+  dns_challenge {
+    provider = "gandiv5"
+
+    config {
+      GANDIV5_API_KEY = "${var.gandi_api_key}"
+    }
+  }
+}
+
+resource "google_compute_ssl_certificate" "certificate" {
+  name = "splight-fr"
+  description = "LetsEncrypt-issued certificate for splight.fr"
+  private_key = "${acme_certificate.certificate.private_key_pem}"
+  certificate = "${acme_certificate.certificate.certificate_pem}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "acme_certificate" "wildcard_certificate" {
+  account_key_pem = "${file("/ssh/id_rsa")}"
+  common_name = "*.splight.fr"
+
+  dns_challenge {
+    provider = "gandiv5"
+
+    config {
+      GANDIV5_API_KEY = "${var.gandi_api_key}"
+    }
+  }
+}
+
+resource "google_compute_ssl_certificate" "wildcard_certificate" {
+  name = "wildcard-splight-fr"
+  description = "LetsEncrypt-issued wildcard certificate for *.splight.fr"
+  private_key = "${acme_certificate.wildcard_certificate.private_key_pem}"
+  certificate = "${acme_certificate.wildcard_certificate.certificate_pem}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
