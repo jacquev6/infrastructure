@@ -14,6 +14,7 @@ sys.argv[0] = "./infra.sh"
 import click
 
 
+# @todo Evaluate https://github.com/AGWA/git-crypt
 class Secrets:
     # See https://bjornjohansen.no/encrypt-file-using-ssh-key
 
@@ -61,7 +62,7 @@ class Secrets:
         for secret in self.__secrets:
             with open(secret) as f:
                 content = f.read()
-            if not (os.path.exists(secret + ".enc") and self.__crypt("-d", "-in", secret + ".enc").decode('latin-1') == content):
+            if not (os.path.exists(secret + ".enc") and self.__crypt("-d", "-in", secret + ".enc").decode("latin-1") == content):
                 print("Encrypting", secret)
                 self.__crypt("-in", secret, "-out", secret + ".enc")
 
@@ -118,7 +119,7 @@ def apply(terraform_only, kubectl_only):
     ignore_unknown_options=True,
     help_option_names=[],
 ))
-@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+@click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def terraform(args):
     with secrets():
         subprocess.run(["terraform"] + list(args), check=True)
@@ -128,7 +129,7 @@ def terraform(args):
     ignore_unknown_options=True,
     help_option_names=[],
 ))
-@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+@click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def gcloud(args):
     with secrets():
         subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -139,7 +140,7 @@ def gcloud(args):
     ignore_unknown_options=True,
     help_option_names=[],
 ))
-@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+@click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def kubectl(args):
     with secrets():
         subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -151,7 +152,7 @@ def kubectl(args):
     ignore_unknown_options=True,
     help_option_names=[],
 ))
-@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+@click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def kubeseal(args):
     with secrets():
         subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
