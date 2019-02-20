@@ -13,4 +13,4 @@ provider "google" {
   zone = "europe-west1-c"
 }
 
-# https://console.aws.amazon.com/iam/home?#/users/infrastructure-as-code
+# https://console.aws.amazon.com/iam/home?#/users/infrastructure-as-code Not used yet

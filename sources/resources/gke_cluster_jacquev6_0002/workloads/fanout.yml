@@ -5,6 +5,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: "fanout"
 spec:
+  # Current quota: 15 backends (https://console.cloud.google.com/iam-admin/quotas?project=jacquev6-0001)
   rules:
     - host: dyn.vincent-jacques.net
       http:
