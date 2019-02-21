@@ -78,3 +78,11 @@ resource "google_compute_ssl_certificate" "wildcard_certificate" {
     create_before_destroy = true
   }
 }
+
+output "certificate_name" {
+  value = "${google_compute_ssl_certificate.certificate.name}"
+}
+
+output "wildcard_certificate_name" {
+  value = "${google_compute_ssl_certificate.wildcard_certificate.name}"
+}
