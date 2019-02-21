@@ -15,6 +15,7 @@ provider "google" {
 
 # https://console.aws.amazon.com/iam/home?#/users/infrastructure-as-code Not used yet
 
+# @todo Evaluate https://blog.jetstack.io/blog/kube-lego/
 provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }

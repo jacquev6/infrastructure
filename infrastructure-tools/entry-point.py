@@ -29,6 +29,13 @@ def plan():
         subprocess.run(["terraform", "plan"], check=True)
 
 
+# @todo Use "kubernetes" and "helm" providers, to have to use only "terraform apply" and not "kubectl apply"
+# Examples:
+# - (on GKE, seems promising) https://github.com/adamcroissant/gcp-cicd-poc/blob/8eb330c1e41a9c133cc0c9c1e48ad417c1fdee24/main.tf#L26
+# - (not on GKE, but good start and blog article) https://github.com/vranystepan/dok8s-terraform-example-1
+# - https://github.com/dcaro/build2018/blob/609e4d39e9596d0a6ef24cda70add2bf898f3bb6/0-demo/2-kubernetes.tf#L3
+# - (works around the "exec" k8s auth provider not being supported) https://github.com/niallmccullagh/terraform-eks/blob/b7c0dc29b874eacc351d90f99e3e57ac8e1ddeb6/modules/eks/providers.tf#L18
+# Other examples: https://github.com/search?l=HCL&p=2&q=provider+kubernetes&type=Code
 @cli.command()
 @click.option("--terraform-only", is_flag=True)
 @click.option("--kubectl-only", is_flag=True)
