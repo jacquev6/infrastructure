@@ -64,6 +64,16 @@ resource "google_compute_ssl_certificate" "wildcard_certificate" {
   private_key = "${acme_certificate.wildcard_certificate.private_key_pem}"
   certificate = "${acme_certificate.wildcard_certificate.certificate_pem}"
 
+# @todo Understand why the certificates make Firefox happy but curl sad.
+# https://community.letsencrypt.org/t/curl-does-not-trust-le-certs-on-plain-debian/54091/10
+# https://www.digicert.com/ssl-support/pem-ssl-creation.htm
+# It looks like the GCP load balancer is not transmitting the intermediate cert
+# but browsers are happy anyway because they cahce those interm certs.
+# Curl doesn't. But the interm cert is available in as acme_certificate.certificate.issuer_pem
+# So we should be able to pass it to google_compute_ssl_certificate.certificate like this:
+# certificate = "${acme_certificate.wildcard_certificate.certificate_pem}\n${acme_certificate.wildcard_certificate.issuer_pem}"
+# but we need to fix the fanout k8s ingress beforehand to be able to create google_compute_ssl_certificate with "name_prefix" instead of "name".
+
   lifecycle {
     create_before_destroy = true
   }
