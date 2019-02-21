@@ -24,6 +24,9 @@ RUN cd /usr/local/bin \
     && wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.7.0/kubeseal-linux-amd64 \
     && chmod +x kubeseal-linux-amd64
 
+RUN cd / \
+    && wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.3-linux-amd64.tar.gz \
+    && tar xzf helm-v2.12.3-linux-amd64.tar.gz
 
 # @todo Why do we have wget? Is it from the base image? Seems unnecessary
 FROM python:2.7.15-alpine3.8
@@ -38,6 +41,9 @@ COPY --from=0 /usr/local/bin/kubectl /usr/local/bin/
 COPY --from=0 /usr/local/bin/kubeseal-linux-amd64 /usr/local/bin/kubeseal
 COPY --from=0 /google-cloud-sdk/ /
 RUN cd /usr/local/bin && ln -s /google-cloud-sdk/bin/gcloud .
+COPY --from=0 /linux-amd64/helm /usr/local/bin/
+
+RUN helm init --client-only
 
 VOLUME /ssh
 VOLUME /sources

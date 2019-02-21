@@ -91,6 +91,15 @@ def kubeseal(args):
     subprocess.run(["kubeseal"] + list(args), check=True)
 
 
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+    help_option_names=[],
+))
+@click.argument("args", nargs=-1, type=click.UNPROCESSED)
+def helm(args):
+    subprocess.run(["helm"] + list(args), check=True)
+
+
 @cli.command()
 def shell():
         subprocess.run(["sh"], check=True)

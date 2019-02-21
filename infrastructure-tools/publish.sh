@@ -35,4 +35,11 @@ then
   docker push jacquev6/infrastructure-tools:$DATE_TAG
 fi
 
-sed -i -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$DATE_TAG/" ../infra
+NOT_PUSHED_WARNING=""
+
+if ! $PUSH
+then
+  NOT_PUSHED_WARNING=" # Image not pushed to hub.docker.io, DO NOT COMMIT"
+fi
+
+sed -i -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$DATE_TAG$NOT_PUSHED_WARNING/" ../infra
