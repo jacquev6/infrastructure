@@ -27,11 +27,15 @@ resource "acme_certificate" "wildcard_certificate" {
   }
 }
 
+# @todo Avoid terraform error when certificate changes
+# Currently, the new certificate is created, then the fanout ingress is updated and terraform tries to delete the old
+# certificate, but the load balancer is still using it, so there is a "resource in use" error.
+# Could we maybe use a provisioner that just sleeps for a while?
 resource "google_compute_ssl_certificate" "wildcard_certificate" {
-  name = "wildcard-vincent-jacques-net"
+  name_prefix = "wildcard-vincent-jacques-net-"
   description = "LetsEncrypt-issued wildcard certificate for *.vincent-jacques.net"
   private_key = "${acme_certificate.wildcard_certificate.private_key_pem}"
-  certificate = "${acme_certificate.wildcard_certificate.certificate_pem}"
+  certificate = "${acme_certificate.wildcard_certificate.certificate_pem}${acme_certificate.wildcard_certificate.issuer_pem}"
 
   lifecycle {
     create_before_destroy = true

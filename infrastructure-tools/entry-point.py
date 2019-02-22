@@ -105,5 +105,12 @@ def shell():
         subprocess.run(["sh"], check=True)
 
 
+@cli.command()
+@click.argument("ip")
+@click.argument("name")
+def check_certificate(ip, name):
+    subprocess.run(["openssl", "s_client", "-showcerts", "-servername", name, "-connect", ip + ":443"], check=True, input="")
+
+
 if __name__ == "__main__":
     cli()
