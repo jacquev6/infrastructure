@@ -22,6 +22,11 @@ def init():
 
 
 @cli.command()
+def refresh():
+    subprocess.run(["terraform", "refresh"], check=True)
+
+
+@cli.command()
 def plan():
     increment_chart_versions()
     subprocess.run(["terraform", "plan", "-refresh=false"], check=True)
