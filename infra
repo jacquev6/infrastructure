@@ -2,7 +2,7 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_TAG=20190222-091042
+INFRASTRUCTURE_TOOLS_TAG=20190222-110333
 
 TTY_OPTION=""
 
@@ -12,7 +12,6 @@ then
 fi
 
 docker run --interactive $TTY_OPTION \
-  --mount type=bind,src=$PWD/sources,dst=/sources \
-  --env INFRA_UID=$(id -u) --env INFRA_GID=$(id -g) \
+  --mount type=bind,src=$PWD,dst=/infrastructure \
   jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_TAG \
   -- "$@"

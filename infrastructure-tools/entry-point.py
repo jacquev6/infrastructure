@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function
+#!/usr/bin/env python3
 
 import base64
 import glob
@@ -6,7 +6,7 @@ import contextlib
 import itertools
 import os
 import shutil
-import subprocess32 as subprocess
+import subprocess
 import sys
 
 sys.argv[0] = "./infra.sh"
