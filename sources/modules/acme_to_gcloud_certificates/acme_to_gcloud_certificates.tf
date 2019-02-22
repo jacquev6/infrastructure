@@ -1,40 +1,12 @@
-variable "github_pages_ips" {
-  type = "list"
-}
-
-variable "fanout_ips" {
-  type = "list"
-}
+variable "domain_name" {}
 
 variable "gandi_api_key" {}
 
 variable "acme_account_key_pem" {}
 
-module "gandi_dns" {
-  source = "../../modules/gandi_dns"
-  domain_name = "splight.fr"
-  a_at_ips = "${var.github_pages_ips}"
-}
-
-resource "gandi_zonerecord" "admin" {
-  zone = "${module.gandi_dns.zone_id}"
-  name = "admin"
-  type = "A"
-  ttl = 3600
-  values = "${var.fanout_ips}"
-}
-
-resource "gandi_zonerecord" "api_v1" {
-  zone = "${module.gandi_dns.zone_id}"
-  name = "api-v1"
-  type = "A"
-  ttl = 3600
-  values = "${var.fanout_ips}"
-}
-
 resource "acme_certificate" "certificate" {
   account_key_pem = "${var.acme_account_key_pem}"
-  common_name = "splight.fr"
+  common_name = "${var.domain_name}"
 
   dns_challenge {
     provider = "gandiv5"
@@ -45,9 +17,13 @@ resource "acme_certificate" "certificate" {
   }
 }
 
+# @todo Avoid terraform error when certificate changes
+# Currently, the new certificate is created, then the fanout ingress is updated and terraform tries to delete the old
+# certificate, but the load balancer is still using it, so there is a "resource in use" error.
+# Could we maybe use a provisioner that just sleeps for a while?
 resource "google_compute_ssl_certificate" "certificate" {
-  name_prefix = "splight-fr-"
-  description = "LetsEncrypt-issued certificate for splight.fr"
+  name_prefix = "${replace(var.domain_name, ".", "-")}-"
+  description = "LetsEncrypt-issued certificate for ${var.domain_name}"
   private_key = "${acme_certificate.certificate.private_key_pem}"
   certificate = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
 
@@ -58,7 +34,7 @@ resource "google_compute_ssl_certificate" "certificate" {
 
 resource "acme_certificate" "wildcard_certificate" {
   account_key_pem = "${var.acme_account_key_pem}"
-  common_name = "*.splight.fr"
+  common_name = "*.${var.domain_name}"
 
   dns_challenge {
     provider = "gandiv5"
@@ -70,8 +46,8 @@ resource "acme_certificate" "wildcard_certificate" {
 }
 
 resource "google_compute_ssl_certificate" "wildcard_certificate" {
-  name_prefix = "wildcard-splight-fr-"
-  description = "LetsEncrypt-issued wildcard certificate for *.splight.fr"
+  name_prefix = "wildcard-${replace(var.domain_name, ".", "-")}-"
+  description = "LetsEncrypt-issued wildcard certificate for *.${var.domain_name}"
   private_key = "${acme_certificate.wildcard_certificate.private_key_pem}"
   certificate = "${acme_certificate.wildcard_certificate.certificate_pem}${acme_certificate.wildcard_certificate.issuer_pem}"
 
