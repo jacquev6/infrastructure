@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: splight-public
+spec:
+  selector:
+    matchLabels:
+      app: splight-public
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: splight-public
+    spec:
+      containers:
+        - name: splight-public
+          image: jacquev6/splight:{{ .Values.version }}.public-frontend.public
+          ports:
+            - containerPort: 80
+          env:
+            - name: SPLIGHT_API_URL
+              value: "https://api-v1.splight.fr/graphql"
+          resources:
+            requests:
+              cpu: 10m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: splight-public
+spec:
+  type: NodePort
+  selector:
+    app: splight-public
+  ports:
+    - port: 80

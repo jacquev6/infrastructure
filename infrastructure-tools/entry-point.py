@@ -27,34 +27,38 @@ def refresh():
 
 
 @cli.command()
-def plan():
-    increment_chart_versions()
+@click.option('--increment-charts/--no-increment-charts', default=True)
+def plan(increment_charts):
+    increment_chart_versions(increment_charts)
     subprocess.run(["terraform", "plan", "-refresh=false"], check=True)
 
 
 @cli.command()
-def apply():
-    increment_chart_versions()
+@click.option('--increment-charts/--no-increment-charts', default=True)
+def apply(increment_charts):
+    increment_chart_versions(increment_charts)
     subprocess.run(["terraform", "apply", "-refresh=false", "-auto-approve"], check=True)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+@click.option('--increment-charts/--no-increment-charts', default=True)
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def terraform(args):
-    increment_chart_versions()
+def terraform(increment_charts, args):
+    increment_chart_versions(increment_charts)
     subprocess.run(["terraform"] + list(args), check=True)
 
 
-def increment_chart_versions():
-    for chart_file in glob.glob("charts/*/Chart.yaml"):
-        chart_directory = os.path.dirname(chart_file)
-        if subprocess.run(["git", "status", "--porcelain", chart_directory], check=True, stdout=subprocess.PIPE).stdout:
-            # Additionaly, we could check the currently applied version in terraform.state and increment only if it matches the current chart version
-            with open(chart_file) as f:
-                chart = yaml.load(f)
-            chart["version"] += 1
-            with open(chart_file, "w") as f:
-                yaml.dump(chart, f, default_flow_style=False)
+def increment_chart_versions(increment_charts):
+    if increment_charts:
+        for chart_file in glob.glob("charts/*/Chart.yaml"):
+            chart_directory = os.path.dirname(chart_file)
+            if subprocess.run(["git", "status", "--porcelain", chart_directory], check=True, stdout=subprocess.PIPE).stdout:
+                # Additionaly, we could check the currently applied version in terraform.state and increment only if it matches the current chart version
+                with open(chart_file) as f:
+                    chart = yaml.load(f)
+                chart["version"] += 1
+                with open(chart_file, "w") as f:
+                    yaml.dump(chart, f, default_flow_style=False)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))

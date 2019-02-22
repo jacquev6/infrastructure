@@ -31,6 +31,13 @@ module "vincent_jacques_net_certificates" {
   acme_account_key_pem = "${acme_registration.registration.account_key_pem}"
 }
 
+module "prod_01_cluster" {
+  source = "modules/prod_cluster"
+
+  name = "prod-01"
+  pre_shared_certificates = "${module.vincent_jacques_net_certificates.wildcard_certificate_name}\\,${module.splight_fr_certificates.certificate_name}\\,${module.splight_fr_certificates.wildcard_certificate_name}"
+}
+
 module "gke_cluster_jacquev6_0002" {
   source = "resources/gke_cluster_jacquev6_0002"
 
