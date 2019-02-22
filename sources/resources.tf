@@ -38,12 +38,6 @@ module "prod_01_cluster" {
   pre_shared_certificates = "${module.vincent_jacques_net_certificates.wildcard_certificate_name}\\,${module.splight_fr_certificates.certificate_name}\\,${module.splight_fr_certificates.wildcard_certificate_name}"
 }
 
-module "gke_cluster_jacquev6_0002" {
-  source = "resources/gke_cluster_jacquev6_0002"
-
-  pre_shared_certificates = "${module.vincent_jacques_net_certificates.wildcard_certificate_name}\\,${module.splight_fr_certificates.certificate_name}\\,${module.splight_fr_certificates.wildcard_certificate_name}"
-}
-
 module "splight_fr_dns" {
   source = "resources/splight_fr_dns"
 
