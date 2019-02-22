@@ -4,10 +4,6 @@ variable "github_pages_ips" {
 
 variable "fanout_ip" {}
 
-variable "gandi_api_key" {}
-
-variable "acme_account_key_pem" {}
-
 module "gandi_dns" {
   source = "../../modules/gandi_dns"
   domain_name = "splight.fr"

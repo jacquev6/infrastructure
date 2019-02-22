@@ -12,6 +12,6 @@ resource "acme_registration" "registration" {
 }
 
 # About https://blog.jetstack.io/blog/kube-lego/:
-# -- no wildcard certs?
+# -- no wildcard certs? (and we kinda need them because we can't put many certs on a GCP LB)
 # ++ no need to run ./infra apply at least once per three months
 # == but anyway we'll soon be running it daily(?) on a Travis cron
