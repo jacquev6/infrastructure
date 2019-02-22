@@ -39,9 +39,9 @@ FROM ubuntu:18.04
 RUN set -x \
     && apt-get update \
     && apt-get install --yes --no-install-recommends \
-        python python3-pip \
+        python python3-pip python3-setuptools git \
     && rm -rf /var/lib/apt/lists/* \
-    && pip3 install click==7.0
+    && pip3 install click==7.0 pyyaml==3.13
 
 COPY --from=terraform /terraform /usr/local/bin/
 COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/

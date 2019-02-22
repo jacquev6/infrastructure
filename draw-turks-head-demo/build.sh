@@ -37,4 +37,4 @@ then
   docker push jacquev6/draw-turks-head-demo:$TAG
 fi
 
-sed -i -e "s|image: jacquev6/draw-turks-head-demo:.*|image: jacquev6/draw-turks-head-demo:$TAG$NOT_PUSHED_WARNING|" ../sources/resources/gke_cluster_jacquev6_0002/workloads/draw-turks-head-demo.yml
+sed -i -e "s|image: jacquev6/draw-turks-head-demo:.*|image: jacquev6/draw-turks-head-demo:$TAG$NOT_PUSHED_WARNING|" ../sources/charts/main/templates/draw-turks-head-demo.yaml

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: draw-turks-head-demo
-          image: jacquev6/draw-turks-head-demo:20190222-111050
+          image: jacquev6/draw-turks-head-demo:20190222-160624
           ports:
             - containerPort: 80
           resources:
