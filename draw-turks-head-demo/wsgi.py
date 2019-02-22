@@ -9,7 +9,7 @@ import DrawTurksHead
 # A bare WSGI app, because it's a very simple use-case, but we should
 # use Flask or Django if it get any more complex.
 def app(environ, start_response):
-    # @todo Use python.2.7.16's max_num_fields parameter
+    # We should use python.2.7.16's max_num_fields parameter (not yet available even in Alpine 3.9)
     qs = urlparse.parse_qs(environ.get("QUERY_STRING", ""))
 
     def get(name, convert, default, validate=lambda x: True):

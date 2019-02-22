@@ -1,13 +1,7 @@
 FROM alpine:3.8 AS builder
 
-RUN apk add boost-dev
-RUN apk add python2-dev
-RUN apk add cairomm-dev
-RUN apk add g++
-RUN apk add pkgconf-dev
-RUN apk add py2-pip
+RUN apk add boost-dev python2-dev cairomm-dev g++ pkgconf-dev py2-pip strace
 RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
-RUN apk add strace
 
 # Make a list of files actually required
 # This is the tricky part. The following can help:
