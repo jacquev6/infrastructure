@@ -4,6 +4,10 @@ resource "google_compute_global_address" "fanout" {
   name = "fanout"
 }
 
+output "fanout_ip" {
+  value = "${google_compute_global_address.fanout.address}"
+}
+
 resource "google_container_cluster" "cluster" {
   name = "jacquev6-0002"
   min_master_version = "1.11.6"

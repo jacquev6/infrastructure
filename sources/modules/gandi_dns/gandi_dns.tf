@@ -1,5 +1,9 @@
 variable "domain_name" {}
 
+variable "a_at_ips" {
+  type = "list"
+}
+
 resource "gandi_zone" "zone" {
   name = "${var.domain_name}"
   lifecycle = {
@@ -8,17 +12,16 @@ resource "gandi_zone" "zone" {
 }
 
 resource "gandi_domainattachment" "attachment" {
-    domain = "${var.domain_name}"
-    zone = "${gandi_zone.zone.id}"
+  domain = "${var.domain_name}"
+  zone = "${gandi_zone.zone.id}"
 }
 
-# @todo Could we ensure the enforce_https setting on the GitHub repository?
 resource "gandi_zonerecord" "a_at" {
   zone = "${gandi_zone.zone.id}"
   name = "@"
   type = "A"
   ttl = 3600
-  values = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
+  values = "${var.a_at_ips}"
 }
 
 resource "gandi_zonerecord" "mx_at" {

@@ -1,3 +1,11 @@
+variable "github_pages_ips" {
+  type = "list"
+}
+
+variable "fanout_ips" {
+  type = "list"
+}
+
 variable "gandi_api_key" {}
 
 variable "acme_account_key_pem" {}
@@ -5,6 +13,7 @@ variable "acme_account_key_pem" {}
 module "gandi_dns" {
   source = "../../modules/gandi_dns"
   domain_name = "vincent-jacques.net"
+  a_at_ips = "${var.github_pages_ips}"
 }
 
 resource "gandi_zonerecord" "wildcard" {
@@ -12,8 +21,7 @@ resource "gandi_zonerecord" "wildcard" {
   name = "*"
   type = "A"
   ttl = 3600
-  # @todo How to use module.gke_cluster_jacquev6_0002.google_compute_global_address.fanout.address
-  values = ["35.244.252.247"]
+  values = "${var.fanout_ips}"
 }
 
 resource "acme_certificate" "wildcard_certificate" {
