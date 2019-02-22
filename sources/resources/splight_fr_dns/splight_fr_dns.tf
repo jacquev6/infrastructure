@@ -2,9 +2,7 @@ variable "github_pages_ips" {
   type = "list"
 }
 
-variable "fanout_ips" {
-  type = "list"
-}
+variable "fanout_ip" {}
 
 variable "gandi_api_key" {}
 
@@ -21,7 +19,7 @@ resource "gandi_zonerecord" "admin" {
   name = "admin"
   type = "A"
   ttl = 3600
-  values = "${var.fanout_ips}"
+  values = ["${var.fanout_ip}"]
 }
 
 resource "gandi_zonerecord" "api_v1" {
@@ -29,5 +27,5 @@ resource "gandi_zonerecord" "api_v1" {
   name = "api-v1"
   type = "A"
   ttl = 3600
-  values = "${var.fanout_ips}"
+  values = ["${var.fanout_ip}"]
 }

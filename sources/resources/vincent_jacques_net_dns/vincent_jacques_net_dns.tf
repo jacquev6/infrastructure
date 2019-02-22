@@ -2,9 +2,7 @@ variable "github_pages_ips" {
   type = "list"
 }
 
-variable "fanout_ips" {
-  type = "list"
-}
+variable "fanout_ip" {}
 
 variable "gandi_api_key" {}
 
@@ -21,5 +19,5 @@ resource "gandi_zonerecord" "wildcard" {
   name = "*"
   type = "A"
   ttl = 3600
-  values = "${var.fanout_ips}"
+  values = ["${var.fanout_ip}"]
 }
