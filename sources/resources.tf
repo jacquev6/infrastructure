@@ -23,5 +23,5 @@ module "domain_vincent_jacques_net" {
 module "gke_cluster_jacquev6_0002" {
   source = "resources/gke_cluster_jacquev6_0002"
 
-  preSharedCertificates = "${module.domain_vincent_jacques_net.wildcard_certificate_name}\\,${module.domain_splight_fr.certificate_name}\\,${module.domain_splight_fr.wildcard_certificate_name}"
+  pre_shared_certificates = "${module.domain_vincent_jacques_net.wildcard_certificate_name}\\,${module.domain_splight_fr.certificate_name}\\,${module.domain_splight_fr.wildcard_certificate_name}"
 }

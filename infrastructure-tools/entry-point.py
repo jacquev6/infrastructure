@@ -45,7 +45,7 @@ def apply(terraform_only, kubectl_only):
     if not kubectl_only:
         subprocess.run(["terraform", "apply", "-auto-approve"], check=True)
     if not terraform_only:
-        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=provider.google.secret.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         for f in glob.glob("resources/gke_cluster_jacquev6_0002/workloads/*.yml"):
             print("Applying", f)
@@ -67,7 +67,7 @@ def terraform(args):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def gcloud(args):
-    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=provider.google.secret.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(["gcloud"] + list(args), check=True)
 
 
@@ -77,7 +77,7 @@ def gcloud(args):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def kubectl(args):
-    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=provider.google.secret.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(["kubectl"] + list(args), check=True)
 
@@ -88,7 +88,7 @@ def kubectl(args):
 ))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def kubeseal(args):
-    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=gcp-account.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=provider.google.secret.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(["kubeseal"] + list(args), check=True)
 

@@ -1,4 +1,4 @@
-variable "preSharedCertificates" {}
+variable "pre_shared_certificates" {}
 
 resource "google_compute_global_address" "fanout" {
   name = "fanout"
@@ -82,6 +82,6 @@ resource "helm_release" "main" {
 
   set {
     name = "preSharedCertificates"
-    value = "${var.preSharedCertificates}"
+    value = "${var.pre_shared_certificates}"
   }
 }
