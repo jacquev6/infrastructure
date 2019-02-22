@@ -63,6 +63,7 @@ resource "kubernetes_cluster_role_binding" "tiller" {
 
 provider "helm" {
   install_tiller = true
+  tiller_image = "gcr.io/kubernetes-helm/tiller:v2.11.0"
   service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
   namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
   kubernetes = {

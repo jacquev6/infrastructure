@@ -30,8 +30,8 @@ RUN chmod +x kubeseal-linux-amd64
 
 
 FROM base AS helm
-RUN wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.3-linux-amd64.tar.gz
-RUN tar xzf helm-v2.12.3-linux-amd64.tar.gz
+RUN wget https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
+RUN tar xzf helm-v2.11.0-linux-amd64.tar.gz
 
 
 FROM ubuntu:18.04
