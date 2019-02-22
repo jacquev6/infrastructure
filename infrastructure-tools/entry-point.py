@@ -14,6 +14,8 @@ sys.argv[0] = "./infra.sh"
 import click
 
 
+# @todo Increment chart versions when they have some "git diff"
+
 @click.group()
 def cli():
     pass
@@ -102,7 +104,7 @@ def helm(args):
 
 @cli.command()
 def shell():
-        subprocess.run(["sh"], check=True)
+    subprocess.run(["sh"], check=True)
 
 
 @cli.command()
