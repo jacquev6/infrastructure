@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
-import base64
 import glob
-import contextlib
-import itertools
 import os
-import shutil
 import subprocess
 import sys
 
-sys.argv[0] = "./infra.sh"
+sys.argv[0] = "./infra"
 
 import click
 
