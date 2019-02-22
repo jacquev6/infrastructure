@@ -1,5 +1,7 @@
 variable "gandi_api_key" {}
 
+variable "acme_account_key_pem" {}
+
 module "gandi_dns" {
   source = "../../modules/gandi_dns"
   domain_name = "splight.fr"
@@ -22,7 +24,7 @@ resource "gandi_zonerecord" "api_v1" {
 }
 
 resource "acme_certificate" "certificate" {
-  account_key_pem = "${file("/ssh/id_rsa")}"
+  account_key_pem = "${var.acme_account_key_pem}"
   common_name = "splight.fr"
 
   dns_challenge {
@@ -46,7 +48,7 @@ resource "google_compute_ssl_certificate" "certificate" {
 }
 
 resource "acme_certificate" "wildcard_certificate" {
-  account_key_pem = "${file("/ssh/id_rsa")}"
+  account_key_pem = "${var.acme_account_key_pem}"
   common_name = "*.splight.fr"
 
   dns_challenge {

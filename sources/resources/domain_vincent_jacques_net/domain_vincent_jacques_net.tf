@@ -1,5 +1,7 @@
 variable "gandi_api_key" {}
 
+variable "acme_account_key_pem" {}
+
 module "gandi_dns" {
   source = "../../modules/gandi_dns"
   domain_name = "vincent-jacques.net"
@@ -15,7 +17,7 @@ resource "gandi_zonerecord" "wildcard" {
 }
 
 resource "acme_certificate" "wildcard_certificate" {
-  account_key_pem = "${file("/ssh/id_rsa")}"
+  account_key_pem = "${var.acme_account_key_pem}"
   common_name = "*.vincent-jacques.net"
 
   dns_challenge {

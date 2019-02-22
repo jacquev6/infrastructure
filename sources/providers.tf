@@ -20,8 +20,11 @@ provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }
 
-# @todo Don't depend on file external to repository (except the git-crypt key file in .git/git-crypt)
+resource "tls_private_key" "acme" {
+  algorithm = "RSA"
+}
+
 resource "acme_registration" "registration" {
-  account_key_pem = "${file("/ssh/id_rsa")}"
+  account_key_pem = "${tls_private_key.acme.private_key_pem}"
   email_address = "letsencrypt.org@vincent-jacques.net"
 }

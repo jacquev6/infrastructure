@@ -45,7 +45,6 @@ COPY --from=0 /linux-amd64/helm /usr/local/bin/
 
 RUN helm init --client-only
 
-VOLUME /ssh
 VOLUME /sources
 WORKDIR /sources
 
