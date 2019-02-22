@@ -53,36 +53,40 @@ def increment_chart_versions():
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+@click.argument("cluster")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def gcloud(args):
-    init_gcloud()
+def gcloud(cluster, args):
+    init_gcloud(cluster)
     subprocess.run(["gcloud"] + list(args), check=True)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+@click.argument("cluster")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def kubectl(args):
-    init_gcloud()
+def kubectl(cluster, args):
+    init_gcloud(cluster)
     subprocess.run(["kubectl"] + list(args), check=True)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+@click.argument("cluster")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def kubeseal(args):
-    init_gcloud()
+def kubeseal(cluster, args):
+    init_gcloud(cluster)
     subprocess.run(["kubeseal"] + list(args), check=True)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+@click.argument("cluster")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def helm(args):
-    init_gcloud()
+def helm(cluster, args):
+    init_gcloud(cluster)
     subprocess.run(["helm"] + list(args), check=True)
 
 
-def init_gcloud():
+def init_gcloud(cluster):
     subprocess.run(["gcloud", "auth", "activate-service-account", "--key-file=provider.google.secret.json"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.run(["gcloud", "container", "clusters", "get-credentials", "jacquev6-0002", "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["gcloud", "container", "clusters", "get-credentials", cluster, "--zone", "europe-west1-c", "--project", "jacquev6-0001"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 @cli.command()
