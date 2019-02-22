@@ -48,12 +48,12 @@ module "splight_fr_dns" {
   source = "resources/splight_fr_dns"
 
   github_pages_ips = "${local.github_pages_ips}"
-  fanout_ip = "${module.gke_cluster_jacquev6_0002.fanout_ip}"
+  fanout_ip = "${module.prod_01_cluster.fanout_ip}"
 }
 
 module "vincent_jacques_net_dns" {
   source = "resources/vincent_jacques_net_dns"
 
   github_pages_ips = "${local.github_pages_ips}"
-  fanout_ip = "${module.gke_cluster_jacquev6_0002.fanout_ip}"
+  fanout_ip = "${module.prod_01_cluster.fanout_ip}"
 }
