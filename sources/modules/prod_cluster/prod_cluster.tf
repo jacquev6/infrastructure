@@ -27,6 +27,8 @@ resource "google_container_node_pool" "np_01" {
 }
 
 provider "kubernetes" {
+  version = "~> 1.5.1"
+
   host = "${google_container_cluster.cluster.endpoint}"
   username = "${google_container_cluster.cluster.master_auth.0.username}"
   password = "${google_container_cluster.cluster.master_auth.0.password}"
@@ -62,6 +64,8 @@ resource "kubernetes_cluster_role_binding" "tiller" {
 }
 
 provider "helm" {
+  version = "~> 0.8.0"
+
   install_tiller = true
   service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
   namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
