@@ -92,7 +92,7 @@ resource "helm_release" "splight" {
 
   set {
     name = "version"
-    value = "20190218-185234"
+    value = "20190223-104710"
   }
 
   set {
