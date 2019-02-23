@@ -85,19 +85,28 @@ resource "google_compute_disk" "mongo" {
   size = 10
 }
 
-# @todo Restore the mongo-backup CronJob
 resource "helm_release" "splight" {
   name = "splight"
   chart = "./charts/splight"
 
   set {
     name = "version"
-    value = "20190223-104710"
+    value = "20190223-165237"
   }
 
   set {
     name = "mongoPersistentDiskName"
     value = "${google_compute_disk.mongo.name}"
+  }
+
+  set {
+    name = "splightBackupServiceAccount"
+    value = "${base64encode(file("splight-backup.google-service-account.secret.json"))}"
+  }
+
+  set {
+    name = "restore"
+    value = "false" # Set to the date of the mongodump to restore e.g. "20190223-155347"
   }
 
   depends_on = [
