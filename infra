@@ -11,7 +11,7 @@ then
   TTY_OPTION="--tty"
 fi
 
-docker run --interactive $TTY_OPTION \
+docker run --rm --name infrastructure-tools --interactive $TTY_OPTION \
   --mount type=bind,src=$PWD,dst=/infrastructure \
   jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_TAG \
   -- "$@"
