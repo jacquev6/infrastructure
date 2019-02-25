@@ -1,28 +1,28 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: splight-mongo
+  name: {{ .Values.baseName }}-mongo
 spec:
   selector:
     matchLabels:
-      app: splight-mongo
+      app: {{ .Values.baseName }}-mongo
   replicas: 1
   template:
     metadata:
       labels:
-        app: splight-mongo
+        app: {{ .Values.baseName }}-mongo
     spec:
       containers:
-        - name: splight-mongo
+        - name: {{ .Values.baseName }}-mongo
           image: mongo:3.6.9
           volumeMounts:
             - mountPath: /data/db
-              name: splight-mongo
+              name: {{ .Values.baseName }}-mongo
           resources:
             requests:
               cpu: 10m
       volumes:
-        - name: splight-mongo
+        - name: {{ .Values.baseName }}-mongo
           gcePersistentDisk:
             pdName: {{ .Values.mongoPersistentDiskName }}
             fsType: ext4
@@ -30,9 +30,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: splight-mongo
+  name: {{ .Values.baseName }}-mongo
 spec:
   selector:
-    app: splight-mongo
+    app: {{ .Values.baseName }}-mongo
   ports:
     - port: 27017

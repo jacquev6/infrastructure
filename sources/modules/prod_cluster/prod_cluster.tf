@@ -79,39 +79,32 @@ provider "helm" {
   }
 }
 
-resource "google_compute_disk" "mongo" {
-  name = "${var.name}-splight-mongo"
-  type = "pd-standard"
-  size = 10
+module "splight_preprod" {
+  source = "../splight_instance"
+
+  suffix = "preprod"
+  images_version = "20190224-163505"
+  api_public_url = "https://api-preprod.splight.fr/graphql" # @todo Remove "graphql"
+  do_backups = "false"
+  restore = "false" # Set to the date of the mongodump to restore e.g. "20190223-155347"
+
+  providers {
+    helm = "helm"
+  }
 }
 
-resource "helm_release" "splight" {
-  name = "splight"
-  chart = "./charts/splight"
+module "splight_prod" {
+  source = "../splight_instance"
 
-  set {
-    name = "version"
-    value = "20190224-163505"
+  suffix = "prod"
+  images_version = "20190224-163505"
+  api_public_url = "https://api.splight.fr/graphql" # @todo Remove "graphql"
+  do_backups = "true"
+  restore = "false" # Set to the date of the mongodump to restore e.g. "20190223-155347"
+
+  providers {
+    helm = "helm"
   }
-
-  set {
-    name = "mongoPersistentDiskName"
-    value = "${google_compute_disk.mongo.name}"
-  }
-
-  set {
-    name = "splightBackupServiceAccount"
-    value = "${base64encode(file("splight-backup.google-service-account.secret.json"))}"
-  }
-
-  set {
-    name = "restore"
-    value = "false" # Set to the date of the mongodump to restore e.g. "20190223-155347"
-  }
-
-  depends_on = [
-    "kubernetes_cluster_role_binding.tiller"
-  ]
 }
 
 resource "google_compute_global_address" "fanout" {
@@ -138,6 +131,7 @@ resource "helm_release" "main" {
 
   depends_on = [
     "kubernetes_cluster_role_binding.tiller",
-    "helm_release.splight"
+    "module.splight_preprod",
+    "module.splight_prod"
   ]
 }

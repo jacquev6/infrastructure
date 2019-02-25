@@ -2,14 +2,15 @@ apiVersion: v1
 kind: Secret
 metadata:
   creationTimestamp: null
-  name: splight-backup-service-account
+  name: {{ .Values.baseName }}-backup-service-account
 data:
   splight-backup.json: {{ .Values.splightBackupServiceAccount }}
+{{ if .Values.doBackups }}
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: splight-backup
+  name: {{ .Values.baseName }}-backup
 spec:
   schedule: "0 * * * *"
   jobTemplate:
@@ -17,11 +18,11 @@ spec:
       template:
         spec:
           containers:
-            - name: splight-backup
+            - name: {{ .Values.baseName }}-backup
               image: jacquev6/splight:{{ .Values.version }}.backup
               env:
                 - name: SPLIGHT_MONGODB_URL
-                  value: "mongodb://splight-mongo:27017/"
+                  value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
                 - name: SPLIGHT_PROJECT_ID
                   value: jacquev6-0001
               volumeMounts:
@@ -34,26 +35,27 @@ spec:
           volumes:
             - name: service-accounts
               secret:
-                secretName: splight-backup-service-account
+                secretName: {{ .Values.baseName }}-backup-service-account
           restartPolicy: Never
+{{ end }}
 {{ if .Values.restore }}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: splight-restore
+  name: {{ .Values.baseName }}-restore
 spec:
   template:
     spec:
       containers:
-        - name: splight-restore
+        - name: {{ .Values.baseName }}-restore
           image: jacquev6/splight:{{ .Values.version }}.backup
           args:
             - restore
             - {{ .Values.restore }}
           env:
             - name: SPLIGHT_MONGODB_URL
-              value: "mongodb://splight-mongo:27017/"
+              value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
             - name: SPLIGHT_PROJECT_ID
               value: jacquev6-0001
           volumeMounts:
@@ -66,6 +68,6 @@ spec:
       volumes:
         - name: service-accounts
           secret:
-            secretName: splight-backup-service-account
+            secretName: {{ .Values.baseName }}-backup-service-account
       restartPolicy: Never
 {{ end }}

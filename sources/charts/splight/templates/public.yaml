@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: splight-preview
+  name: {{ .Values.baseName }}-public
 spec:
   selector:
     matchLabels:
-      app: splight-preview
+      app: {{ .Values.baseName }}-public
   replicas: 1
   template:
     metadata:
       labels:
-        app: splight-preview
+        app: {{ .Values.baseName }}-public
     spec:
       containers:
-        - name: splight-preview
-          image: jacquev6/splight:{{ .Values.version }}.public-frontend.preview
+        - name: {{ .Values.baseName }}-public
+          image: jacquev6/splight:{{ .Values.version }}.public-frontend.public
           ports:
             - containerPort: 80
           env:
             - name: SPLIGHT_API_URL
-              value: "https://api-v1.splight.fr/graphql"
+              value: "{{ .Values.apiPublicUrl }}"
           resources:
             requests:
               cpu: 10m
@@ -27,10 +27,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: splight-preview
+  name: {{ .Values.baseName }}-public
 spec:
   type: NodePort
   selector:
-    app: splight-preview
+    app: {{ .Values.baseName }}-public
   ports:
     - port: 80

@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: splight-admin
+  name: {{ .Values.baseName }}-admin
 spec:
   selector:
     matchLabels:
-      app: splight-admin
+      app: {{ .Values.baseName }}-admin
   replicas: 1
   template:
     metadata:
       labels:
-        app: splight-admin
+        app: {{ .Values.baseName }}-admin
     spec:
       containers:
-        - name: splight-admin
+        - name: {{ .Values.baseName }}-admin
           image: jacquev6/splight:{{ .Values.version }}.admin-frontend
           ports:
             - containerPort: 80
           env:
             - name: SPLIGHT_API_URL
-              value: "https://api-v1.splight.fr/graphql"
+              value: "{{ .Values.apiPublicUrl }}"
           resources:
             requests:
               cpu: 10m
@@ -27,10 +27,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: splight-admin
+  name: {{ .Values.baseName }}-admin
 spec:
   type: NodePort
   selector:
-    app: splight-admin
+    app: {{ .Values.baseName }}-admin
   ports:
     - port: 80
