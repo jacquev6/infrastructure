@@ -16,7 +16,7 @@ resource "google_compute_disk" "mongo" {
 
 resource "helm_release" "splight" {
   name = "splight-${var.suffix}"
-  chart = "./charts/splight-new"
+  chart = "./charts/splight"
 
   set {
     name = "baseName"
