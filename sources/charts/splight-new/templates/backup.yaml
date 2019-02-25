@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: {{ .Values.baseName }}-backup-service-account
+data:
+  splight-backup.json: {{ .Values.splightBackupServiceAccount }}
+{{ if .Values.doBackups }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Values.baseName }}-backup
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.baseName }}-backup
+              image: jacquev6/splight:{{ .Values.version }}.backup
+              env:
+                - name: SPLIGHT_MONGODB_URL
+                  value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
+                - name: SPLIGHT_PROJECT_ID
+                  value: jacquev6-0001
+              volumeMounts:
+                - name: service-accounts
+                  mountPath: /service-accounts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 10m
+          volumes:
+            - name: service-accounts
+              secret:
+                secretName: {{ .Values.baseName }}-backup-service-account
+          restartPolicy: Never
+{{ end }}
+{{ if .Values.restore }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.baseName }}-restore
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Values.baseName }}-restore
+          image: jacquev6/splight:{{ .Values.version }}.backup
+          args:
+            - restore
+            - {{ .Values.restore }}
+          env:
+            - name: SPLIGHT_MONGODB_URL
+              value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
+            - name: SPLIGHT_PROJECT_ID
+              value: jacquev6-0001
+          volumeMounts:
+            - name: service-accounts
+              mountPath: /service-accounts
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+      volumes:
+        - name: service-accounts
+          secret:
+            secretName: {{ .Values.baseName }}-backup-service-account
+      restartPolicy: Never
+{{ end }}

@@ -10,17 +10,9 @@ module "gandi_dns" {
   a_at_ips = "${var.github_pages_ips}"
 }
 
-resource "gandi_zonerecord" "admin" {
+resource "gandi_zonerecord" "wildcard" {
   zone = "${module.gandi_dns.zone_id}"
-  name = "admin"
-  type = "A"
-  ttl = 3600
-  values = ["${var.fanout_ip}"]
-}
-
-resource "gandi_zonerecord" "api_v1" {
-  zone = "${module.gandi_dns.zone_id}"
-  name = "api-v1"
+  name = "*"
   type = "A"
   ttl = 3600
   values = ["${var.fanout_ip}"]

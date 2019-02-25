@@ -79,6 +79,20 @@ provider "helm" {
   }
 }
 
+module "splight_preprod" {
+  source = "../splight_instance"
+
+  suffix = "preprod"
+  images_version = "20190224-163505"
+  api_public_url = "https://api-preprod.splight.fr/graphql" # @todo Remove "graphql"
+  do_backups = "false"
+  restore = "false" # Set to the date of the mongodump to restore e.g. "20190223-155347"
+
+  providers {
+    helm = "helm"
+  }
+}
+
 resource "google_compute_disk" "mongo" {
   name = "${var.name}-splight-mongo"
   type = "pd-standard"
