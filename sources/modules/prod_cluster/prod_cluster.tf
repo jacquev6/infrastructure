@@ -98,7 +98,7 @@ module "splight_prod" {
 
   suffix = "prod"
   images_version = "20190224-163505"
-  api_public_url = "https://api-prod.splight.fr/graphql" # @todo Remove "graphql"
+  api_public_url = "https://api.splight.fr/graphql" # @todo Remove "graphql"
   do_backups = "false"
   restore = "20190225-090010" # Set to the date of the mongodump to restore e.g. "20190223-155347"
 

@@ -18,36 +18,6 @@ spec:
               serviceName: draw-turks-head-demo
               servicePort: 80
 
-    - host: splight.fr
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: splight-public
-              servicePort: 80
-    - host: admin.splight.fr
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: splight-admin
-              servicePort: 80
-          - path: /preview/*
-            backend:
-              serviceName: splight-preview
-              servicePort: 80
-          - path: /preview
-            backend:
-              serviceName: splight-preview
-              servicePort: 80
-    - host: api-v1.splight.fr
-      http:
-        paths:
-          - path: /graphql
-            backend:
-              serviceName: splight-api-v1
-              servicePort: 80
-
     - host: preprod.splight.fr
       http:
         paths:
@@ -78,14 +48,14 @@ spec:
               serviceName: splight-preprod-api
               servicePort: 80
 
-    - host: prod.splight.fr
+    - host: prod.splight.fr  # @todo Change to "splight.fr" when we move out of GitHub Pages
       http:
         paths:
           - path: /*
             backend:
               serviceName: splight-prod-public
               servicePort: 80
-    - host: admin-prod.splight.fr
+    - host: admin.splight.fr
       http:
         paths:
           - path: /*
@@ -100,7 +70,7 @@ spec:
             backend:
               serviceName: splight-prod-preview
               servicePort: 80
-    - host: api-prod.splight.fr
+    - host: api.splight.fr
       http:
         paths:
           - path: /graphql
