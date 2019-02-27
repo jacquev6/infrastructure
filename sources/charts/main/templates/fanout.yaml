@@ -21,30 +21,23 @@ spec:
     - host: preprod.splight.fr
       http:
         paths:
-          - path: /*
-            backend:
+          - backend:
               serviceName: splight-preprod-public
               servicePort: 80
     - host: admin-preprod.splight.fr
       http:
         paths:
-          - path: /*
-            backend:
+          - backend:
               serviceName: splight-preprod-admin
               servicePort: 80
-          - path: /preview/*
-            backend:
-              serviceName: splight-preprod-preview
-              servicePort: 80
-          - path: /preview
+          - path: /preview*
             backend:
               serviceName: splight-preprod-preview
               servicePort: 80
     - host: api-preprod.splight.fr
       http:
         paths:
-          - path: /graphql
-            backend:
+          - backend:
               serviceName: splight-preprod-api
               servicePort: 80
 
