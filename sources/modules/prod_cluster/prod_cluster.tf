@@ -79,6 +79,13 @@ provider "helm" {
   }
 }
 
+resource "helm_release" "reloader" {
+  name = "reloader"
+  repository = "https://stakater.github.io/stakater-charts"
+  chart = "reloader"
+  version = "0.0.26"
+}
+
 module "splight_preprod" {
   source = "../splight_instance"
 

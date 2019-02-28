@@ -1,6 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+  # @todo Name it plainly "fanout": the service name is namespaced by cluster
   name: {{ .Values.fanoutName }}
   annotations:
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.fanoutName }}
@@ -9,68 +10,106 @@ metadata:
     ingress.gcp.kubernetes.io/pre-shared-cert: "{{ .Values.preSharedCertificates }}"
 spec:
   # Current quota: 15 backends (https://console.cloud.google.com/iam-admin/quotas?project=jacquev6-0001)
-  rules:
-    - host: dyn.vincent-jacques.net
-      http:
-        paths:
-          - path: /turkshead
-            backend:
-              serviceName: draw-turks-head-demo
-              servicePort: 80
-
-    - host: preprod.splight.fr
-      http:
-        paths:
-          - backend:
-              serviceName: splight-preprod-public
-              servicePort: 80
-    - host: admin-preprod.splight.fr
-      http:
-        paths:
-          - backend:
-              serviceName: splight-preprod-admin
-              servicePort: 80
-          - path: /preview/*
-            backend:
-              serviceName: splight-preprod-preview
-              servicePort: 80
-          - path: /preview
-            backend:
-              serviceName: splight-preprod-preview
-              servicePort: 80
-    - host: api-preprod.splight.fr
-      http:
-        paths:
-          - backend:
-              serviceName: splight-preprod-api
-              servicePort: 80
-
-    - host: prod.splight.fr  # @todo Change to "splight.fr" when we move out of GitHub Pages
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: splight-prod-public
-              servicePort: 80
-    - host: admin.splight.fr
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: splight-prod-admin
-              servicePort: 80
-          - path: /preview/*
-            backend:
-              serviceName: splight-prod-preview
-              servicePort: 80
-          - path: /preview
-            backend:
-              serviceName: splight-prod-preview
-              servicePort: 80
-    - host: api.splight.fr
-      http:
-        paths:
-          - path: /graphql
-            backend:
-              serviceName: splight-prod-api
-              servicePort: 80
+  backend:
+    serviceName: fanout
+    servicePort: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fanout
+data:
+  haproxy.cfg: |
+    defaults
+      mode http
+      timeout connect 5000
+      timeout client 50000
+      timeout server 50000
+    frontend fanout
+      bind *:80
+      # VJNet
+      acl is_draw_turks_head_demo path /turkshead
+      acl is_dyn_vjnet hdr(host) dyn.vincent-jacques.net
+      use_backend draw_turks_head_demo if is_dyn_vjnet is_draw_turks_head_demo
+      # Splight pre-production
+      acl is_splight_preprod_preview url_beg /preview
+      acl is_splight_preprod_admin hdr(host) admin-preprod.splight.fr
+      acl is_splight_preprod_api hdr(host) api-preprod.splight.fr
+      acl is_splight_preprod_public hdr(host) preprod.splight.fr
+      use_backend splight_preprod_preview if is_splight_preprod_admin is_splight_preprod_preview
+      use_backend splight_preprod_admin if is_splight_preprod_admin
+      use_backend splight_preprod_api if is_splight_preprod_api
+      use_backend splight_preprod_public if is_splight_preprod_public
+      # Splight production
+      acl is_splight_prod_preview url_beg /preview
+      acl is_splight_prod_admin hdr(host) admin.splight.fr
+      acl is_splight_prod_api hdr(host) api.splight.fr
+      # @todo Change to "splight.fr" when we move out of GitHub Pages
+      acl is_splight_prod_public hdr(host) prod.splight.fr
+      use_backend splight_prod_preview if is_splight_prod_admin is_splight_prod_preview
+      use_backend splight_prod_admin if is_splight_prod_admin
+      use_backend splight_prod_api if is_splight_prod_api
+      use_backend splight_prod_public if is_splight_prod_public
+      # Default backend MUST respond 200 on /
+      default_backend splight_prod_api
+    backend draw_turks_head_demo
+      server draw_turks_head_demo draw-turks-head-demo
+    backend splight_preprod_public
+      server splight_preprod_public splight-preprod-public
+    backend splight_preprod_api
+      server splight_preprod_api splight-preprod-api
+    backend splight_preprod_admin
+      server splight_preprod_admin splight-preprod-admin
+    backend splight_preprod_preview
+      server splight_preprod_preview splight-preprod-preview
+    backend splight_prod_public
+      server splight_prod_public splight-prod-public
+    backend splight_prod_api
+      server splight_prod_api splight-prod-api
+    backend splight_prod_admin
+      server splight_prod_admin splight-prod-admin
+    backend splight_prod_preview
+      server splight_prod_preview splight-prod-preview
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fanout
+  annotations:
+    configmap.reloader.stakater.com/reload: "fanout"
+spec:
+  selector:
+    matchLabels:
+      app: fanout
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: fanout
+    spec:
+      containers:
+        - name: fanout
+          image: haproxy:1.9.4-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+          volumeMounts:
+            - name: etc-haproxy
+              mountPath: /usr/local/etc/haproxy
+      volumes:
+        - name: etc-haproxy
+          configMap:
+            name: fanout
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fanout
+spec:
+  type: NodePort
+  selector:
+    app: fanout
+  ports:
+    - port: 80
