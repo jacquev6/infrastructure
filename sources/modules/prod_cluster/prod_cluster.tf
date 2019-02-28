@@ -39,7 +39,7 @@ provider "kubernetes" {
 
 resource "kubernetes_service_account" "tiller" {
   metadata {
-    name      = "tiller"
+    name = "tiller"
     namespace = "kube-system"
   }
   automount_service_account_token = true
@@ -57,7 +57,7 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     api_group = ""
   }
   role_ref {
-    kind  = "ClusterRole"
+    kind = "ClusterRole"
     name = "cluster-admin"
     api_group = "rbac.authorization.k8s.io"
   }
