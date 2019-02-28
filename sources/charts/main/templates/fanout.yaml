@@ -30,7 +30,11 @@ spec:
           - backend:
               serviceName: splight-preprod-admin
               servicePort: 80
-          - path: /preview*
+          - path: /preview/*
+            backend:
+              serviceName: splight-preprod-preview
+              servicePort: 80
+          - path: /preview
             backend:
               serviceName: splight-preprod-preview
               servicePort: 80
