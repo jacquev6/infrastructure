@@ -91,8 +91,8 @@ module "splight_preprod" {
 
   prefix = "${var.name}"
   suffix = "preprod"
-  images_version = "20190227-150344"
-  api_public_url = "https://api-preprod.splight.fr/graphql" # @todo Remove "graphql"
+  images_version = "20190228-172055"
+  api_public_url = "https://api-preprod.splight.fr/"
   do_backups = "false"
   restore = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
