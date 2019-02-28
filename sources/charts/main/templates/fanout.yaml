@@ -1,8 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  # @todo Name it plainly "fanout": the service name is namespaced by cluster
-  name: {{ .Values.fanoutName }}
+  name: fanout
   annotations:
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.fanoutName }}
     # Limit: 10 certificates (https://cloud.google.com/load-balancing/docs/ssl-certificates#ssl-certificate-limits)
