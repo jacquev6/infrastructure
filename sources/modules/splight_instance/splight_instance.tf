@@ -1,3 +1,5 @@
+variable "prefix" {}
+
 variable "suffix" {}
 
 variable "images_version" {}
@@ -9,7 +11,7 @@ variable "restore" {}
 variable "do_backups" {}
 
 resource "google_compute_disk" "mongo" {
-  name = "splight-${var.suffix}-mongo"
+  name = "${var.prefix}-splight-${var.suffix}-mongo"
   type = "pd-standard"
   size = 10
 }
