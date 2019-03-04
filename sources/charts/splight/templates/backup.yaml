@@ -5,12 +5,12 @@ metadata:
   name: {{ .Values.baseName }}-backup-service-account
 data:
   splight-backup.json: {{ .Values.splightBackupServiceAccount }}
-{{ if .Values.doBackups }}
+{{ if .Values.periodicalBackups }}
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ .Values.baseName }}-backup
+  name: {{ .Values.baseName }}-periodical-backup
 spec:
   schedule: "0 * * * *"
   jobTemplate:
@@ -18,8 +18,48 @@ spec:
       template:
         spec:
           containers:
-            - name: {{ .Values.baseName }}-backup
+            - name: {{ .Values.baseName }}-periodical-backup
               image: jacquev6/splight:{{ .Values.version }}.backup
+              args:
+                - backup
+              env:
+                - name: SPLIGHT_MONGODB_URL
+                  value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
+                - name: SPLIGHT_PROJECT_ID
+                  value: jacquev6-0001
+                - name: SPLIGHT_INSTANCE_SLUG
+                  value: {{ .Values.periodicalBackups }}
+              volumeMounts:
+                - name: service-accounts
+                  mountPath: /service-accounts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 10m
+          volumes:
+            - name: service-accounts
+              secret:
+                secretName: {{ .Values.baseName }}-backup-service-account
+          restartPolicy: Never
+{{ end }}
+{{ if .Values.periodicalRestores }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Values.baseName }}-periodical-restore
+spec:
+  schedule: "5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.baseName }}-periodical-restore
+              image: jacquev6/splight:{{ .Values.version }}.backup
+              args:
+                - restore-latest
+                - {{ .Values.periodicalRestores }}
               env:
                 - name: SPLIGHT_MONGODB_URL
                   value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
@@ -38,7 +78,7 @@ spec:
                 secretName: {{ .Values.baseName }}-backup-service-account
           restartPolicy: Never
 {{ end }}
-{{ if .Values.restore }}
+{{ if .Values.restoreOnce }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -52,7 +92,7 @@ spec:
           image: jacquev6/splight:{{ .Values.version }}.backup
           args:
             - restore
-            - {{ .Values.restore }}
+            - {{ .Values.restoreOnce }}
           env:
             - name: SPLIGHT_MONGODB_URL
               value: "mongodb://{{ .Values.baseName }}-mongo:27017/"

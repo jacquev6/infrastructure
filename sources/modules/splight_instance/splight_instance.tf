@@ -1,18 +1,15 @@
-variable "cluster_name" {}
-
 variable "instance_slug" {}
-
 variable "images_version" {}
 
 variable "api_public_url" {}
-
-variable "restore" {}
-
-variable "do_backups" {}
+variable "cluster_name" {}
 
 variable "instance_name" {}
-
 variable "instance_warnings" {}
+
+variable "periodical_backups" {}
+variable "periodical_restores" {}
+variable "restore_once" {}
 
 resource "google_compute_disk" "mongo" {
   name = "${var.cluster_name}-splight-${var.instance_slug}-mongo"
@@ -45,13 +42,18 @@ resource "helm_release" "splight" {
   }
 
   set {
-    name = "doBackups"
-    value = "${var.do_backups}"
+    name = "periodicalBackups"
+    value = "${var.periodical_backups}"
   }
 
   set {
-    name = "restore"
-    value = "${var.restore}"
+    name = "periodicalRestores"
+    value = "${var.periodical_restores}"
+  }
+
+  set {
+    name = "restoreOnce"
+    value = "${var.restore_once}"
   }
 
   set {

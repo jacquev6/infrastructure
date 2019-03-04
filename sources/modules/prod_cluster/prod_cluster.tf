@@ -90,16 +90,17 @@ module "splight_preprod" {
   source = "../splight_instance"
 
   instance_slug = "preprod"
-  images_version = "20190304-121550"
+  images_version = "20190304-134823"
 
   api_public_url = "https://api-preprod.splight.fr/"
   cluster_name = "${var.name}"
 
   instance_name = "pré-production"
-  instance_warnings = "warn 1\\\\nwarn 2\\\\nwarn 3"
+  instance_warnings = "les modifications faites ici seront perdues\\\\nà chaque heure pile les données de la version production sont sauvegardées\\\\net restaurées ici 5 minutes plus tard"
 
-  do_backups = "false"
-  restore = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
+  periodical_backups = "false"
+  periodical_restores = "prod"
+  restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
   providers {
     helm = "helm"
@@ -110,7 +111,7 @@ module "splight_prod" {
   source = "../splight_instance"
 
   instance_slug = "prod"
-  images_version = "20190228-172055"
+  images_version = "20190304-134823"
 
   cluster_name = "${var.name}"
   api_public_url = "https://api.splight.fr/"
@@ -118,8 +119,9 @@ module "splight_prod" {
   instance_name = "production"
   instance_warnings = "false"
 
-  do_backups = "true"
-  restore = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
+  periodical_backups = "prod"
+  periodical_restores = "false"
+  restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
   providers {
     helm = "helm"
