@@ -20,6 +20,12 @@ spec:
           env:
             - name: SPLIGHT_MONGODB_URL
               value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
+            - name: SPLIGHT_INSTANCE_NAME
+              value: {{ .Values.instanceName }}
+{{ if .Values.instanceWarnings }}
+            - name: SPLIGHT_INSTANCE_WARNINGS
+              value: "{{ .Values.instanceWarnings }}"
+{{ end }}
           resources:
             requests:
               cpu: 10m

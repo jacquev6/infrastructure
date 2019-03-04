@@ -1,6 +1,6 @@
-variable "prefix" {}
+variable "cluster_name" {}
 
-variable "suffix" {}
+variable "instance_slug" {}
 
 variable "images_version" {}
 
@@ -10,19 +10,23 @@ variable "restore" {}
 
 variable "do_backups" {}
 
+variable "instance_name" {}
+
+variable "instance_warnings" {}
+
 resource "google_compute_disk" "mongo" {
-  name = "${var.prefix}-splight-${var.suffix}-mongo"
+  name = "${var.cluster_name}-splight-${var.instance_slug}-mongo"
   type = "pd-standard"
   size = 10
 }
 
 resource "helm_release" "splight" {
-  name = "splight-${var.suffix}"
+  name = "splight-${var.instance_slug}"
   chart = "./charts/splight"
 
   set {
     name = "baseName"
-    value = "splight-${var.suffix}"
+    value = "splight-${var.instance_slug}"
   }
 
   set {
@@ -37,7 +41,7 @@ resource "helm_release" "splight" {
 
   set {
     name = "splightBackupServiceAccount"
-    value = "${base64encode(file(format("splight-%s-backup.google-service-account.secret.json", var.suffix)))}"
+    value = "${base64encode(file(format("splight-%s-backup.google-service-account.secret.json", var.instance_slug)))}"
   }
 
   set {
@@ -53,5 +57,15 @@ resource "helm_release" "splight" {
   set {
     name = "apiPublicUrl"
     value = "${var.api_public_url}"
+  }
+
+  set {
+    name = "instanceName"
+    value = "${var.instance_name}"
+  }
+
+  set {
+    name = "instanceWarnings"
+    value = "${var.instance_warnings}"
   }
 }

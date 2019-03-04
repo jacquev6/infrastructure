@@ -89,10 +89,15 @@ resource "helm_release" "reloader" {
 module "splight_preprod" {
   source = "../splight_instance"
 
-  prefix = "${var.name}"
-  suffix = "preprod"
-  images_version = "20190228-172055"
+  instance_slug = "preprod"
+  images_version = "20190304-121550"
+
   api_public_url = "https://api-preprod.splight.fr/"
+  cluster_name = "${var.name}"
+
+  instance_name = "pré-production"
+  instance_warnings = "warn 1\\\\nwarn 2\\\\nwarn 3"
+
   do_backups = "false"
   restore = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
@@ -104,10 +109,15 @@ module "splight_preprod" {
 module "splight_prod" {
   source = "../splight_instance"
 
-  prefix = "${var.name}"
-  suffix = "prod"
+  instance_slug = "prod"
   images_version = "20190228-172055"
+
+  cluster_name = "${var.name}"
   api_public_url = "https://api.splight.fr/"
+
+  instance_name = "production"
+  instance_warnings = "false"
+
   do_backups = "true"
   restore = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
