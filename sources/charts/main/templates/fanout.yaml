@@ -49,6 +49,15 @@ data:
       use_backend splight_prod_admin if is_splight_prod_admin
       use_backend splight_prod_api if is_splight_prod_api
       use_backend splight_prod_public if is_splight_prod_public
+      # Splight demonstration
+      acl is_splight_demo_preview url_beg /preview
+      acl is_splight_demo_admin hdr(host) splight-demo-admin.vincent-jacques.net
+      acl is_splight_demo_api hdr(host) splight-demo-api.vincent-jacques.net
+      acl is_splight_demo_public hdr(host) splight-demo.vincent-jacques.net
+      use_backend splight_demo_preview if is_splight_demo_admin is_splight_demo_preview
+      use_backend splight_demo_admin if is_splight_demo_admin
+      use_backend splight_demo_api if is_splight_demo_api
+      use_backend splight_demo_public if is_splight_demo_public
       # Default backend MUST respond 200 on /
       default_backend splight_prod_api
     backend draw_turks_head_demo
@@ -69,6 +78,14 @@ data:
       server splight_prod_admin splight-prod-admin
     backend splight_prod_preview
       server splight_prod_preview splight-prod-preview
+    backend splight_demo_public
+      server splight_demo_public splight-demo-public
+    backend splight_demo_api
+      server splight_demo_api splight-demo-api
+    backend splight_demo_admin
+      server splight_demo_admin splight-demo-admin
+    backend splight_demo_preview
+      server splight_demo_preview splight-demo-preview
 ---
 apiVersion: apps/v1
 kind: Deployment

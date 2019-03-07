@@ -2,6 +2,11 @@ variable "name" {}
 
 variable "pre_shared_certificates" {}
 
+locals {
+  splight_preprod_images_version = "20190304-134823"
+  splight_prod_images_version = "20190304-134823"
+}
+
 # @todo Handle deletion of prod_cluster
 # Currently, deleting an instance of this module makes terraform complain about the missing providers
 # because resources are still in the state but no provider is configured to handle their deletion.
@@ -90,7 +95,7 @@ module "splight_preprod" {
   source = "../splight_instance"
 
   instance_slug = "preprod"
-  images_version = "20190304-134823"
+  images_version = "${local.splight_preprod_images_version}"
 
   api_public_url = "https://api-preprod.splight.fr/"
   cluster_name = "${var.name}"
@@ -111,7 +116,7 @@ module "splight_prod" {
   source = "../splight_instance"
 
   instance_slug = "prod"
-  images_version = "20190304-134823"
+  images_version = "${local.splight_prod_images_version}"
 
   cluster_name = "${var.name}"
   api_public_url = "https://api.splight.fr/"
@@ -120,6 +125,27 @@ module "splight_prod" {
   instance_warnings = "false"
 
   periodical_backups = "prod"
+  periodical_restores = "false"
+  restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
+
+  providers {
+    helm = "helm"
+  }
+}
+
+module "splight_demo" {
+  source = "../splight_instance"
+
+  instance_slug = "demo"
+  images_version = "${local.splight_prod_images_version}"
+
+  cluster_name = "${var.name}"
+  api_public_url = "https://splight-demo-api.vincent-jacques.net/"
+
+  instance_name = "demonstration"
+  instance_warnings = "login: admin\\\\npassword: admin\\\\nchanges made here will be lost\\\\ndata is restored to its default state every 15 minutes"
+
+  periodical_backups = "false"
   periodical_restores = "false"
   restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
