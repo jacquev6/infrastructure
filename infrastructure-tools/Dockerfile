@@ -59,6 +59,4 @@ WORKDIR /infrastructure/sources
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-ENTRYPOINT ["python3", "/entry-point.py"]
-
-COPY entry-point.py /
+COPY infra /

@@ -2,7 +2,19 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_TAG=20190222-190905
+INFRASTRUCTURE_TOOLS_TAG=20190307-102929
+
+NAME=infrastructure-tools-$INFRASTRUCTURE_TOOLS_TAG
+
+if ! docker ps | grep $NAME >/dev/null
+then
+  docker run \
+    --rm --name $NAME --detach \
+    --mount type=bind,src=$PWD,dst=/infrastructure \
+    jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_TAG \
+    bash -c "tail -f /dev/null" \
+  >/dev/null
+fi
 
 TTY_OPTION=""
 
@@ -11,7 +23,4 @@ then
   TTY_OPTION="--tty"
 fi
 
-docker run --rm --interactive $TTY_OPTION \
-  --mount type=bind,src=$PWD,dst=/infrastructure \
-  jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_TAG \
-  -- "$@"
+docker exec --interactive $TTY_OPTION $NAME /infra "$@"

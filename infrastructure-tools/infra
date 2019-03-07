@@ -6,8 +6,6 @@ import subprocess
 import sys
 import yaml
 
-sys.argv[0] = "./infra"
-
 import click
 
 
