@@ -14,9 +14,7 @@ locals {
     "nas2:50",
     "doorman:51",
     "idee:52",
-    "kodi:53",
-    "eeepc:54",
-    "nas1:55"
+    "kodi:53"
   ],
   aliases = [
     "home:home-jacquev6-net.synology.me.",
