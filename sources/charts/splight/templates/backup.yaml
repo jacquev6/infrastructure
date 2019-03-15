@@ -78,6 +78,31 @@ spec:
                 secretName: {{ .Values.baseName }}-backup-service-account
           restartPolicy: Never
 {{ end }}
+{{ if .Values.periodicalTestDataRestores }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Values.baseName }}-periodical-test-data-restore
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.baseName }}-periodical-test-data-restore
+              image: jacquev6/splight:{{ .Values.version }}.test-data
+              env:
+                - name: SPLIGHT_MONGODB_URL
+                  value: "mongodb://{{ .Values.baseName }}-mongo:27017/"
+                - name: SPLIGHT_API_URL
+                  value: "http://{{ .Values.baseName }}-api/graphql"
+              resources:
+                requests:
+                  cpu: 10m
+          restartPolicy: Never
+{{ end }}
 {{ if .Values.restoreOnce }}
 ---
 apiVersion: batch/v1

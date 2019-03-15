@@ -9,6 +9,7 @@ variable "instance_warnings" {}
 
 variable "periodical_backups" {}
 variable "periodical_restores" {}
+variable "periodical_test_data_restores" {}
 variable "restore_once" {}
 
 resource "google_compute_disk" "mongo" {
@@ -49,6 +50,11 @@ resource "helm_release" "splight" {
   set {
     name = "periodicalRestores"
     value = "${var.periodical_restores}"
+  }
+
+  set {
+    name = "periodicalTestDataRestores"
+    value = "${var.periodical_test_data_restores}"
   }
 
   set {

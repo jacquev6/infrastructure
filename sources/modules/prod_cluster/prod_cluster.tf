@@ -3,8 +3,8 @@ variable "name" {}
 variable "pre_shared_certificates" {}
 
 locals {
-  splight_preprod_images_version = "20190304-134823"
-  splight_prod_images_version = "20190304-134823"
+  splight_preprod_images_version = "20190315-131524"
+  splight_prod_images_version = "20190315-131524"
 }
 
 # @todo Handle deletion of prod_cluster
@@ -105,6 +105,7 @@ module "splight_preprod" {
 
   periodical_backups = "false"
   periodical_restores = "prod"
+  periodical_test_data_restores = "false"
   restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
   providers {
@@ -126,6 +127,7 @@ module "splight_prod" {
 
   periodical_backups = "prod"
   periodical_restores = "false"
+  periodical_test_data_restores = "false"
   restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
   providers {
@@ -147,6 +149,7 @@ module "splight_demo" {
 
   periodical_backups = "false"
   periodical_restores = "false"
+  periodical_test_data_restores = "true"
   restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
 
   providers {
