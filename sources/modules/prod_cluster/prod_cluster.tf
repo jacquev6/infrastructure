@@ -3,8 +3,8 @@ variable "name" {}
 variable "pre_shared_certificates" {}
 
 locals {
-  splight_preprod_images_version = "20190315-131524"
-  splight_prod_images_version = "20190315-131524"
+  splight_preprod_images_version = "20190321-164706"
+  splight_prod_images_version = "20190321-164706"
 }
 
 # @todo Handle deletion of prod_cluster
