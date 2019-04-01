@@ -53,23 +53,18 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install click==7.0 pyyaml==3.13
 
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
 COPY --from=terraform /terraform /usr/local/bin/
-COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/
 COPY --from=kubectl /kubectl /usr/local/bin/
 COPY --from=kubeseal /kubeseal-linux-amd64 /usr/local/bin/kubeseal
 COPY --from=google_cloud_sdk /google-cloud-sdk/ /
 RUN cd /usr/local/bin && ln -s /google-cloud-sdk/bin/gcloud .
 COPY --from=helm /linux-amd64/helm /usr/local/bin/
-
 RUN helm init --client-only
-
-VOLUME /infrastructure
-WORKDIR /infrastructure/sources
-
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-
-COPY infra /
-
-# @todo Put this line just below the 'COPY --from=terraform_provider_gandi' line
+COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/
 COPY --from=terraform_provider_sfr_box /terraform-provider-sfrbox/terraform-provider-sfrbox /usr/local/bin/
+
+WORKDIR /infrastructure/sources
+COPY infra /
