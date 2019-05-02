@@ -185,3 +185,5 @@ resource "helm_release" "main" {
     "module.splight_prod"
   ]
 }
+
+# @todo Use https://github.com/louy/terraform-provider-uptimerobot for my https://uptimerobot.com/ checks
