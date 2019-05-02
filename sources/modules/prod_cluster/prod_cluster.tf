@@ -15,7 +15,7 @@ locals {
 
 resource "google_container_cluster" "cluster" {
   name = "${var.name}"
-  min_master_version = "1.11.7"
+  min_master_version = "1.11.8"
 
   initial_node_count = 1
   remove_default_node_pool = "true"
