@@ -106,7 +106,7 @@ module "splight_preprod" {
   periodical_backups = "false"
   periodical_restores = "prod"
   periodical_test_data_restores = "false"
-  restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
+  restore_once = "false"
 
   providers {
     helm = "helm"
@@ -128,7 +128,7 @@ module "splight_prod" {
   periodical_backups = "prod"
   periodical_restores = "false"
   periodical_test_data_restores = "false"
-  restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
+  restore_once = "false" # Set to the file name of the mongodump to restore e.g. "prod-20190502-010008-mongodump.gz"
 
   providers {
     helm = "helm"
@@ -150,7 +150,7 @@ module "splight_demo" {
   periodical_backups = "false"
   periodical_restores = "false"
   periodical_test_data_restores = "true"
-  restore_once = "false" # Set to the date of the mongodump to restore e.g. "20190228-140011"
+  restore_once = "false"
 
   providers {
     helm = "helm"
@@ -161,6 +161,7 @@ resource "google_compute_global_address" "fanout" {
   name = "${var.name}-fanout"
 }
 
+# @todo Make this an input, to allow switching clusters quickly
 output "fanout_ip" {
   value = "${google_compute_global_address.fanout.address}"
 }
