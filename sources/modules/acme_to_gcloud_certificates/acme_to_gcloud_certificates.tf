@@ -35,6 +35,7 @@ resource "google_compute_ssl_certificate" "certificate" {
 resource "acme_certificate" "wildcard_certificate" {
   account_key_pem = "${var.acme_account_key_pem}"
   common_name = "*.${var.domain_name}"
+  min_days_remaining = "20"  # To match ACME's e-mail reminder
 
   dns_challenge {
     provider = "gandiv5"
