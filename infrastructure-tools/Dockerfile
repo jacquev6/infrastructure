@@ -50,8 +50,9 @@ RUN set -x \
     && apt-get update \
     && apt-get install --yes --no-install-recommends \
         python python3-pip python3-setuptools git \
+        groff \
     && rm -rf /var/lib/apt/lists/* \
-    && pip3 install click==7.0 pyyaml==3.13
+    && pip3 install awscli==1.16 click==7.0 pyyaml==3.13
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
