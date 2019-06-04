@@ -58,8 +58,9 @@ data:
       use_backend splight_demo_admin if is_splight_demo_admin
       use_backend splight_demo_api if is_splight_demo_api
       use_backend splight_demo_public if is_splight_demo_public
-      # Default backend MUST respond 200 on /
-      default_backend splight_prod_api
+      # Default backend must respond 200 on / for health checks from load balancer
+      # @todo Could we respond with 200 directly from haproxy, and remove always_200?
+      default_backend always_200
     backend draw_turks_head_demo
       server draw_turks_head_demo draw-turks-head-demo
     backend splight_preprod_public
@@ -86,6 +87,8 @@ data:
       server splight_demo_admin splight-demo-admin
     backend splight_demo_preview
       server splight_demo_preview splight-demo-preview
+    backend always_200
+      server always_200 always-200
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -127,5 +130,39 @@ spec:
   type: NodePort
   selector:
     app: fanout
+  ports:
+    - port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: always-200
+spec:
+  selector:
+    matchLabels:
+      app: always-200
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: always-200
+    spec:
+      containers:
+        - name: always-200
+          image: nginx:1.15
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: always-200
+spec:
+  type: NodePort
+  selector:
+    app: always-200
   ports:
     - port: 80
