@@ -91,49 +91,51 @@ resource "helm_release" "reloader" {
   version = "0.0.26"
 }
 
-module "splight_preprod" {
-  source = "../splight_instance"
+# @todo Set health-checks to restart the API backend when it timed out when connecting to MongoDB
 
-  instance_slug = "preprod"
-  images_version = "${local.splight_preprod_images_version}"
-
-  api_public_url = "https://api-preprod.splight.fr/"
-  cluster_name = "${var.name}"
-
-  instance_name = "pré-production"
-  instance_warnings = "les modifications faites ici seront perdues\\\\nà chaque heure pile les données de la version production sont sauvegardées\\\\net restaurées ici 5 minutes plus tard"
-
-  periodical_backups = "false"
-  periodical_restores = "prod"
-  periodical_test_data_restores = "false"
-  restore_once = "false"
-
-  providers {
-    helm = "helm"
-  }
-}
-
-module "splight_prod" {
-  source = "../splight_instance"
-
-  instance_slug = "prod"
-  images_version = "${local.splight_prod_images_version}"
-
-  cluster_name = "${var.name}"
-  api_public_url = "https://api.splight.fr/"
-
-  instance_name = "production"
-  instance_warnings = "false"
-
-  periodical_backups = "prod"
-  periodical_restores = "false"
-  periodical_test_data_restores = "false"
-  restore_once = "false" # Set to the file name of the mongodump to restore e.g. "prod-20190502-010008-mongodump.gz"
-
-  providers {
-    helm = "helm"
-  }
-}
+#module "splight_preprod" {
+#  source = "../splight_instance"
+#
+#  instance_slug = "preprod"
+#  images_version = "${local.splight_preprod_images_version}"
+#
+#  api_public_url = "https://api-preprod.splight.fr/"
+#  cluster_name = "${var.name}"
+#
+#  instance_name = "pré-production"
+#  instance_warnings = "les modifications faites ici seront perdues\\\\nà chaque heure pile les données de la version production sont sauvegardées\\\\net restaurées ici 5 minutes plus tard"
+#
+#  periodical_backups = "false"
+#  periodical_restores = "prod"
+#  periodical_test_data_restores = "false"
+#  restore_once = "false"
+#
+#  providers {
+#    helm = "helm"
+#  }
+#}
+#
+#module "splight_prod" {
+#  source = "../splight_instance"
+#
+#  instance_slug = "prod"
+#  images_version = "${local.splight_prod_images_version}"
+#
+#  cluster_name = "${var.name}"
+#  api_public_url = "https://api.splight.fr/"
+#
+#  instance_name = "production"
+#  instance_warnings = "false"
+#
+#  periodical_backups = "prod"
+#  periodical_restores = "false"
+#  periodical_test_data_restores = "false"
+#  restore_once = "false" # Set to the file name of the mongodump to restore e.g. "prod-20190502-010008-mongodump.gz"
+#
+#  providers {
+#    helm = "helm"
+#  }
+#}
 
 module "splight_demo" {
   source = "../splight_instance"
@@ -181,9 +183,9 @@ resource "helm_release" "main" {
   }
 
   depends_on = [
-    "kubernetes_cluster_role_binding.tiller",
-    "module.splight_preprod",
-    "module.splight_prod"
+    "kubernetes_cluster_role_binding.tiller"
+    #"module.splight_preprod",
+    #"module.splight_prod"
   ]
 }
 
