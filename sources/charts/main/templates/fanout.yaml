@@ -27,28 +27,30 @@ data:
     frontend fanout
       bind *:80
       # VJNet
+      acl is_www_vjnet hdr(host) www.vincent-jacques.net
+      redirect location https://vincent-jacques.net/ code 301 if is_www_vjnet
       acl is_draw_turks_head_demo path /turkshead
       acl is_dyn_vjnet hdr(host) dyn.vincent-jacques.net
       use_backend draw_turks_head_demo if is_dyn_vjnet is_draw_turks_head_demo
-      # Splight pre-production
-      acl is_splight_preprod_preview url_beg /preview
-      acl is_splight_preprod_admin hdr(host) admin-preprod.splight.fr
-      acl is_splight_preprod_api hdr(host) api-preprod.splight.fr
-      acl is_splight_preprod_public hdr(host) preprod.splight.fr
-      use_backend splight_preprod_preview if is_splight_preprod_admin is_splight_preprod_preview
-      use_backend splight_preprod_admin if is_splight_preprod_admin
-      use_backend splight_preprod_api if is_splight_preprod_api
-      use_backend splight_preprod_public if is_splight_preprod_public
-      # Splight production
-      acl is_splight_prod_preview url_beg /preview
-      acl is_splight_prod_admin hdr(host) admin.splight.fr
-      acl is_splight_prod_api hdr(host) api.splight.fr
-      # @todo Change to "splight.fr" when we move out of GitHub Pages
-      acl is_splight_prod_public hdr(host) prod.splight.fr
-      use_backend splight_prod_preview if is_splight_prod_admin is_splight_prod_preview
-      use_backend splight_prod_admin if is_splight_prod_admin
-      use_backend splight_prod_api if is_splight_prod_api
-      use_backend splight_prod_public if is_splight_prod_public
+      # # Splight pre-production
+      # acl is_splight_preprod_preview url_beg /preview
+      # acl is_splight_preprod_admin hdr(host) admin-preprod.splight.fr
+      # acl is_splight_preprod_api hdr(host) api-preprod.splight.fr
+      # acl is_splight_preprod_public hdr(host) preprod.splight.fr
+      # use_backend splight_preprod_preview if is_splight_preprod_admin is_splight_preprod_preview
+      # use_backend splight_preprod_admin if is_splight_preprod_admin
+      # use_backend splight_preprod_api if is_splight_preprod_api
+      # use_backend splight_preprod_public if is_splight_preprod_public
+      # # Splight production
+      # acl is_splight_prod_preview url_beg /preview
+      # acl is_splight_prod_admin hdr(host) admin.splight.fr
+      # acl is_splight_prod_api hdr(host) api.splight.fr
+      # # @todo Change to "splight.fr" when we move out of GitHub Pages
+      # acl is_splight_prod_public hdr(host) prod.splight.fr
+      # use_backend splight_prod_preview if is_splight_prod_admin is_splight_prod_preview
+      # use_backend splight_prod_admin if is_splight_prod_admin
+      # use_backend splight_prod_api if is_splight_prod_api
+      # use_backend splight_prod_public if is_splight_prod_public
       # Splight demonstration
       acl is_splight_demo_preview url_beg /preview
       acl is_splight_demo_admin hdr(host) splight-demo-admin.vincent-jacques.net
@@ -63,22 +65,22 @@ data:
       default_backend always_200
     backend draw_turks_head_demo
       server draw_turks_head_demo draw-turks-head-demo
-    backend splight_preprod_public
-      server splight_preprod_public splight-preprod-public
-    backend splight_preprod_api
-      server splight_preprod_api splight-preprod-api
-    backend splight_preprod_admin
-      server splight_preprod_admin splight-preprod-admin
-    backend splight_preprod_preview
-      server splight_preprod_preview splight-preprod-preview
-    backend splight_prod_public
-      server splight_prod_public splight-prod-public
-    backend splight_prod_api
-      server splight_prod_api splight-prod-api
-    backend splight_prod_admin
-      server splight_prod_admin splight-prod-admin
-    backend splight_prod_preview
-      server splight_prod_preview splight-prod-preview
+    # backend splight_preprod_public
+    #   server splight_preprod_public splight-preprod-public
+    # backend splight_preprod_api
+    #   server splight_preprod_api splight-preprod-api
+    # backend splight_preprod_admin
+    #   server splight_preprod_admin splight-preprod-admin
+    # backend splight_preprod_preview
+    #   server splight_preprod_preview splight-preprod-preview
+    # backend splight_prod_public
+    #   server splight_prod_public splight-prod-public
+    # backend splight_prod_api
+    #   server splight_prod_api splight-prod-api
+    # backend splight_prod_admin
+    #   server splight_prod_admin splight-prod-admin
+    # backend splight_prod_preview
+    #   server splight_prod_preview splight-prod-preview
     backend splight_demo_public
       server splight_demo_public splight-demo-public
     backend splight_demo_api
