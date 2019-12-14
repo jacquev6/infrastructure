@@ -33,12 +33,6 @@ resource "gandi_zonerecord" "home_machine" {
   values = ["${element(split("|", element(local.home_machines, count.index)), 1)}"]
 }
 
-resource "sfrbox_dhcpentry" "home_machine" {
-  count = "${length(local.home_machines) - 1}"
-  mac = "${element(split("|", element(local.home_machines, count.index + 1)), 2)}"
-  ip = "${element(split("|", element(local.home_machines, count.index + 1)), 1)}"
-}
-
 resource "gandi_zonerecord" "alias" {
   count = "${length(local.aliases)}"
   zone = "${module.gandi_dns.zone_id}"

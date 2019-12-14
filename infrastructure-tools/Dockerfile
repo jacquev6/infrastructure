@@ -15,15 +15,6 @@ RUN apt-get install --yes git
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -a -tags netgo -ldflags '-w -extldflags "-static"' github.com/tiramiseb/terraform-provider-gandi
 
 
-FROM base AS terraform_provider_sfr_box
-RUN apt-get install --yes golang
-RUN apt-get install --yes git
-WORKDIR /terraform-provider-sfrbox
-RUN go get github.com/hashicorp/terraform
-COPY /terraform-provider-sfrbox .
-RUN go build terraform-provider-sfrbox.go
-
-
 FROM base AS kubectl
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v1.13.2/bin/linux/amd64/kubectl
 RUN chmod +x kubectl
@@ -65,7 +56,6 @@ RUN cd /usr/local/bin && ln -s /google-cloud-sdk/bin/gcloud .
 COPY --from=helm /linux-amd64/helm /usr/local/bin/
 RUN helm init --client-only
 COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/
-COPY --from=terraform_provider_sfr_box /terraform-provider-sfrbox/terraform-provider-sfrbox /usr/local/bin/
 
 WORKDIR /infrastructure/sources
 COPY infra /
