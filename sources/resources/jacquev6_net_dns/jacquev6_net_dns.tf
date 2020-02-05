@@ -11,11 +11,12 @@ module "gandi_dns" {
 locals {
   home_machines = [
     "box|192.168.0.1",
-    "nas2|192.168.0.50|00:11:32:49:8b:63",
-    "doorman|192.168.0.51|b8:27:eb:39:27:df",
-    "idee|192.168.0.52|1c:6f:65:37:a6:c6",
-    "macbook|192.168.0.53|a4:83:e7:5e:19:b1",
-    "icule|192.168.0.54|08:00:27:ee:68:dc"
+    # WARNING, the static DHCP configuration is maintained by hand at http://mafreebox.freebox.fr/
+    "nas2|192.168.1.50|00:11:32:49:8b:63",
+    "doorman|192.168.1.51|b8:27:eb:39:27:df",
+    "idee|192.168.1.52|1c:6f:65:37:a6:c6",
+    "macbook|192.168.1.53|a4:83:e7:5e:19:b1",
+    "icule|192.168.1.54|08:00:27:ee:68:dc"
   ],
   aliases = [
     "home|home-jacquev6-net.synology.me.",
