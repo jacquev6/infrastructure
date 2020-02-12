@@ -40,7 +40,7 @@ FROM ubuntu:18.04
 RUN set -x \
     && apt-get update \
     && apt-get install --yes --no-install-recommends \
-        python python3-pip python3-setuptools git \
+        python python3-pip python3-setuptools git ssh \
         groff \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install awscli==1.16 click==7.0 pyyaml==3.13
