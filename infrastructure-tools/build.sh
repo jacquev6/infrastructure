@@ -37,4 +37,4 @@ then
   docker push jacquev6/infrastructure-tools:$TAG
 fi
 
-sed -i -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$TAG$NOT_PUSHED_WARNING/" ../infra
+sed -i "" -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$TAG$NOT_PUSHED_WARNING/" ../infra
