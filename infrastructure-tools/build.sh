@@ -30,7 +30,6 @@ echo "Building jacquev6/infrastructure-tools:$TAG"
 echo "------------------------------------------------------"
 
 docker build $NO_CACHE --tag jacquev6/infrastructure-tools:$TAG .
-docker tag jacquev6/infrastructure-tools:$TAG jacquev6/infrastructure-tools:latest
 
 if $PUSH
 then

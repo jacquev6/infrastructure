@@ -1,6 +1,8 @@
 FROM alpine:3.8 AS builder
 
 RUN apk add boost-dev python2-dev cairomm-dev g++ pkgconf-dev py2-pip strace
+# Freeze pycairo to the last version supporting Python 2
+RUN pip install pycairo==1.18.2
 RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
 
 # Make a list of files actually required
