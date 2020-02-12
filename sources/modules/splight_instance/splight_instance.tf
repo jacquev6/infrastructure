@@ -16,6 +16,9 @@ resource "google_compute_disk" "mongo" {
   name = "${var.cluster_name}-splight-${var.instance_slug}-mongo"
   type = "pd-standard"
   size = 10
+  labels {
+    goog-gke-volume = ""  # Re-added externally somehow. Captured here to avoid refresh-apply loops.
+  }
 }
 
 resource "helm_release" "splight" {
