@@ -13,6 +13,7 @@ RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
 # (Required to run strace inside Docker)
 COPY list.txt /list.txt
 WORKDIR /collected
+RUN mkdir lib; cp /lib/ld-musl-*.so.1 lib
 RUN for f in $(grep "^/" /list.txt); do mkdir -p .$(dirname $f); cp $f .$(dirname $f); done
 
 
