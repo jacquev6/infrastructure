@@ -65,11 +65,11 @@ resource "docker_container" "always_200" {
     content = "${acme_certificate.certificate.private_key_pem}"
   }
   upload {
-    file = "/etc/nginx/dyn.vincent-jacques.net.crt"
+    file = "/etc/nginx/wildcard.vincent-jacques.net.crt"
     content = "${var.wildcard_vjnet_crt}"
   }
   upload {
-    file = "/etc/nginx/dyn.vincent-jacques.net.key"
+    file = "/etc/nginx/wildcard.vincent-jacques.net.key"
     content = "${var.wildcard_vjnet_key}"
   }
 }
