@@ -10,6 +10,14 @@ module "gandi_dns" {
   a_at_ips = "${var.github_pages_ips}"
 }
 
+resource "gandi_zonerecord" "dyn" {
+  zone = "${module.gandi_dns.zone_id}"
+  name = "dyn"
+  type = "CNAME"
+  ttl = 3600
+  values = ["home-jacquev6-net.synology.me."]
+}
+
 resource "gandi_zonerecord" "wildcard" {
   zone = "${module.gandi_dns.zone_id}"
   name = "*"
