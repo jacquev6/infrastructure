@@ -65,3 +65,11 @@ output "certificate_name" {
 output "wildcard_certificate_name" {
   value = "${google_compute_ssl_certificate.wildcard_certificate.name}"
 }
+
+output "wildcard_certificate_key" {
+  value = "${acme_certificate.wildcard_certificate.private_key_pem}"
+}
+
+output "wildcard_certificate_crt" {
+  value = "${acme_certificate.wildcard_certificate.certificate_pem}${acme_certificate.wildcard_certificate.issuer_pem}"
+}

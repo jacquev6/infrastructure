@@ -2,8 +2,11 @@ variable "gandi_api_key" {}
 
 variable "acme_account_key_pem" {}
 
+variable "wildcard_vjnet_key" {}
+variable "wildcard_vjnet_crt" {}
+
 resource "docker_image" "nginx" {
-  name = "nginx:latest"
+  name = "nginx:1.17-alpine"
 }
 
 data "local_file" "always_200_nginx_conf" {
@@ -52,6 +55,14 @@ resource "docker_container" "always_200" {
   upload {
     file = "/etc/nginx/home.jacquev6.net.key"
     content = "${acme_certificate.certificate.private_key_pem}"
+  }
+  upload {
+    file = "/etc/nginx/dyn.vincent-jacques.net.crt"
+    content = "${var.wildcard_vjnet_crt}"
+  }
+  upload {
+    file = "/etc/nginx/dyn.vincent-jacques.net.key"
+    content = "${var.wildcard_vjnet_key}"
   }
 }
 
