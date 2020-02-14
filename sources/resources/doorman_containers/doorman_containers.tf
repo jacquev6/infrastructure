@@ -1,5 +1,27 @@
+variable "gandi_api_key" {}
+
+variable "acme_account_key_pem" {}
+
 resource "docker_image" "nginx" {
   name = "nginx:latest"
+}
+
+data "local_file" "always_200_nginx_conf" {
+    filename = "${path.module}/nginx.conf"
+}
+
+resource "acme_certificate" "certificate" {
+  account_key_pem = "${var.acme_account_key_pem}"
+  common_name = "home.jacquev6.net"
+  min_days_remaining = "20"  # To match ACME's e-mail reminder
+
+  dns_challenge {
+    provider = "gandiv5"
+
+    config {
+      GANDIV5_API_KEY = "${var.gandi_api_key}"
+    }
+  }
 }
 
 resource "docker_container" "always_200" {
@@ -9,7 +31,27 @@ resource "docker_container" "always_200" {
   restart = "always"
   ports {
     internal = "80"
-    external = "8080"
+    external = "80"
+  }
+  ports {
+    internal = "443"
+    external = "443"
+  }
+  upload {
+    file = "/usr/share/nginx/html/index.html"
+    content = "This is fine\n"
+  }
+  upload {
+    file = "/etc/nginx/nginx.conf"
+    content = "${data.local_file.always_200_nginx_conf.content}"
+  }
+  upload {
+    file = "/etc/nginx/home.jacquev6.net.crt"
+    content = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
+  }
+  upload {
+    file = "/etc/nginx/home.jacquev6.net.key"
+    content = "${acme_certificate.certificate.private_key_pem}"
   }
 }
 

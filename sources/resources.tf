@@ -53,9 +53,12 @@ module "vincent_jacques_net_dns" {
 }
 
 module "doorman_containers" {
+  source = "resources/doorman_containers"
+
   providers {
     docker = "docker.doorman"
   }
 
-  source = "resources/doorman_containers"
+  gandi_api_key = "${var.gandi_api_key}"
+  acme_account_key_pem = "${acme_registration.registration.account_key_pem}"
 }
