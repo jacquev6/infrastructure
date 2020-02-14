@@ -2,8 +2,6 @@ variable "github_pages_ips" {
   type = "list"
 }
 
-variable "fanout_ip" {}
-
 module "gandi_dns" {
   source = "../../modules/gandi_dns"
   domain_name = "vincent-jacques.net"
@@ -16,12 +14,4 @@ resource "gandi_zonerecord" "dyn" {
   type = "CNAME"
   ttl = 3600
   values = ["home-jacquev6-net.synology.me."]
-}
-
-resource "gandi_zonerecord" "wildcard" {
-  zone = "${module.gandi_dns.zone_id}"
-  name = "*"
-  type = "A"
-  ttl = 3600
-  values = ["${var.fanout_ip}"]
 }
