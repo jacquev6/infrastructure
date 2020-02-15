@@ -96,4 +96,4 @@ RUN helm init --client-only
 COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/
 
 WORKDIR /infrastructure/sources
-COPY infra /
+COPY infra.py /

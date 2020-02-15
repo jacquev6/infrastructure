@@ -24,4 +24,4 @@ then
   TTY_OPTION="--tty"
 fi
 
-docker exec --interactive $TTY_OPTION $NAME /infra "$@"
+docker exec --interactive $TTY_OPTION $NAME /infra.py "$@"
