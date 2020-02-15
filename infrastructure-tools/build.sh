@@ -14,7 +14,7 @@ do
       NOT_PUSHED_WARNING=""
       ;;
     --no-cache)
-      NO_CACHE=--no-cache
+      NO_CACHE="--no-cache --pull"
       ;;
     *)
       echo "Unknown parameter passed: $1"
@@ -29,7 +29,17 @@ echo "------------------------------------------------------"
 echo "Building jacquev6/infrastructure-tools:$TAG"
 echo "------------------------------------------------------"
 
-docker build $NO_CACHE --tag jacquev6/infrastructure-tools:$TAG .
+docker build $NO_CACHE --tag jacquev6/infrastructure-tools:$TAG --build-arg tag=$TAG .
+
+# Tag intermediate images to avoid losing them on "docker image prune"
+for ID in $(docker image ls --filter label=infrastructure-tools-builder-tag=$TAG --quiet)
+do
+  docker tag \
+    $(docker inspect $(docker inspect $ID --format "{{.Parent}}") --format "{{.Parent}}") \
+    infrastructure-tools-builder:$TAG-$(docker inspect $ID --format "{{json .Config.Labels}}" | jq -r '.["infrastructure-tools-builder-stage"]')
+
+  docker image rm $ID
+done
 
 if $PUSH
 then
