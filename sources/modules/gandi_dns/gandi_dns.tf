@@ -64,6 +64,7 @@ resource "gandi_zonerecord" "cname_webmail" {
   values = ["webmail.gandi.net."]
 }
 
+
 output "zone_id" {
   value = "${gandi_zone.zone.id}"
 }
