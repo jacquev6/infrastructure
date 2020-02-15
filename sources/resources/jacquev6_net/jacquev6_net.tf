@@ -1,9 +1,9 @@
 variable "github_pages_ips" {
-  type = "list"
+  type = list(string)
 }
 
 variable "home_ip" {
-  type = "string"
+  type = string
 }
 
 
@@ -11,7 +11,7 @@ module "gandi_dns" {
   source = "../../modules/gandi_dns"
 
   domain_name = "jacquev6.net"
-  a_at_ips = "${var.github_pages_ips}"
+  a_at_ips = var.github_pages_ips
 }
 
 
@@ -33,19 +33,19 @@ locals {
 }
 
 resource "gandi_zonerecord" "home_machine" {
-  count = "${length(local.home_machines)}"
-  zone = "${module.gandi_dns.zone_id}"
+  count = length(local.home_machines)
+  zone = module.gandi_dns.zone_id
   name = "${element(split("|", element(local.home_machines, count.index)), 0)}.home"
   type = "A"
   ttl = 3600
-  values = ["${element(split("|", element(local.home_machines, count.index)), 1)}"]
+  values = [element(split("|", element(local.home_machines, count.index)), 1)]
 }
 
 resource "gandi_zonerecord" "alias" {
-  count = "${length(local.aliases)}"
-  zone = "${module.gandi_dns.zone_id}"
-  name = "${element(split("|", element(local.aliases, count.index)), 0)}"
+  count = length(local.aliases)
+  zone = module.gandi_dns.zone_id
+  name = element(split("|", element(local.aliases, count.index)), 0)
   type = "CNAME"
   ttl = 3600
-  values = ["${element(split("|", element(local.aliases, count.index)), 1)}"]
+  values = [element(split("|", element(local.aliases, count.index)), 1)]
 }

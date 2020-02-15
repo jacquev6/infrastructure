@@ -1,31 +1,33 @@
-variable "domain_name" {}
+variable "domain_name" {
+  type = string
+}
 
 variable "a_at_ips" {
-  type = "list"
+  type = list(string)
 }
 
 resource "gandi_zone" "zone" {
-  name = "${var.domain_name}"
+  name = var.domain_name
   lifecycle {
     create_before_destroy = true
   }
 }
 
 resource "gandi_domainattachment" "attachment" {
-  domain = "${var.domain_name}"
-  zone = "${gandi_zone.zone.id}"
+  domain = var.domain_name
+  zone = gandi_zone.zone.id
 }
 
 resource "gandi_zonerecord" "a_at" {
-  zone = "${gandi_zone.zone.id}"
+  zone = gandi_zone.zone.id
   name = "@"
   type = "A"
   ttl = 3600
-  values = "${var.a_at_ips}"
+  values = var.a_at_ips
 }
 
 resource "gandi_zonerecord" "mx_at" {
-  zone = "${gandi_zone.zone.id}"
+  zone = gandi_zone.zone.id
   name = "@"
   type = "MX"
   ttl = 3600
@@ -33,7 +35,7 @@ resource "gandi_zonerecord" "mx_at" {
 }
 
 resource "gandi_zonerecord" "cname_imap" {
-  zone = "${gandi_zone.zone.id}"
+  zone = gandi_zone.zone.id
   name = "imap"
   type = "CNAME"
   ttl = 3600
@@ -41,7 +43,7 @@ resource "gandi_zonerecord" "cname_imap" {
 }
 
 resource "gandi_zonerecord" "cname_pop" {
-  zone = "${gandi_zone.zone.id}"
+  zone = gandi_zone.zone.id
   name = "pop"
   type = "CNAME"
   ttl = 3600
@@ -49,7 +51,7 @@ resource "gandi_zonerecord" "cname_pop" {
 }
 
 resource "gandi_zonerecord" "cname_smtp" {
-  zone = "${gandi_zone.zone.id}"
+  zone = gandi_zone.zone.id
   name = "smtp"
   type = "CNAME"
   ttl = 3600
@@ -57,7 +59,7 @@ resource "gandi_zonerecord" "cname_smtp" {
 }
 
 resource "gandi_zonerecord" "cname_webmail" {
-  zone = "${gandi_zone.zone.id}"
+  zone = gandi_zone.zone.id
   name = "webmail"
   type = "CNAME"
   ttl = 3600
@@ -66,5 +68,5 @@ resource "gandi_zonerecord" "cname_webmail" {
 
 
 output "zone_id" {
-  value = "${gandi_zone.zone.id}"
+  value = gandi_zone.zone.id
 }

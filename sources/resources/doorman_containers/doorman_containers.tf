@@ -1,9 +1,18 @@
-variable "gandi_api_key" {}
+variable "gandi_api_key" {
+  type = string
+}
 
-variable "acme_account_key_pem" {}
+variable "acme_account_key_pem" {
+  type = string
+}
 
-variable "wildcard_vjnet_key" {}
-variable "wildcard_vjnet_crt" {}
+variable "wildcard_vjnet_key" {
+  type = string
+}
+
+variable "wildcard_vjnet_crt" {
+  type = string
+}
 
 resource "docker_image" "nginx" {
   name = "nginx:1.17-alpine"
@@ -21,7 +30,7 @@ data "local_file" "always_200_nginx_conf" {
 }
 
 resource "acme_certificate" "certificate" {
-  account_key_pem = "${var.acme_account_key_pem}"
+  account_key_pem = var.acme_account_key_pem
   common_name = "home.jacquev6.net"
   min_days_remaining = "20"  # To match ACME's e-mail reminder
 
@@ -29,14 +38,14 @@ resource "acme_certificate" "certificate" {
     provider = "gandiv5"
 
     config = {
-      GANDIV5_API_KEY = "${var.gandi_api_key}"
+      GANDIV5_API_KEY = var.gandi_api_key
     }
   }
 }
 
 resource "docker_container" "always_200" {
   name  = "always_200"
-  image = "${docker_image.nginx.latest}"  # Don't simply use "nginx:latest" here: it triggers a new container on every "infra apply"
+  image = docker_image.nginx.latest  # Don't simply use "nginx:latest" here: it triggers a new container on every "infra apply"
   rm = "false"
   restart = "always"
   # @todo readonly = "true"
@@ -54,7 +63,7 @@ resource "docker_container" "always_200" {
   }
   upload {
     file = "/etc/nginx/nginx.conf"
-    content = "${data.local_file.always_200_nginx_conf.content}"
+    content = data.local_file.always_200_nginx_conf.content
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
@@ -62,15 +71,15 @@ resource "docker_container" "always_200" {
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.key"
-    content = "${acme_certificate.certificate.private_key_pem}"
+    content = acme_certificate.certificate.private_key_pem
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.crt"
-    content = "${var.wildcard_vjnet_crt}"
+    content = var.wildcard_vjnet_crt
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.key"
-    content = "${var.wildcard_vjnet_key}"
+    content = var.wildcard_vjnet_key
   }
 }
 
@@ -82,7 +91,7 @@ resource "docker_image" "draw_turks_head_demo" {
 
 resource "docker_container" "draw_turks_head_demo" {
   name  = "draw_turks_head_demo"
-  image = "${docker_image.draw_turks_head_demo.latest}"
+  image = docker_image.draw_turks_head_demo.latest
   rm = "false"
   restart = "always"
   # @todo readonly = "true"
