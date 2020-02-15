@@ -28,7 +28,7 @@ resource "acme_certificate" "certificate" {
   dns_challenge {
     provider = "gandiv5"
 
-    config {
+    config = {
       GANDIV5_API_KEY = "${var.gandi_api_key}"
     }
   }

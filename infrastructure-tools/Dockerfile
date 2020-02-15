@@ -8,8 +8,8 @@ FROM base AS terraform
 LABEL infrastructure-tools-builder-stage=terraform
 
 # https://www.terraform.io/downloads.html
-RUN wget https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
-RUN unzip terraform_0.11.14_linux_amd64.zip
+RUN wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip
+RUN unzip terraform_0.12.20_linux_amd64.zip
 
 ARG tag
 LABEL infrastructure-tools-builder-tag=$tag

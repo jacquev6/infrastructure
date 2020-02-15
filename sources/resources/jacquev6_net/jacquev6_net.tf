@@ -24,7 +24,7 @@ locals {
     "idee|192.168.1.52|1c:6f:65:37:a6:c6",
     "macbook|192.168.1.53|a4:83:e7:5e:19:b1",
     "icule|192.168.1.54|08:00:27:ee:68:dc"
-  ],
+  ]
   aliases = [
     "home|home-jacquev6-net.synology.me.",
     "parents|parents-jacquev6-net.synology.me.",

@@ -6,7 +6,7 @@ variable "a_at_ips" {
 
 resource "gandi_zone" "zone" {
   name = "${var.domain_name}"
-  lifecycle = {
+  lifecycle {
     create_before_destroy = true
   }
 }
