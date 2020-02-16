@@ -88,6 +88,5 @@ module "doorman_containers" {
 
   gandi_api_key = var.gandi_api_key
   acme_account_key_pem = module.acme_registration.account_key_pem
-  wildcard_vjnet_key = module.vincent_jacques_net_wildcard_certificate.key
-  wildcard_vjnet_crt = module.vincent_jacques_net_wildcard_certificate.crt
+  wildcard_vjnet_certificate = module.vincent_jacques_net_wildcard_certificate.certificate
 }

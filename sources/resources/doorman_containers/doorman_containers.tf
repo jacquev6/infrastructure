@@ -6,12 +6,11 @@ variable "acme_account_key_pem" {
   type = string
 }
 
-variable "wildcard_vjnet_key" {
-  type = string
-}
-
-variable "wildcard_vjnet_crt" {
-  type = string
+variable "wildcard_vjnet_certificate" {
+  type = object({
+    key = string
+    crt = string
+  })
 }
 
 resource "docker_image" "nginx" {
@@ -75,11 +74,11 @@ resource "docker_container" "always_200" {
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.crt"
-    content = var.wildcard_vjnet_crt
+    content = var.wildcard_vjnet_certificate.crt
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.key"
-    content = var.wildcard_vjnet_key
+    content = var.wildcard_vjnet_certificate.key
   }
 }
 

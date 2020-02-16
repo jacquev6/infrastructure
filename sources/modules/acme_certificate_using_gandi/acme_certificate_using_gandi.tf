@@ -26,10 +26,9 @@ resource "acme_certificate" "certificate" {
 }
 
 
-output "key" {
-  value = acme_certificate.certificate.private_key_pem
-}
-
-output "crt" {
-  value = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
+output "certificate" {
+  value = {
+    key = acme_certificate.certificate.private_key_pem
+    crt = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
+  }
 }
