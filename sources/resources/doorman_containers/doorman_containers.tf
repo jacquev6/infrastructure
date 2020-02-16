@@ -1,12 +1,11 @@
-variable "gandi_api_key" {
-  type = string
+variable "wildcard_vincent_jacques_net_certificate" {
+  type = object({
+    key = string
+    crt = string
+  })
 }
 
-variable "acme_account_key_pem" {
-  type = string
-}
-
-variable "wildcard_vjnet_certificate" {
+variable "home_jacquev6_net_certificate" {
   type = object({
     key = string
     crt = string
@@ -26,20 +25,6 @@ resource "docker_image" "nginx" {
 
 data "local_file" "always_200_nginx_conf" {
     filename = "${path.module}/nginx.conf"
-}
-
-resource "acme_certificate" "certificate" {
-  account_key_pem = var.acme_account_key_pem
-  common_name = "home.jacquev6.net"
-  min_days_remaining = "20"  # To match ACME's e-mail reminder
-
-  dns_challenge {
-    provider = "gandiv5"
-
-    config = {
-      GANDIV5_API_KEY = var.gandi_api_key
-    }
-  }
 }
 
 resource "docker_container" "always_200" {
@@ -66,19 +51,19 @@ resource "docker_container" "always_200" {
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
-    content = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
+    content = var.home_jacquev6_net_certificate.crt
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.key"
-    content = acme_certificate.certificate.private_key_pem
+    content = var.home_jacquev6_net_certificate.key
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.crt"
-    content = var.wildcard_vjnet_certificate.crt
+    content = var.wildcard_vincent_jacques_net_certificate.crt
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.key"
-    content = var.wildcard_vjnet_certificate.key
+    content = var.wildcard_vincent_jacques_net_certificate.key
   }
 }
 

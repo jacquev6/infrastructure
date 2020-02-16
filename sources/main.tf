@@ -48,6 +48,14 @@ module "etcavole_fr" {
 }
 
 
+module "home_jacquev6_net_certificate" {
+  source = "./modules/acme_certificate_using_gandi"
+
+  acme_account_key_pem = module.acme_registration.account_key_pem
+  gandi_api_key = var.gandi_api_key
+  domain_name = "home.jacquev6.net"
+}
+
 module "jacquev6_net" {
   source = "./resources/jacquev6_net"
 
@@ -56,14 +64,13 @@ module "jacquev6_net" {
 }
 
 
-module "vincent_jacques_net_wildcard_certificate" {
+module "wildcard_vincent_jacques_net_certificate" {
   source = "./modules/acme_certificate_using_gandi"
 
   acme_account_key_pem = module.acme_registration.account_key_pem
   gandi_api_key = var.gandi_api_key
   domain_name = "*.vincent-jacques.net"
 }
-
 
 module "vincent_jacques_net" {
   source = "./resources/vincent_jacques_net"
@@ -86,7 +93,6 @@ module "doorman_containers" {
     docker = docker.doorman
   }
 
-  gandi_api_key = var.gandi_api_key
-  acme_account_key_pem = module.acme_registration.account_key_pem
-  wildcard_vjnet_certificate = module.vincent_jacques_net_wildcard_certificate.certificate
+  wildcard_vincent_jacques_net_certificate = module.wildcard_vincent_jacques_net_certificate.certificate
+  home_jacquev6_net_certificate = module.home_jacquev6_net_certificate.certificate
 }
