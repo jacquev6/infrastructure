@@ -12,35 +12,41 @@ def cli():
 
 @cli.command()
 def init():
-    subprocess.run(["terraform", "init"], check=True)
+    delegate_to("terraform", "init")
 
 
 @cli.command()
 def refresh():
-    subprocess.run(["terraform", "refresh"], check=True)
+    delegate_to("terraform", "refresh")
 
 
 @cli.command()
 def plan():
-    subprocess.run(["terraform", "plan", "-refresh=false"], check=True)
+    delegate_to("terraform", "plan", "-refresh=false")
 
 
 @cli.command()
 def apply():
-    subprocess.run(["terraform", "apply", "-refresh=false", "-auto-approve"], check=True)
+    delegate_to("terraform", "apply", "-refresh=false", "-auto-approve")
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def terraform(args):
-    subprocess.run(["terraform"] + list(args), check=True)
+    delegate_to("terraform", *args)
 
 
 @cli.command()
 @click.argument("ip")
 @click.argument("name")
 def check_certificate(ip, name):
-    subprocess.run(["openssl", "s_client", "-showcerts", "-servername", name, "-connect", ip + ":443"], check=True, input="")
+    delegate_to("openssl", "s_client", "-showcerts", "-servername", name, "-connect", ip + ":443", input="")
+
+
+def delegate_to(*args, **kwds):
+  assert "check" not in kwds
+  exit(subprocess.run(args, **kwds).returncode)
+
 
 
 if __name__ == "__main__":
