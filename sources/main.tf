@@ -10,8 +10,34 @@ locals {
 }
 
 
+terraform {
+  required_version = ">= 0.12"
+  required_providers {
+    local = "~> 1.4"
+    tls = "~> 2.1"
+    acme = "~> 1.5"
+    docker = "~> 2.7"
+  }
+}
+
+
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+
 module "acme_registration" {
   source = "./resources/acme_registration"
+}
+
+
+# https://account.gandi.net/fr/users/jacquev6/security
+variable "gandi_api_key" {
+  type = string
+}
+
+provider "gandi" {
+  key = var.gandi_api_key
 }
 
 
@@ -44,6 +70,12 @@ module "vincent_jacques_net" {
 
   github_pages_ips = local.github_pages_ips
   home_ip = local.home_ip
+}
+
+
+provider "docker" {
+  alias = "doorman"
+  host = "ssh://jacquev6@doorman.home.jacquev6.net"
 }
 
 
