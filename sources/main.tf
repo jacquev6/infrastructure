@@ -93,6 +93,8 @@ module "doorman_containers" {
     docker = docker.doorman
   }
 
-  wildcard_vincent_jacques_net_certificate = module.wildcard_vincent_jacques_net_certificate.certificate
-  home_jacquev6_net_certificate = module.home_jacquev6_net_certificate.certificate
+  certificates = {
+    "*.vincent-jacques.net" = module.wildcard_vincent_jacques_net_certificate.certificate
+    "home.jacquev6.net" = module.home_jacquev6_net_certificate.certificate
+  }
 }

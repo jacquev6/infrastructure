@@ -1,15 +1,8 @@
-variable "wildcard_vincent_jacques_net_certificate" {
-  type = object({
+variable "certificates" {
+  type = map(object({
     key = string
     crt = string
-  })
-}
-
-variable "home_jacquev6_net_certificate" {
-  type = object({
-    key = string
-    crt = string
-  })
+  }))
 }
 
 resource "docker_image" "nginx" {
@@ -51,19 +44,19 @@ resource "docker_container" "always_200" {
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
-    content = var.home_jacquev6_net_certificate.crt
+    content = var.certificates["home.jacquev6.net"].crt
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.key"
-    content = var.home_jacquev6_net_certificate.key
+    content = var.certificates["home.jacquev6.net"].key
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.crt"
-    content = var.wildcard_vincent_jacques_net_certificate.crt
+    content = var.certificates["*.vincent-jacques.net"].crt
   }
   upload {
     file = "/etc/nginx/wildcard.vincent-jacques.net.key"
-    content = var.wildcard_vincent_jacques_net_certificate.key
+    content = var.certificates["*.vincent-jacques.net"].key
   }
 }
 
