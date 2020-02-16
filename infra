@@ -6,8 +6,10 @@ INFRASTRUCTURE_TOOLS_TAG=20200216-085612
 
 NAME=infrastructure-tools-$INFRASTRUCTURE_TOOLS_TAG
 
-if ! docker ps | grep $NAME >/dev/null
+if [ -z $(docker ps --quiet --filter name=$NAME) ]
 then
+  docker ps --quiet --filter name=infrastructure-tools- | xargs docker kill
+
   docker run \
     --rm --name $NAME --detach \
     --mount type=bind,src=$PWD,dst=/infrastructure \
