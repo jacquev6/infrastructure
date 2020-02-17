@@ -23,7 +23,12 @@ module "dns" {
   records = [
     {
       type = "A"
-      name = "*"
+      name = "www"
+      values = [var.home_ip]
+    },
+    {
+      type = "A"
+      name = "dyn"
       values = [var.home_ip]
     },
   ]
