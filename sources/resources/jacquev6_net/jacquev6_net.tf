@@ -17,11 +17,6 @@ variable "home_ip" {
 
 locals {
   home_machines = [
-    {
-      # @todo Delete
-      name = "box"
-      ip = "192.168.0.1"
-    },
     # WARNING, the static DHCP configuration is maintained by hand at http://mafreebox.freebox.fr/
     {
       name = "nas2"
@@ -67,9 +62,9 @@ module "dns" {
     ],
     [
       {
-        type = "CNAME"
+        type = "A"
         name = "home"
-        values = ["home-jacquev6-net.synology.me."]
+        values = [var.home_ip]
       },
       {
         type = "CNAME"
