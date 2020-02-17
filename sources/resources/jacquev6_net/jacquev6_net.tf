@@ -81,6 +81,49 @@ module "dns" {
 }
 
 
+data "uptimerobot_account" "account" {}
+
+data "uptimerobot_alert_contact" "default" {
+  friendly_name = "${data.uptimerobot_account.account.email}"
+}
+
+resource "uptimerobot_monitor" "http_jacquev6_net" {
+  friendly_name = "http://jacquev6.net/"
+  type = "http"
+  url = "http://jacquev6.net/"
+  alert_contact {
+    id = data.uptimerobot_alert_contact.default.id
+  }
+}
+
+resource "uptimerobot_monitor" "https_jacquev6_net" {
+  friendly_name = "https://jacquev6.net/"
+  type = "http"
+  url = "https://jacquev6.net/"
+  alert_contact {
+    id = data.uptimerobot_alert_contact.default.id
+  }
+}
+
+resource "uptimerobot_monitor" "http_home_jacquev6_net" {
+  friendly_name = "http://home.jacquev6.net/"
+  type = "http"
+  url = "http://home.jacquev6.net/"
+  alert_contact {
+    id = data.uptimerobot_alert_contact.default.id
+  }
+}
+
+resource "uptimerobot_monitor" "https_home_jacquev6_net" {
+  friendly_name = "https://home.jacquev6.net/"
+  type = "http"
+  url = "https://home.jacquev6.net/"
+  alert_contact {
+    id = data.uptimerobot_alert_contact.default.id
+  }
+}
+
+
 module "home_jacquev6_net_certificate" {
   source = "../../modules/acme_certificate_using_gandi"
 

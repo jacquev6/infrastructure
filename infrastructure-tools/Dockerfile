@@ -26,6 +26,22 @@ LABEL infrastructure-tools-builder-tag=$tag
 
 
 
+FROM base AS terraform_provider_uptimerobot
+LABEL infrastructure-tools-builder-stage=terraform_provider_uptimerobot
+
+WORKDIR /mygo
+RUN wget https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz
+RUN tar zxf go1.13.8.linux-amd64.tar.gz
+WORKDIR /
+ENV PATH=/mygo/go/bin:$PATH
+RUN git clone https://github.com/louy/terraform-provider-uptimerobot.git
+RUN cd terraform-provider-uptimerobot && go build
+
+ARG tag
+LABEL infrastructure-tools-builder-tag=$tag
+
+
+
 FROM ubuntu:18.04
 
 RUN set -x \
@@ -39,6 +55,7 @@ ENV LANG=C.UTF-8
 
 COPY --from=terraform /terraform /usr/local/bin/
 COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/
+COPY --from=terraform_provider_uptimerobot /terraform-provider-uptimerobot/terraform-provider-uptimerobot /usr/local/bin/
 
 WORKDIR /infrastructure/sources
 COPY infra.py /

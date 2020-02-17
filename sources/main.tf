@@ -1,4 +1,3 @@
-# @todo Manage UptimeRobot (https://github.com/louy/terraform-provider-uptimerobot)
 # @todo Manage ports redirections and static DHCP leases in FreeBox
 
 locals {
@@ -37,6 +36,15 @@ variable "gandi_api_key" {
 
 provider "gandi" {
   key = var.gandi_api_key
+}
+
+
+variable "uptimerobot_api_key" {
+  type = string
+}
+
+provider "uptimerobot" {
+  api_key = var.uptimerobot_api_key
 }
 
 
