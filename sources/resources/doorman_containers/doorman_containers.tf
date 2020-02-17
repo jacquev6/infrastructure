@@ -16,13 +16,13 @@ resource "docker_image" "nginx" {
   pull_triggers = ["nginx:1.17-alpine"]
 }
 
-data "local_file" "always_200_nginx_conf" {
-    filename = "${path.module}/nginx.conf"
+data "local_file" "fanout_nginx_conf" {
+    filename = "${path.module}/fanout.nginx.conf"
 }
 
-resource "docker_container" "always_200" {
-  name  = "always_200"
-  image = docker_image.nginx.latest  # Don't simply use "nginx:latest" here: it triggers a new container on every "infra apply"
+resource "docker_container" "fanout" {
+  name  = "fanout"
+  image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
   # @todo readonly = "true"
@@ -35,12 +35,8 @@ resource "docker_container" "always_200" {
     external = "443"
   }
   upload {
-    file = "/usr/share/nginx/html/index.html"
-    content = "This is fine\n"
-  }
-  upload {
     file = "/etc/nginx/nginx.conf"
-    content = data.local_file.always_200_nginx_conf.content
+    content = data.local_file.fanout_nginx_conf.content
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
@@ -86,4 +82,26 @@ resource "docker_container" "draw_turks_head_demo" {
     external = "8081"
   }
   working_dir = "/"  # Weirdly required to avoid re-creating the container on every "infra apply"
+}
+
+
+data "local_file" "always_200_nginx_conf" {
+    filename = "${path.module}/always_200.nginx.conf"
+}
+
+resource "docker_container" "always_200" {
+  name  = "always_200"
+  image = docker_image.nginx.latest
+  rm = "false"
+  restart = "always"
+  # @todo readonly = "true"
+  # @todo Use a Docker network, don't publish this port
+  ports {
+    internal = "80"
+    external = "8082"
+  }
+  upload {
+    file = "/etc/nginx/nginx.conf"
+    content = data.local_file.always_200_nginx_conf.content
+  }
 }
