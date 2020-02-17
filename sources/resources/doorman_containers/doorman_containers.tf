@@ -51,12 +51,20 @@ resource "docker_container" "always_200" {
     content = var.certificates["home.jacquev6.net"].key
   }
   upload {
-    file = "/etc/nginx/wildcard.vincent-jacques.net.crt"
-    content = var.certificates["*.vincent-jacques.net"].crt
+    file = "/etc/nginx/www.vincent-jacques.net.crt"
+    content = var.certificates["www.vincent-jacques.net"].crt
   }
   upload {
-    file = "/etc/nginx/wildcard.vincent-jacques.net.key"
-    content = var.certificates["*.vincent-jacques.net"].key
+    file = "/etc/nginx/www.vincent-jacques.net.key"
+    content = var.certificates["www.vincent-jacques.net"].key
+  }
+  upload {
+    file = "/etc/nginx/dyn.vincent-jacques.net.crt"
+    content = var.certificates["dyn.vincent-jacques.net"].crt
+  }
+  upload {
+    file = "/etc/nginx/dyn.vincent-jacques.net.key"
+    content = var.certificates["dyn.vincent-jacques.net"].key
   }
 }
 
