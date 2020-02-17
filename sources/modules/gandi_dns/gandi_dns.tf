@@ -58,7 +58,7 @@ resource "gandi_zonerecord" "record" {
         },
       ],
     ):
-      "${record.type} ${record.name}" => record
+      "${record.name} ${record.type}" => record
   }
 
   zone = gandi_zone.zone.id
