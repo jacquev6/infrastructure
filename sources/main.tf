@@ -25,7 +25,6 @@ provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }
 
-
 module "acme_registration" {
   source = "./resources/acme_registration"
 }
@@ -48,33 +47,21 @@ module "etcavole_fr" {
 }
 
 
-module "home_jacquev6_net_certificate" {
-  source = "./modules/acme_certificate_using_gandi"
-
-  acme_account_key_pem = module.acme_registration.account_key_pem
-  gandi_api_key = var.gandi_api_key
-  domain_name = "home.jacquev6.net"
-}
-
 module "jacquev6_net" {
   source = "./resources/jacquev6_net"
 
+  acme_account_key = module.acme_registration.account_key_pem
+  gandi_api_key = var.gandi_api_key
   github_pages_ips = local.github_pages_ips
   home_ip = local.home_ip
 }
 
 
-module "wildcard_vincent_jacques_net_certificate" {
-  source = "./modules/acme_certificate_using_gandi"
-
-  acme_account_key_pem = module.acme_registration.account_key_pem
-  gandi_api_key = var.gandi_api_key
-  domain_name = "*.vincent-jacques.net"
-}
-
 module "vincent_jacques_net" {
   source = "./resources/vincent_jacques_net"
 
+  acme_account_key = module.acme_registration.account_key_pem
+  gandi_api_key = var.gandi_api_key
   github_pages_ips = local.github_pages_ips
   home_ip = local.home_ip
 }
@@ -93,8 +80,5 @@ module "doorman_containers" {
     docker = docker.doorman
   }
 
-  certificates = {
-    "*.vincent-jacques.net" = module.wildcard_vincent_jacques_net_certificate.certificate
-    "home.jacquev6.net" = module.home_jacquev6_net_certificate.certificate
-  }
+  certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates)
 }

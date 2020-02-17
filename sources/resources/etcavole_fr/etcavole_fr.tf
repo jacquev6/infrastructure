@@ -3,7 +3,7 @@ variable "github_pages_ips" {
 }
 
 
-module "gandi_dns" {
+module "dns" {
   source = "../../modules/gandi_dns"
 
   domain_name = "etcavole.fr"

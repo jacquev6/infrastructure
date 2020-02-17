@@ -18,55 +18,52 @@ resource "gandi_domainattachment" "attachment" {
   zone = gandi_zone.zone.id
 }
 
-resource "gandi_zonerecord" "a_at" {
-  zone = gandi_zone.zone.id
-  name = "@"
-  type = "A"
-  ttl = 3600
-  values = var.a_at_ips
+
+variable "records" {
+  type = list(object({
+    type = string
+    name = string
+    values = list(string)
+  }))
+  default = []
 }
 
-resource "gandi_zonerecord" "mx_at" {
+resource "gandi_zonerecord" "record" {
+  for_each = {
+    for record in concat(
+      var.records,
+      [
+        for name, values in {
+          webmail = ["webmail.gandi.net."]
+          smtp = ["relay.mail.gandi.net."]
+          pop = ["access.mail.gandi.net."]
+          imap = ["access.mail.gandi.net."]
+        }:
+          {
+            type = "CNAME"
+            name = name
+            values = values
+          }
+      ],
+      [
+        {
+          type = "MX"
+          name = "@"
+          values = ["10 spool.mail.gandi.net.", "50 fb.mail.gandi.net."]
+        },
+        {
+          type = "A"
+          name = "@"
+          values = var.a_at_ips
+        },
+      ],
+    ):
+      "${record.type} ${record.name}" => record
+  }
+
   zone = gandi_zone.zone.id
-  name = "@"
-  type = "MX"
   ttl = 3600
-  values = ["10 spool.mail.gandi.net.", "50 fb.mail.gandi.net."]
-}
-
-resource "gandi_zonerecord" "cname_imap" {
-  zone = gandi_zone.zone.id
-  name = "imap"
-  type = "CNAME"
-  ttl = 3600
-  values = ["access.mail.gandi.net."]
-}
-
-resource "gandi_zonerecord" "cname_pop" {
-  zone = gandi_zone.zone.id
-  name = "pop"
-  type = "CNAME"
-  ttl = 3600
-  values = ["access.mail.gandi.net."]
-}
-
-resource "gandi_zonerecord" "cname_smtp" {
-  zone = gandi_zone.zone.id
-  name = "smtp"
-  type = "CNAME"
-  ttl = 3600
-  values = ["relay.mail.gandi.net."]
-}
-
-resource "gandi_zonerecord" "cname_webmail" {
-  zone = gandi_zone.zone.id
-  name = "webmail"
-  type = "CNAME"
-  ttl = 3600
-  values = ["webmail.gandi.net."]
-}
-
-
-output "zone_id" {
-  value = gandi_zone.zone.id
+  name = each.value.name
+  type = each.value.type
+  values = each.value.values
 }

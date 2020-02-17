@@ -1,3 +1,11 @@
+variable "acme_account_key" {
+  type = string
+}
+
+variable "gandi_api_key" {
+  type = string
+}
+
 variable "github_pages_ips" {
   type = list(string)
 }
@@ -7,18 +15,30 @@ variable "home_ip" {
 }
 
 
-module "gandi_dns" {
+module "dns" {
   source = "../../modules/gandi_dns"
 
   domain_name = "vincent-jacques.net"
   a_at_ips = var.github_pages_ips
+  records = [
+    {
+      type = "A"
+      name = "*"
+      values = [var.home_ip]
+    },
+  ]
 }
 
+module "wildcard_vincent_jacques_net_certificate" {
+  source = "../../modules/acme_certificate_using_gandi"
 
-resource "gandi_zonerecord" "wildcard" {
-  zone = module.gandi_dns.zone_id
-  name = "*"
-  type = "A"
-  ttl = 3600
-  values = [var.home_ip]
+  acme_account_key = var.acme_account_key
+  gandi_api_key = var.gandi_api_key
+  domain_name = "*.vincent-jacques.net"
+}
+
+output "certificates" {
+  value = {
+    "*.vincent-jacques.net" = module.wildcard_vincent_jacques_net_certificate.certificate
+  }
 }

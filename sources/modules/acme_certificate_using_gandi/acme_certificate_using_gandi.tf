@@ -6,13 +6,13 @@ variable "gandi_api_key" {
   type = string
 }
 
-variable "acme_account_key_pem" {
+variable "acme_account_key" {
   type = string
 }
 
 
 resource "acme_certificate" "certificate" {
-  account_key_pem = var.acme_account_key_pem
+  account_key_pem = var.acme_account_key
   common_name = var.domain_name
   min_days_remaining = "20"  # To match ACME's e-mail reminder
 
