@@ -22,11 +22,13 @@ def refresh():
 
 @cli.command()
 def plan():
+    # @todo Run "terraform state list", filter for ".data.", the "terraform refresh --target=" each data source
     delegate_to("terraform", "plan", "-refresh=false")
 
 
 @cli.command()
 def apply():
+    # @todo Run "terraform state list", filter for ".data.", the "terraform refresh --target=" each data source
     delegate_to("terraform", "apply", "-refresh=false", "-auto-approve")
 
 

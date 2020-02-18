@@ -34,6 +34,10 @@ variable "gandi_api_key" {
   type = string
 }
 
+variable "gandi_smtp_password" {
+  type = string
+}
+
 provider "gandi" {
   key = var.gandi_api_key
 }
@@ -80,7 +84,6 @@ provider "docker" {
   host = "ssh://jacquev6@doorman.home.jacquev6.net"
 }
 
-
 module "doorman_containers" {
   source = "./resources/doorman_containers"
 
@@ -89,4 +92,20 @@ module "doorman_containers" {
   }
 
   certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates)
+}
+
+
+provider "docker" {
+  alias = "idee"
+  host = "ssh://jacquev6@idee.home.jacquev6.net"
+}
+
+module "idee_containers" {
+  source = "./resources/idee_containers"
+
+  providers = {
+    docker = docker.idee
+  }
+
+  gandi_smtp_password = var.gandi_smtp_password
 }

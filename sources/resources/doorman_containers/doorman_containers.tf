@@ -16,10 +16,6 @@ resource "docker_image" "nginx" {
   pull_triggers = ["nginx:1.17-alpine"]
 }
 
-data "local_file" "fanout_nginx_conf" {
-    filename = "${path.module}/fanout.nginx.conf"
-}
-
 resource "docker_container" "fanout" {
   name  = "fanout"
   image = docker_image.nginx.latest
@@ -36,7 +32,7 @@ resource "docker_container" "fanout" {
   }
   upload {
     file = "/etc/nginx/nginx.conf"
-    content = data.local_file.fanout_nginx_conf.content
+    content = file("${path.module}/fanout.nginx.conf")
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
@@ -84,11 +80,6 @@ resource "docker_container" "draw_turks_head_demo" {
   working_dir = "/"  # Weirdly required to avoid re-creating the container on every "infra apply"
 }
 
-
-data "local_file" "always_200_nginx_conf" {
-    filename = "${path.module}/always_200.nginx.conf"
-}
-
 resource "docker_container" "always_200" {
   name  = "always_200"
   image = docker_image.nginx.latest
@@ -102,6 +93,6 @@ resource "docker_container" "always_200" {
   }
   upload {
     file = "/etc/nginx/nginx.conf"
-    content = data.local_file.always_200_nginx_conf.content
+    content = file("${path.module}/always_200.nginx.conf")
   }
 }
