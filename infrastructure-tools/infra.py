@@ -22,14 +22,20 @@ def refresh():
 
 @cli.command()
 def plan():
-    # @todo Run "terraform state list", filter for ".data.", the "terraform refresh --target=" each data source
+    refresh_data_sources()
     delegate_to("terraform", "plan", "-refresh=false")
 
 
 @cli.command()
 def apply():
-    # @todo Run "terraform state list", filter for ".data.", the "terraform refresh --target=" each data source
+    refresh_data_sources()
     delegate_to("terraform", "apply", "-refresh=false", "-auto-approve")
+
+
+def refresh_data_sources():
+    resources = subprocess.check_output(["terraform", "state", "list"], universal_newlines=True)
+    targets = [f"-target={resource}" for resource in resources.splitlines() if ".data." in resource]
+    subprocess.run(["terraform", "refresh"] + targets, check=True)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
