@@ -5,6 +5,11 @@ variable "certificates" {
   }))
 }
 
+
+resource "docker_network" "fanout" {
+  name = "fanout"
+}
+
 resource "docker_image" "nginx" {
   name = "nginx:1.17-alpine"
   # It's very weird that changing name does not trigger a new resource.
@@ -22,6 +27,9 @@ resource "docker_container" "fanout" {
   rm = "false"
   restart = "always"
   # @todo readonly = "true"
+  networks_advanced {
+    name = docker_network.fanout.name
+  }
   ports {
     internal = "80"
     external = "80"
@@ -72,10 +80,8 @@ resource "docker_container" "draw_turks_head_demo" {
   rm = "false"
   restart = "always"
   # @todo readonly = "true"
-  # @todo Use a Docker network, don't publish this port
-  ports {
-    internal = "80"
-    external = "8081"
+  networks_advanced {
+    name = docker_network.fanout.name
   }
   working_dir = "/"  # Weirdly required to avoid re-creating the container on every "infra apply"
 }
@@ -86,10 +92,8 @@ resource "docker_container" "always_200" {
   rm = "false"
   restart = "always"
   # @todo readonly = "true"
-  # @todo Use a Docker network, don't publish this port
-  ports {
-    internal = "80"
-    external = "8082"
+  networks_advanced {
+    name = docker_network.fanout.name
   }
   upload {
     file = "/etc/nginx/nginx.conf"
