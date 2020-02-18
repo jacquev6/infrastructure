@@ -109,3 +109,15 @@ module "idee_containers" {
 
   gandi_smtp_password = var.gandi_smtp_password
 }
+
+
+resource "multiverse_custom_resource" "test" {
+  executor = "python3"
+  script = "/test_multiverse.py"
+  id_key = "id"
+  data = <<-JSON
+    {
+      "id": "test",
+    }
+  JSON
+}
