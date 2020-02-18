@@ -21,18 +21,28 @@ resource "docker_image" "nginx" {
   pull_triggers = ["nginx:1.17-alpine"]
 }
 
+resource "docker_container" "redirect_http_to_https" {
+  name  = "redirect_http_to_https"
+  image = docker_image.nginx.latest
+  rm = "false"
+  restart = "always"
+  ports {
+    internal = "80"
+    external = "80"
+  }
+  upload {
+    file = "/etc/nginx/nginx.conf"
+    content = file("${path.module}/redirect_http_to_https.nginx.conf")
+  }
+}
+
 resource "docker_container" "fanout" {
   name  = "fanout"
   image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
-  # @todo readonly = "true"
   networks_advanced {
     name = docker_network.fanout.name
-  }
-  ports {
-    internal = "80"
-    external = "80"
   }
   ports {
     internal = "443"
@@ -68,7 +78,6 @@ resource "docker_container" "fanout" {
   }
 }
 
-
 resource "docker_image" "draw_turks_head_demo" {
   name = "jacquev6/draw-turks-head-demo:20200213-135841"
   pull_triggers = ["jacquev6/draw-turks-head-demo:20200213-135841"]
@@ -79,7 +88,6 @@ resource "docker_container" "draw_turks_head_demo" {
   image = docker_image.draw_turks_head_demo.latest
   rm = "false"
   restart = "always"
-  # @todo readonly = "true"
   networks_advanced {
     name = docker_network.fanout.name
   }
@@ -91,7 +99,6 @@ resource "docker_container" "always_200" {
   image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
-  # @todo readonly = "true"
   networks_advanced {
     name = docker_network.fanout.name
   }
