@@ -17,30 +17,29 @@ variable "home_ip" {
 
 locals {
   home_machines = [
-    # WARNING, the static DHCP configuration is maintained by hand at http://mafreebox.freebox.fr/
     {
       name = "nas2"
-      mac = "00:11:32:49:8b:63"
+      mac = "00:11:32:49:8B:63"
       ip = "192.168.1.50"
     },
     {
       name = "doorman"
-      mac = "b8:27:eb:39:27:df"
+      mac = "B8:27:EB:39:27:DF"
       ip = "192.168.1.51"
     },
     {
       name = "idee"
-      mac = "1c:6f:65:37:a6:c6"
+      mac = "1C:6F:65:37:A6:C6"
       ip = "192.168.1.52"
     },
     {
       name = "macbook"
-      mac = "a4:83:e7:5e:19:b1"
+      mac = "A4:83:E7:5E:19:B1"
       ip = "192.168.1.53"
     },
     {
       name = "icule"
-      mac = "08:00:27:ee:68:dc"
+      mac = "08:00:27:EE:68:DC"
       ip = "192.168.1.54"
     },
   ]
@@ -78,6 +77,25 @@ module "dns" {
       },
     ]
   )
+}
+
+
+resource "multiverse_custom_resource" "static_dhcp_lease" {
+  for_each = {
+    for machine in local.home_machines:
+    machine.name => machine
+  }
+
+  executor = "python3"
+  script = "/terraform-provider-multiverse-freebox.py"
+  id_key = "id"
+  data = <<-JSON
+    {
+      "kind": "static_dhcp_lease",
+      "mac": "${each.value.mac}",
+      "ip": "${each.value.ip}"
+    }
+  JSON
 }
 
 

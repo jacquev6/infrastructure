@@ -51,10 +51,14 @@ def check_certificate(ip, name):
     delegate_to("openssl", "s_client", "-showcerts", "-servername", name, "-connect", ip + ":443", input="")
 
 
+@cli.command()
+def login_to_freebox():
+    delegate_to("/terraform-provider-multiverse-freebox.py", "login")
+
+
 def delegate_to(*args, **kwds):
   assert "check" not in kwds
   exit(subprocess.run(args, **kwds).returncode)
-
 
 
 if __name__ == "__main__":

@@ -65,9 +65,9 @@ FROM ubuntu:18.04
 
 RUN set -x \
     && apt-get update \
-    && apt-get install --yes --no-install-recommends python3-pip ssh \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 install click==7.0
+    && apt-get install --yes --no-install-recommends python3-pip python3-setuptools ssh git \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip3 install click==7.0 requests==2.22.0
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
@@ -79,4 +79,4 @@ COPY --from=terraform_provider_multiverse /root/go/bin/terraform-provider-multiv
 
 WORKDIR /infrastructure/sources
 COPY infra.py /
-COPY test_multiverse.py /
+COPY terraform-provider-multiverse-freebox.py /

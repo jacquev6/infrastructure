@@ -1,4 +1,4 @@
-# @todo Manage ports redirections and static DHCP leases in FreeBox
+# @todo Manage ports redirections in FreeBox
 
 locals {
   github_pages_ips = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
@@ -108,16 +108,4 @@ module "idee_containers" {
   }
 
   gandi_smtp_password = var.gandi_smtp_password
-}
-
-
-resource "multiverse_custom_resource" "test" {
-  executor = "python3"
-  script = "/test_multiverse.py"
-  id_key = "id"
-  data = <<-JSON
-    {
-      "id": "test",
-    }
-  JSON
 }
