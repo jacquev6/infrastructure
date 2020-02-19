@@ -132,7 +132,7 @@ resource_kinds = {
             "wan_port_start": payload["port"],
             "lan_ip": payload["ip"],
         },
-        ret=lambda r: {"id": str(r["id"]), "port": r["lan_port"], "ip": r["lan_ip"]}
+        ret=lambda r: {"id": r["id"], "port": r["lan_port"], "ip": r["lan_ip"]}
     ),
 }
 
@@ -155,7 +155,7 @@ def crud_command(command):
                 with open("freebox_app_token.secret.txt") as f:
                     app_token = f.read().strip()
                 with Freebox(app_id="infrastructure", app_token=app_token) as freebox:
-                    ret = command(kind, id, payload, freebox)
+                    ret = {k: str(v) for (k, v) in command(kind, id, payload, freebox).items()}
                 debug.write(f"RET: {ret}\n")
             except:
                 debug.write(f"ERROR: {traceback.format_exc()}\n")
