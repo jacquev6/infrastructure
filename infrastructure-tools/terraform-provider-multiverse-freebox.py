@@ -107,12 +107,32 @@ def login():
     print("Please fix permissions for newly registered app: add 'Modification des réglages de la Freebox'")
 
 
+# @to_maybe_do Use classes and objects?
 resource_kinds = {
     "static_dhcp_lease": dict(
         base_path="dhcp/static_lease",
         create=lambda payload: {"mac": payload["mac"], "ip": payload["ip"]},
         update=lambda payload: {"ip": payload["ip"]},
         ret=lambda r: {"id": r["id"], "mac": r["mac"], "ip": r["ip"]}
+    ),
+    "port_forwarding": dict(
+        base_path="fw/redir",
+        create=lambda payload: {
+            "enabled": True,
+            "lan_port": payload["port"],
+            "wan_port_end": payload["port"],
+            "wan_port_start": payload["port"],
+            "lan_ip": payload["ip"],
+            "ip_proto": "tcp",
+            "src_ip": "0.0.0.0",
+        },
+        update=lambda payload: {
+            "lan_port": payload["port"],
+            "wan_port_end": payload["port"],
+            "wan_port_start": payload["port"],
+            "lan_ip": payload["ip"],
+        },
+        ret=lambda r: {"id": str(r["id"]), "port": r["lan_port"], "ip": r["lan_ip"]}
     ),
 }
 

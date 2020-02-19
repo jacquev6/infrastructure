@@ -16,17 +16,18 @@ variable "home_ip" {
 
 
 locals {
+  doorman = {
+    name = "doorman"
+    mac = "B8:27:EB:39:27:DF"
+    ip = "192.168.1.51"
+  }
   home_machines = [
     {
       name = "nas2"
       mac = "00:11:32:49:8B:63"
       ip = "192.168.1.50"
     },
-    {
-      name = "doorman"
-      mac = "B8:27:EB:39:27:DF"
-      ip = "192.168.1.51"
-    },
+    local.doorman,
     {
       name = "idee"
       mac = "1C:6F:65:37:A6:C6"
@@ -94,6 +95,25 @@ resource "multiverse_custom_resource" "static_dhcp_lease" {
       "kind": "static_dhcp_lease",
       "mac": "${each.value.mac}",
       "ip": "${each.value.ip}"
+    }
+  JSON
+}
+
+
+resource "multiverse_custom_resource" "port_forwarding" {
+  for_each = {
+    ssh = 22
+    http = 80
+    https = 443
+  }
+  executor = "python3"
+  script = "/terraform-provider-multiverse-freebox.py"
+  id_key = "id"
+  data = <<-JSON
+    {
+      "kind": "port_forwarding",
+      "port": ${each.value},
+      "ip": "${local.doorman.ip}"
     }
   JSON
 }
