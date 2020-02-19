@@ -17,6 +17,7 @@ RUN mkdir lib; cp /lib/ld-musl-*.so.1 lib
 RUN for f in $(grep "^/" /list.txt); do mkdir -p .$(dirname $f); cp $f .$(dirname $f); done
 
 
+# @todo Have a look at https://github.com/GoogleContainerTools/distroless
 FROM scratch
 
 COPY --from=builder /collected /
