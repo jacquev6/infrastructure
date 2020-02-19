@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import json
 import subprocess
 
 import click
@@ -57,8 +58,26 @@ def login_to_freebox():
 
 
 def delegate_to(*args, **kwds):
-  assert "check" not in kwds
-  exit(subprocess.run(args, **kwds).returncode)
+    assert "check" not in kwds
+    try:
+        exit(subprocess.run(args, **kwds).returncode)
+    finally:
+        if args[0] == "terraform":
+            stabilize_terraform_state()
+
+
+def stabilize_terraform_state():
+    with open("terraform.tfstate") as f:
+        state = json.load(f)
+    # Keep resources sorted
+    state["resources"] = sorted(state["resources"], key=lambda r: ".".join([r["module"], r["mode"], r["type"], r["name"]]))
+    # Remove changing id
+    for resource in state["resources"]:
+        if resource["type"] == "uptimerobot_account":
+            for instance in resource["instances"]:
+                instance["attributes"].pop("id", None)
+    with open("terraform.tfstate", "w") as f:
+        json.dump(state, f, sort_keys=True, indent=2)
 
 
 if __name__ == "__main__":
