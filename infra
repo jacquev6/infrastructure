@@ -4,6 +4,10 @@ set -o errexit
 
 INFRASTRUCTURE_TOOLS_TAG=20200219-140527
 
+# Clean-up:
+# docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_TAG | xargs docker image rm
+# docker image ls infrastructure-tools-builder --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_TAG | xargs docker image rm
+
 NAME=infrastructure-tools-$INFRASTRUCTURE_TOOLS_TAG
 
 if [ -z $(docker ps --quiet --filter name=$NAME) ]
