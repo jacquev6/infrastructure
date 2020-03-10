@@ -2,7 +2,7 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_TAG=20200219-140527
+INFRASTRUCTURE_TOOLS_TAG=20200310-083611
 
 # Clean-up:
 # docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_TAG | xargs docker image rm
@@ -25,7 +25,7 @@ fi
 
 TTY_OPTION=""
 
-if [ -t 0 ]
+if [ -t 0 -a -t 1 -a -t 2 ]
 then
   TTY_OPTION="--tty"
 fi

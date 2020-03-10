@@ -107,6 +107,15 @@ def login():
     print("Please fix permissions for newly registered app: add 'Modification des réglages de la Freebox'")
 
 
+@cli.command()
+@click.argument("path")
+def get(path):
+    with open("freebox_app_token.secret.txt") as f:
+        app_token = f.read().strip()
+    with Freebox(app_id="infrastructure", app_token=app_token) as freebox:
+        print(json.dumps(freebox.get(path), sort_keys=True, indent=2))
+
+
 # @to_maybe_do Use classes and objects?
 resource_kinds = {
     "static_dhcp_lease": dict(

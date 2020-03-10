@@ -52,9 +52,20 @@ def check_certificate(ip, name):
     delegate_to("openssl", "s_client", "-showcerts", "-servername", name, "-connect", ip + ":443", input="")
 
 
-@cli.command()
-def login_to_freebox():
+@cli.group()
+def freebox():
+    pass
+
+
+@freebox.command()
+def login():
     delegate_to("/terraform-provider-multiverse-freebox.py", "login")
+
+
+@freebox.command()
+@click.argument("path")
+def get(path):
+    delegate_to("/terraform-provider-multiverse-freebox.py", "get", path)
 
 
 def delegate_to(*args, **kwds):

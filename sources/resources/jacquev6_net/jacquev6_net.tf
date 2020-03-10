@@ -178,6 +178,8 @@ resource "multiverse_custom_resource" "port_forwarding" {
   JSON
 }
 
+# @todo Set primary name in Freebox (PUT /api/v4/lan/browser/{interface}/{hostid}/)
+
 
 data "uptimerobot_account" "account" {}
 
