@@ -101,7 +101,33 @@ locals {
       mac = "1C:91:48:6A:E8:B4"
       ip = "192.168.1.63"
       dns = false
+    },
+    {
+      name = "freebox-mini"
+      mac = "68:A3:78:23:EC:C8"
+      ip = "192.168.1.64"
+      dns = false
+    },
+    {
+      name = "ps3"
+      mac = "F8:D0:AC:9D:CA:13"
+      ip = "192.168.1.65"
+      dns = false
+    },
+    {
+      name = "media"
+      mac = "B8:27:EB:21:C9:E7"
+      ip = "192.168.1.66"
+      dns = false
+    },
+    {
+      name = "eeepc"
+      mac = "74:2F:68:2D:EB:F2"
+      ip = "192.168.1.67"
+      dns = false
     }
+    # @todo Add kindle.claire
+    # @todo Add ipad.claire
   ]
 }
 
