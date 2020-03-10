@@ -20,29 +20,88 @@ locals {
     name = "doorman"
     mac = "B8:27:EB:39:27:DF"
     ip = "192.168.1.51"
+    dns = true
   }
   home_machines = [
     {
       name = "nas2"
       mac = "00:11:32:49:8B:63"
       ip = "192.168.1.50"
+      dns = true
     },
     local.doorman,
     {
       name = "idee"
       mac = "1C:6F:65:37:A6:C6"
       ip = "192.168.1.52"
+      dns = true
     },
     {
       name = "macbook"
       mac = "A4:83:E7:5E:19:B1"
       ip = "192.168.1.53"
+      dns = true
     },
     {
       name = "icule"
       mac = "08:00:27:EE:68:DC"
       ip = "192.168.1.54"
+      dns = true
     },
+    {
+      name = "switch"
+      mac = "B8:8A:EC:C3:94:5D"
+      ip = "192.168.1.55"
+      dns = false
+    },
+    {
+      name = "ps4"
+      mac = "B0:52:16:E0:FE:99"
+      ip = "192.168.1.56"
+      dns = false
+    },
+    {
+      name = "hue"
+      mac = "EC:B5:FA:00:D4:3D"
+      ip = "192.168.1.57"
+      dns = false
+    },
+    {
+      name = "pixel3"
+      mac = "3C:28:6D:F5:CB:7C"
+      ip = "192.168.1.58"
+      dns = false
+    },
+    {
+      name = "firetv"
+      mac = "FC:65:DE:50:E5:34"
+      ip = "192.168.1.59"
+      dns = false
+    },
+    {
+      name = "alexa"
+      mac = "CC:F7:35:A3:05:19"
+      ip = "192.168.1.60"
+      dns = false
+    },
+    {
+      name = "macbook.claire"
+      mac = "2C:F0:EE:19:E3:82"
+      ip = "192.168.1.61"
+      dns = false
+    },
+    {
+      name = "printer"
+      mac = "30:CD:A7:A4:6E:02"
+      ip = "192.168.1.62"
+      dns = false
+    },
+    {
+      name = "iphone.claire"
+      mac = "1C:91:48:6A:E8:B4"
+      ip = "192.168.1.63"
+      dns = false
+    }
   ]
 }
 
@@ -59,6 +118,7 @@ module "dns" {
           name = "${machine.name}.home"
           values = [machine.ip]
         }
+      if machine.dns
     ],
     [
       {
