@@ -42,7 +42,8 @@ class Freebox(contextlib.AbstractContextManager):
         else:
             raise Exception(f"Access refused or not granted in time ({status})")
 
-    def __init__(self, *, app_id, app_token, requestor=requests):
+    def __init__(self, *, app_id, app_token, debug, requestor=requests):
+        self.__debug = debug
         self.__requestor = requestor
         # We don't handle session token invalidation because this script is short-lived.
         # If this class is used in a more general context, __request should detect when
@@ -79,11 +80,14 @@ class Freebox(contextlib.AbstractContextManager):
             data = dict()
         else:
             data = dict(data=json.dumps(data))
+        self.__debug(f"FREEBOX: {method} {path}\n")
+        self.__debug(f"FREEBOX: {data}\n")
         r = getattr(self.__requestor, method)(
             f"{self.base_url}/{path}",
             **data,
             headers=self.__headers,
         ).json()
+        self.__debug(f"FREEBOX: {r}\n")
         assert r["success"], r
         return r.get("result")
 
@@ -110,23 +114,57 @@ def login():
 @cli.command()
 @click.argument("path")
 def get(path):
-    with open("freebox_app_token.secret.txt") as f:
-        app_token = f.read().strip()
-    with Freebox(app_id="infrastructure", app_token=app_token) as freebox:
-        print(json.dumps(freebox.get(path), sort_keys=True, indent=2))
+    with freebox() as f:
+        print(json.dumps(f.get(path), sort_keys=True, indent=2))
 
 
-# @to_maybe_do Use classes and objects?
-resource_kinds = {
-    "static_dhcp_lease": dict(
-        base_path="dhcp/static_lease",
-        create=lambda payload: {"mac": payload["mac"], "ip": payload["ip"]},
-        update=lambda payload: {"ip": payload["ip"]},
-        ret=lambda r: {"id": r["id"], "mac": r["mac"], "ip": r["ip"]}
-    ),
-    "port_forwarding": dict(
-        base_path="fw/redir",
-        create=lambda payload: {
+class StandardResource:
+    def __init__(self, freebox, base_path):
+        self.__freebox = freebox
+        self.__base_path = base_path
+
+    def create(self, id, payload):
+        return self._return(self.__freebox.post(
+            f"{self.__base_path}/",
+            self._create(payload),
+        ))
+
+    def read(self, id, payload):
+        return self._return(self.__freebox.get(
+            f"{self.__base_path}/{id}",
+        ))
+
+    def update(self, id, payload):
+        return self._return(self.__freebox.put(
+            f"{self.__base_path}/{id}",
+            self._update(payload)
+        ))
+
+    def delete(self, id, payload):
+        self.__freebox.delete(f"{self.__base_path}/{id}")
+        return {}
+
+
+class StaticDhcpLease(StandardResource):
+    def __init__(self, freebox):
+        super().__init__(freebox, "dhcp/static_lease")
+
+    def _create(self, payload):
+        return {"mac": payload["mac"], "ip": payload["ip"]}
+
+    def _return(self, r):
+        return {"id": r["id"], "mac": r["mac"], "ip": r["ip"]}
+
+    def _update(self, payload):
+        return {"ip": payload["ip"]}
+
+
+class PortForwarding(StandardResource):
+    def __init__(self, freebox):
+        super().__init__(freebox, "fw/redir")
+
+    def _create(self, payload):
+        return {
             "enabled": True,
             "lan_port": payload["port"],
             "wan_port_end": payload["port"],
@@ -134,15 +172,51 @@ resource_kinds = {
             "lan_ip": payload["ip"],
             "ip_proto": "tcp",
             "src_ip": "0.0.0.0",
-        },
-        update=lambda payload: {
+        }
+
+    def _return(self, r):
+        return {"id": r["id"], "port": r["lan_port"], "ip": r["lan_ip"]}
+
+    def _update(self, payload):
+        return {
             "lan_port": payload["port"],
             "wan_port_end": payload["port"],
             "wan_port_start": payload["port"],
             "lan_ip": payload["ip"],
-        },
-        ret=lambda r: {"id": r["id"], "port": r["lan_port"], "ip": r["lan_ip"]}
-    ),
+        }
+
+
+class HostNaming:
+    def __init__(self, freebox):
+        self.__freebox = freebox
+
+    def create(self, id, payload):
+        return self.update(payload["mac"], payload)
+
+    def read(self, id, payload):
+        return self._return(self.__freebox.get(
+            f"lan/browser/pub/ether-{id}",
+        ))
+
+    def update(self, id, payload):
+        return self._return(self.__freebox.put(
+            f"lan/browser/pub/ether-{id}",
+            dict(
+                primary_name=payload["name"],
+            )
+        ))
+
+    def _return(self, r):
+        return {"id": r["id"][6:], "name": r["primary_name"]}
+
+    def delete(self, id, payload):
+        return {}
+
+
+resources = {
+    "static_dhcp_lease": StaticDhcpLease,
+    "port_forwarding": PortForwarding,
+    "host_naming": HostNaming,
 }
 
 
@@ -160,11 +234,8 @@ def crud_command(command):
                 debug.write(f"ID: {id}\n")
                 payload = json.loads(data["Payload"])
                 debug.write(f"PAYLOAD: {payload}\n")
-                kind = resource_kinds[payload["kind"]]
-                with open("freebox_app_token.secret.txt") as f:
-                    app_token = f.read().strip()
-                with Freebox(app_id="infrastructure", app_token=app_token) as freebox:
-                    ret = {k: str(v) for (k, v) in command(kind, id, payload, freebox).items()}
+                with freebox(debug.write) as f:
+                    ret = {k: str(v) for (k, v) in command(resources[payload["kind"]](f), id, payload).items()}
                 debug.write(f"RET: {ret}\n")
             except:
                 debug.write(f"ERROR: {traceback.format_exc()}\n")
@@ -177,29 +248,36 @@ def crud_command(command):
     return wrapper
 
 
-@cli.command()
-@crud_command
-def create(kind, id, payload, freebox):
-    return kind["ret"](freebox.post(f"{kind['base_path']}/", kind["create"](payload)))
+@contextlib.contextmanager
+def freebox(debug=lambda _: None):
+    with open("freebox_app_token.secret.txt") as f:
+        app_token = f.read().strip()
+    with Freebox(app_id="infrastructure", app_token=app_token, debug=debug) as freebox:
+        yield freebox
 
 
 @cli.command()
 @crud_command
-def read(kind, id, payload, freebox):
-    return kind["ret"](freebox.get(f"{kind['base_path']}/{id}"))
+def create(kind, id, payload):
+    return kind.create(id, payload)
 
 
 @cli.command()
 @crud_command
-def update(kind, id, payload, freebox):
-    return kind["ret"](freebox.put(f"{kind['base_path']}/{id}", kind["update"](payload)))
+def read(kind, id, payload):
+    return kind.read(id, payload)
 
 
 @cli.command()
 @crud_command
-def delete(kind, id, payload, freebox):
-    freebox.delete(f"{kind['base_path']}/{id}")
-    return {}
+def update(kind, id, payload):
+    return kind.update(id, payload)
+
+
+@cli.command()
+@crud_command
+def delete(kind, id, payload):
+    return kind.delete(id, payload)
 
 
 if __name__ == "__main__":

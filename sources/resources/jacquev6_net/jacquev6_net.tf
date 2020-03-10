@@ -160,12 +160,32 @@ resource "multiverse_custom_resource" "static_dhcp_lease" {
 }
 
 
+resource "multiverse_custom_resource" "host_naming" {
+  for_each = {
+    for machine in local.home_machines:
+    machine.name => machine
+  }
+
+  executor = "python3"
+  script = "/terraform-provider-multiverse-freebox.py"
+  id_key = "id"
+  data = <<-JSON
+    {
+      "kind": "host_naming",
+      "mac": "${each.value.mac}",
+      "name": "${each.value.name}"
+    }
+  JSON
+}
+
+
 resource "multiverse_custom_resource" "port_forwarding" {
   for_each = {
     ssh = 22
     http = 80
     https = 443
   }
+
   executor = "python3"
   script = "/terraform-provider-multiverse-freebox.py"
   id_key = "id"
@@ -177,8 +197,6 @@ resource "multiverse_custom_resource" "port_forwarding" {
     }
   JSON
 }
-
-# @todo Set primary name in Freebox (PUT /api/v4/lan/browser/{interface}/{hostid}/)
 
 
 data "uptimerobot_account" "account" {}
