@@ -15,6 +15,7 @@ resource "docker_container" "remind_running" {
   restart = "always"
   command = ["/remind_running.py"]
   upload {
+    # @todo Add output from htop and nvidia-smi
     file = "/remind_running.py"
     content = templatefile(
       "${path.module}/remind_running.py",
