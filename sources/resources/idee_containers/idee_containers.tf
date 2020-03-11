@@ -16,6 +16,10 @@ resource "docker_container" "remind_running" {
   command = ["/remind_running.py"]
   upload {
     # @todo Add output from htop and nvidia-smi
+    # One lead: periodicaly run
+    # (date; echo; ps faux; echo; nvidia-smi) | docker exec -i remind-running sh -c "cat >/remind-running.txt"
+    # and then add the contents of this file to the body of the e-mail.
+    # Would be better to run it only once before sending the e-mail though...
     file = "/remind_running.py"
     content = templatefile(
       "${path.module}/remind_running.py",
