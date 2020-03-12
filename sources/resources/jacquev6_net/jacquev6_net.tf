@@ -153,6 +153,11 @@ module "dns" {
         values = [var.home_ip]
       },
       {
+        type = "A"
+        name = "infra"
+        values = [local.doorman.ip]
+      },
+      {
         type = "CNAME"
         name = "parents"
         values = ["parents-jacquev6-net.synology.me."]
@@ -276,8 +281,17 @@ module "home_jacquev6_net_certificate" {
   domain_name = "home.jacquev6.net"
 }
 
+module "infra_jacquev6_net_certificate" {
+  source = "../../modules/acme_certificate_using_gandi"
+
+  acme_account_key = var.acme_account_key
+  gandi_api_key = var.gandi_api_key
+  domain_name = "infra.jacquev6.net"
+}
+
 output "certificates" {
   value = {
     "home.jacquev6.net" = module.home_jacquev6_net_certificate.certificate
+    "infra.jacquev6.net" = module.infra_jacquev6_net_certificate.certificate
   }
 }

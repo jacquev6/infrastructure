@@ -71,6 +71,14 @@ resource "docker_container" "fanout" {
     content = var.certificates["home.jacquev6.net"].key
   }
   upload {
+    file = "/etc/nginx/infra.jacquev6.net.crt"
+    content = var.certificates["infra.jacquev6.net"].crt
+  }
+  upload {
+    file = "/etc/nginx/infra.jacquev6.net.key"
+    content = var.certificates["infra.jacquev6.net"].key
+  }
+  upload {
     file = "/etc/nginx/www.vincent-jacques.net.crt"
     content = var.certificates["www.vincent-jacques.net"].crt
   }
@@ -148,5 +156,26 @@ resource "docker_container" "periodical_check_bot" {
   upload {
     file = "/root/.ssh/id_rsa"
     content = file("${path.module}/periodical_check_bot.id_rsa")
+  }
+}
+
+
+locals {
+  network_perf_graph_version = "20200312-165038"
+}
+
+resource "docker_image" "network_perf_graph" {
+  name = "jacquev6/infrastructure-tools:network_perf_graph-${local.network_perf_graph_version}"
+  pull_triggers = [local.network_perf_graph_version]
+  keep_locally = true
+}
+
+resource "docker_container" "network_perf_graph" {
+  name  = "network_perf_graph"
+  image = docker_image.network_perf_graph.latest
+  rm = "false"
+  restart = "always"
+  networks_advanced {
+    name = docker_network.fanout.name
   }
 }
