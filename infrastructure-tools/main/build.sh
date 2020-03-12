@@ -1,6 +1,7 @@
 #/bin/bash
 
 set -o errexit
+cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 
 PUSH=false
 NOT_PUSHED_WARNING=" # Image not pushed to hub.docker.io, DO NOT COMMIT"
@@ -29,7 +30,7 @@ echo "------------------------------------------------------"
 echo "Building jacquev6/infrastructure-tools:$TAG"
 echo "------------------------------------------------------"
 
-docker build $NO_CACHE --tag jacquev6/infrastructure-tools:$TAG --build-arg tag=$TAG .
+docker build $NO_CACHE --tag jacquev6/infrastructure-tools:main-$TAG --build-arg tag=$TAG .
 
 # Tag intermediate images to avoid losing them on "docker image prune"
 for ID in $(docker image ls --filter label=infrastructure-tools-builder-tag=$TAG --quiet)
@@ -43,7 +44,7 @@ done
 
 if $PUSH
 then
-  docker push jacquev6/infrastructure-tools:$TAG
+  docker push jacquev6/infrastructure-tools:main-$TAG
 fi
 
-sed -i "" -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$TAG$NOT_PUSHED_WARNING/" ../infra
+sed -i "" -e "s/^INFRASTRUCTURE_TOOLS_TAG=.*/INFRASTRUCTURE_TOOLS_TAG=$TAG$NOT_PUSHED_WARNING/" ../../infra
