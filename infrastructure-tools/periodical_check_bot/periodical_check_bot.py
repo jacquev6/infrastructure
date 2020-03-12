@@ -23,10 +23,14 @@ def main(delay, period):
 
 
 def check(delay):
+    print("Checking", flush=True)
     uptime = run_on_idee("uptime", "--since")
     if uptime.returncode == 0:
         running_since = datetime.datetime.strptime(uptime.stdout.strip(), "%Y-%m-%d %H:%M:%S")
         running_for = datetime.datetime.now() - running_since
+
+        # Work around time zone being UTC in the container
+        running_for += datetime.timedelta(seconds=3600)
 
         if running_for > datetime.timedelta(seconds=delay):
             ps = run_on_idee("ps", "faux")
@@ -47,6 +51,8 @@ def check(delay):
                 message.display()
             else:
                 message.send(gandi_smtp_password)
+    else:
+        print("idee is down", flush=True)
 
 
 class Message:
@@ -70,16 +76,11 @@ class Message:
 
 
 def run_on_idee(*args):
-    # Work around DNS resolution problems...
-    for i in range(20):
-        p = subprocess.run(
-            ["ssh", "jacquev6@idee.home.jacquev6.net"] + list(args),
-            capture_output=True,
-            universal_newlines=True,
-        )
-        if p.returncode == 0:
-            break
-    return p
+    return subprocess.run(
+        ["ssh", "jacquev6@idee.home.jacquev6.net"] + list(args),
+        capture_output=True,
+        universal_newlines=True,
+    )
 
 
 if __name__ == "__main__":

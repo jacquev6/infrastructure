@@ -125,7 +125,7 @@ resource "docker_container" "always_200" {
 
 
 locals {
-  periodical_check_bot_version = "20200312-125525"
+  periodical_check_bot_version = "20200312-133736"
 }
 
 resource "docker_image" "periodical_check_bot" {
