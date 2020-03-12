@@ -1,6 +1,7 @@
-#/bin/bash
+#!/bin/bash
 
 set -o errexit
+cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 
 NO_CACHE=""
 
@@ -8,7 +9,7 @@ while [[ "$#" > 0 ]]
 do
   case $1 in
     --no-cache)
-      NO_CACHE=--no-cache
+      NO_CACHE="--no-cache --pull"
       ;;
     *)
       echo "Unknown parameter passed: $1"
@@ -17,10 +18,10 @@ do
   shift
 done
 
-TAG=$(date "+%Y%m%d-%H%M%S")
+VERSION=$(date "+%Y%m%d-%H%M%S")
 
 echo "------------------------------------------------------"
-echo "Building jacquev6/draw-turks-head-demo:$TAG"
+echo "Building jacquev6/draw-turks-head-demo:$VERSION"
 echo "------------------------------------------------------"
 
 # @todo Have a look at https://lobradov.github.io/Building-docker-multiarch-images/#same-dockerfile-template
@@ -32,15 +33,10 @@ echo "------------------------------------------------------"
 docker buildx build \
   $NO_CACHE \
   --platform linux/amd64,linux/arm/v7 \
-  --tag jacquev6/draw-turks-head-demo:latest --tag jacquev6/draw-turks-head-demo:$TAG \
+  --tag jacquev6/draw-turks-head-demo:latest --tag jacquev6/draw-turks-head-demo:$VERSION \
   --push \
   .
 
 sed -i "" \
-  -e "s|name = \"jacquev6/draw-turks-head-demo:.*|name = \"jacquev6/draw-turks-head-demo:$TAG\"|" \
-  -e "s|pull_triggers = \[\"jacquev6/draw-turks-head-demo:.*|pull_triggers = [\"jacquev6/draw-turks-head-demo:$TAG\"]|" \
+  -e "s/^  draw_turks_head_demo_version = .*/  draw_turks_head_demo_version = \"$VERSION\"/" \
   ../sources/resources/doorman_containers/doorman_containers.tf
-
-sed -i "" \
-  -e "s|image: jacquev6/draw-turks-head-demo:.*|image: jacquev6/draw-turks-head-demo:$TAG|" \
-  ../sources/charts/main/templates/draw-turks-head-demo.yaml

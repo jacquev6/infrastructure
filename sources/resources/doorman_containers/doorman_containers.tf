@@ -78,9 +78,14 @@ resource "docker_container" "fanout" {
   }
 }
 
+
+locals {
+  draw_turks_head_demo_version = "20200312-100913"
+}
+
 resource "docker_image" "draw_turks_head_demo" {
-  name = "jacquev6/draw-turks-head-demo:20200213-135841"
-  pull_triggers = ["jacquev6/draw-turks-head-demo:20200213-135841"]
+  name = "jacquev6/draw-turks-head-demo:${local.draw_turks_head_demo_version}"
+  pull_triggers = [local.draw_turks_head_demo_version]
 }
 
 resource "docker_container" "draw_turks_head_demo" {

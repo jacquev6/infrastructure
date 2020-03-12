@@ -1,6 +1,6 @@
 FROM alpine:3.8 AS builder
 
-RUN apk add boost-dev python2-dev cairomm-dev g++ pkgconf-dev py2-pip strace
+RUN apk add boost-dev python2-dev cairomm-dev g++ pkgconf-dev py2-pip
 # Freeze pycairo to the last version supporting Python 2
 RUN pip install pycairo==1.18.2
 RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
@@ -11,7 +11,7 @@ RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
 # This is the tricky part. The following can help:
 # - cat /proc/1/maps
 # - strace -f -e trace=open -o trace.log /usr/bin/gunicorn -w 3 -b :80 wsgi:app
-# - docker run --security-opt seccomp:unconfined --rm --name demo -p 8080:80 jacquev6/draw-turks-head-demo:latest-built-on-idee
+# - docker run --security-opt seccomp:unconfined --rm --name demo -p 8080:80 jacquev6/draw-turks-head-demo
 # (Required to run strace inside Docker)
 COPY list.txt /list.txt
 WORKDIR /collected

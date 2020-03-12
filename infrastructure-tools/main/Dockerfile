@@ -11,8 +11,8 @@ LABEL infrastructure-tools-builder-stage=terraform
 RUN wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip
 RUN unzip terraform_0.12.20_linux_amd64.zip
 
-ARG tag
-LABEL infrastructure-tools-builder-tag=$tag
+ARG version
+LABEL infrastructure-tools-builder-version=$version
 
 
 
@@ -21,8 +21,8 @@ LABEL infrastructure-tools-builder-stage=terraform_provider_gandi
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -a -tags netgo -ldflags '-w -extldflags "-static"' github.com/tiramiseb/terraform-provider-gandi
 
-ARG tag
-LABEL infrastructure-tools-builder-tag=$tag
+ARG version
+LABEL infrastructure-tools-builder-version=$version
 
 
 
@@ -38,8 +38,8 @@ ENV PATH=/mygo/go/bin:$PATH
 RUN git clone https://github.com/louy/terraform-provider-uptimerobot.git
 RUN cd terraform-provider-uptimerobot && go build
 
-ARG tag
-LABEL infrastructure-tools-builder-tag=$tag
+ARG version
+LABEL infrastructure-tools-builder-version=$version
 
 
 
@@ -56,8 +56,8 @@ ENV PATH=/mygo/go/bin:$PATH
 RUN git clone https://github.com/h0x91b-wix/terraform-provider-multiverse.git
 RUN cd terraform-provider-multiverse && make build
 
-ARG tag
-LABEL infrastructure-tools-builder-tag=$tag
+ARG version
+LABEL infrastructure-tools-builder-version=$version
 
 
 
