@@ -155,13 +155,13 @@ resource "docker_container" "periodical_check_bot" {
   ]
   upload {
     file = "/root/.ssh/id_rsa"
-    content = file("${path.module}/periodical_check_bot.id_rsa")
+    content = file("${path.module}/id_rsa")
   }
 }
 
 
 locals {
-  network_perf_graph_version = "20200312-165038"
+  network_perf_graph_version = "20200312-185605"
 }
 
 resource "docker_image" "network_perf_graph" {
@@ -177,5 +177,9 @@ resource "docker_container" "network_perf_graph" {
   restart = "always"
   networks_advanced {
     name = docker_network.fanout.name
+  }
+  upload {
+    file = "/root/.ssh/id_rsa"
+    content = file("${path.module}/id_rsa")
   }
 }
