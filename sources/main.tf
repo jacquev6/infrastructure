@@ -90,4 +90,5 @@ module "doorman_containers" {
   }
 
   certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates)
+  gandi_smtp_password = var.gandi_smtp_password
 }

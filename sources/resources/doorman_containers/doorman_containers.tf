@@ -5,6 +5,10 @@ variable "certificates" {
   }))
 }
 
+variable "gandi_smtp_password" {
+  type = string
+}
+
 
 resource "docker_network" "fanout" {
   name = "fanout"
@@ -19,6 +23,12 @@ resource "docker_image" "nginx" {
   # @todo (after upgrading to latest terraform and provider versions) Remove the pull_triggers workaround and test if changing the name does replace the associated container.
   # If not, open an issue on https://github.com/terraform-providers/terraform-provider-docker.
   pull_triggers = ["nginx:1.17-alpine"]
+
+  lifecycle {
+    # Avoid deleting the image before downloading the new one,
+    # and thus take advantage of common layers already present
+    create_before_destroy = true
+  }
 }
 
 resource "docker_container" "redirect_http_to_https" {
@@ -110,5 +120,34 @@ resource "docker_container" "always_200" {
   upload {
     file = "/etc/nginx/nginx.conf"
     content = file("${path.module}/always_200.nginx.conf")
+  }
+}
+
+
+locals {
+  periodical_check_bot_version = "20200312-121047"
+}
+
+resource "docker_image" "periodical_check_bot" {
+  name = "jacquev6/infrastructure-tools:periodical_check_bot-${local.periodical_check_bot_version}"
+  pull_triggers = [local.periodical_check_bot_version]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "docker_container" "periodical_check_bot" {
+  name  = "periodical_check_bot"
+  image = docker_image.periodical_check_bot.latest
+  rm = "false"
+  restart = "always"
+  command = ["--period", "3600"]
+  env = [
+    "GANDI_SMTP_PASSWORD=${var.gandi_smtp_password}"
+  ]
+  upload {
+    file = "/root/.ssh/id_rsa"
+    content = file("${path.module}/periodical_check_bot.id_rsa")
   }
 }
