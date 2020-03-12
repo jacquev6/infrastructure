@@ -16,6 +16,7 @@ resource "docker_network" "fanout" {
 
 resource "docker_image" "nginx" {
   name = "nginx:1.17-alpine"
+
   # It's very weird that changing name does not trigger a new resource.
   # As a result, without pull_triggers, we need to run "infra apply" twice
   # after building a new version of draw_turks_head_demo.
@@ -24,11 +25,10 @@ resource "docker_image" "nginx" {
   # If not, open an issue on https://github.com/terraform-providers/terraform-provider-docker.
   pull_triggers = ["nginx:1.17-alpine"]
 
-  lifecycle {
-    # Avoid deleting the image before downloading the new one,
-    # and thus take advantage of common layers already present
-    create_before_destroy = true
-  }
+  # Too many issues when deleting the image through Terrafom:
+  #  - container stays down longer because next download is slow because common layers have been deleted
+  #  - delete error because the image is still being used by another container
+  keep_locally = true
 }
 
 resource "docker_container" "redirect_http_to_https" {
@@ -90,12 +90,13 @@ resource "docker_container" "fanout" {
 
 
 locals {
-  draw_turks_head_demo_version = "20200312-100913"
+  draw_turks_head_demo_version = "20200312-160319"
 }
 
 resource "docker_image" "draw_turks_head_demo" {
   name = "jacquev6/draw-turks-head-demo:${local.draw_turks_head_demo_version}"
   pull_triggers = [local.draw_turks_head_demo_version]
+  keep_locally = true
 }
 
 resource "docker_container" "draw_turks_head_demo" {
@@ -125,16 +126,13 @@ resource "docker_container" "always_200" {
 
 
 locals {
-  periodical_check_bot_version = "20200312-133736"
+  periodical_check_bot_version = "20200312-161730"
 }
 
 resource "docker_image" "periodical_check_bot" {
   name = "jacquev6/infrastructure-tools:periodical_check_bot-${local.periodical_check_bot_version}"
   pull_triggers = [local.periodical_check_bot_version]
-
-  lifecycle {
-    create_before_destroy = true
-  }
+  keep_locally = true
 }
 
 resource "docker_container" "periodical_check_bot" {
@@ -144,7 +142,8 @@ resource "docker_container" "periodical_check_bot" {
   restart = "always"
   command = ["--delay", "10800", "--period", "10800"]
   env = [
-    "GANDI_SMTP_PASSWORD=${var.gandi_smtp_password}"
+    "GANDI_SMTP_PASSWORD=${var.gandi_smtp_password}",
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",  # Weirdly required to avoid re-creating the container on every "infra apply"
   ]
   upload {
     file = "/root/.ssh/id_rsa"

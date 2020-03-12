@@ -10,6 +10,7 @@ import time
 
 import click
 
+
 @click.command()
 @click.option("--delay", type=int, default=0)
 @click.option("--period", type=int, default=None)
