@@ -125,7 +125,7 @@ resource "docker_container" "always_200" {
 
 
 locals {
-  periodical_check_bot_version = "20200312-121047"
+  periodical_check_bot_version = "20200312-125525"
 }
 
 resource "docker_image" "periodical_check_bot" {
@@ -142,7 +142,7 @@ resource "docker_container" "periodical_check_bot" {
   image = docker_image.periodical_check_bot.latest
   rm = "false"
   restart = "always"
-  command = ["--period", "3600"]
+  command = ["--delay", "10800", "--period", "10800"]
   env = [
     "GANDI_SMTP_PASSWORD=${var.gandi_smtp_password}"
   ]
