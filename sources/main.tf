@@ -91,19 +91,3 @@ module "doorman_containers" {
 
   certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates)
 }
-
-
-provider "docker" {
-  alias = "idee"
-  host = "ssh://jacquev6@idee.home.jacquev6.net"
-}
-
-module "idee_containers" {
-  source = "./resources/idee_containers"
-
-  providers = {
-    docker = docker.idee
-  }
-
-  gandi_smtp_password = var.gandi_smtp_password
-}
