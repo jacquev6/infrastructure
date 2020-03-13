@@ -14,8 +14,13 @@ hosts = [
 
 os.chmod("/root/.ssh/id_rsa", stat.S_IRUSR)
 
+# @todo Evaluate https://python-rq.org/ to put iperf3 tests in the background
+# (Pay attention to server port and bandwith collisions. Only one test should happen at a time)
+# @todo Evaluate Flask
+# @todo Consider making a Vue.js frontend and an API (REST or GraphQL)
+# @todo Consider using WebSockets to keep frontend up-to-date when new iperf3 tests are done
+
 def app(environ, start_response):
-    # @todo Implement :)
     start_response("200 OK", [("Content-type", "text/plain")])
     for server in hosts:
         for client in hosts:
