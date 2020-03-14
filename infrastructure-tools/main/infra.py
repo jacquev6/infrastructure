@@ -46,15 +46,10 @@ def refresh_data_sources():
 
 
 
-@cli.group()
-def raw():
-    pass
-
-
-@raw.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+@cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def terraform(args):
-    delegate_to("terraform", *args, cwd="terraform")
+def raw(args):
+    delegate_to(*args, cwd="terraform")
 
 
 
