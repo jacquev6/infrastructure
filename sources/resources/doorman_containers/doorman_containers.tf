@@ -134,7 +134,7 @@ resource "docker_container" "always_200" {
 
 
 locals {
-  periodical_check_bot_version = "20200312-161730"
+  periodical_check_bot_version = "20200314-150402"
 }
 
 resource "docker_image" "periodical_check_bot" {
@@ -161,7 +161,7 @@ resource "docker_container" "periodical_check_bot" {
 
 
 locals {
-  network_perf_graph_version = "20200312-185605"
+  network_perf_graph_version = "20200314-150354"
 }
 
 resource "docker_image" "network_perf_graph" {
