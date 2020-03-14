@@ -32,7 +32,7 @@ locals {
     local.doorman,
     {
       name = "idee"
-      mac = "1C:6F:65:37:A6:C6"
+      mac = "00:0C:F6:0E:D4:BB"
       ip = "192.168.1.52"
       dns = true
     },
