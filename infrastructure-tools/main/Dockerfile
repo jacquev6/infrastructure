@@ -77,6 +77,7 @@ COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/
 COPY --from=terraform_provider_uptimerobot /terraform-provider-uptimerobot/terraform-provider-uptimerobot /usr/local/bin/
 COPY --from=terraform_provider_multiverse /root/go/bin/terraform-provider-multiverse /usr/local/bin/
 
-WORKDIR /infrastructure/sources
-COPY infra.py /
-COPY terraform-provider-multiverse-freebox.py /
+WORKDIR /infra
+COPY infra.py .
+COPY terraform-provider-multiverse-freebox.py .
+WORKDIR /infra

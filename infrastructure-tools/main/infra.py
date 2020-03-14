@@ -11,38 +11,51 @@ def cli():
     pass
 
 
-@cli.command()
+
+@cli.group()
+def tf():
+    pass
+
+
+@tf.command()
 def init():
-    delegate_to("terraform", "init")
+    delegate_to("terraform", "init", cwd="terraform")
 
 
-@cli.command()
+@tf.command()
 def refresh():
-    delegate_to("terraform", "refresh")
+    delegate_to("terraform", "refresh", cwd="terraform")
 
 
-@cli.command()
+@tf.command()
 def plan():
     refresh_data_sources()
-    delegate_to("terraform", "plan", "-refresh=false")
+    delegate_to("terraform", "plan", "-refresh=false", cwd="terraform")
 
 
-@cli.command()
+@tf.command()
 def apply():
     refresh_data_sources()
-    delegate_to("terraform", "apply", "-refresh=false", "-auto-approve")
+    delegate_to("terraform", "apply", "-refresh=false", "-auto-approve", cwd="terraform")
 
 
 def refresh_data_sources():
-    resources = subprocess.check_output(["terraform", "state", "list"], universal_newlines=True)
+    resources = subprocess.check_output(["terraform", "state", "list"], universal_newlines=True, cwd="terraform")
     targets = [f"-target={resource}" for resource in resources.splitlines() if ".data." in resource]
-    subprocess.run(["terraform", "refresh"] + targets, check=True)
+    subprocess.run(["terraform", "refresh"] + targets, check=True, cwd="terraform")
 
 
-@cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
+
+@cli.group()
+def raw():
+    pass
+
+
+@raw.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def terraform(args):
-    delegate_to("terraform", *args)
+    delegate_to("terraform", *args, cwd="terraform")
+
 
 
 @cli.command()
@@ -52,6 +65,7 @@ def check_certificate(ip, name):
     delegate_to("openssl", "s_client", "-showcerts", "-servername", name, "-connect", ip + ":443", input="")
 
 
+
 @cli.group()
 def freebox():
     pass
@@ -59,13 +73,13 @@ def freebox():
 
 @freebox.command()
 def login():
-    delegate_to("/terraform-provider-multiverse-freebox.py", "login")
+    delegate_to("/infra/terraform-provider-multiverse-freebox.py", "login")
 
 
 @freebox.command()
 @click.argument("path")
 def get(path):
-    delegate_to("/terraform-provider-multiverse-freebox.py", "get", path)
+    delegate_to("/infra/terraform-provider-multiverse-freebox.py", "get", path)
 
 
 def delegate_to(*args, **kwds):
@@ -78,7 +92,7 @@ def delegate_to(*args, **kwds):
 
 
 def stabilize_terraform_state():
-    with open("terraform.tfstate") as f:
+    with open("terraform/terraform.tfstate") as f:
         state = json.load(f)
     # Keep resources sorted
     state["resources"] = sorted(state["resources"], key=lambda r: ".".join([r["module"], r["mode"], r["type"], r["name"]]))
@@ -87,7 +101,7 @@ def stabilize_terraform_state():
         if resource["type"] == "uptimerobot_account":
             for instance in resource["instances"]:
                 instance["attributes"].pop("id", None)
-    with open("terraform.tfstate", "w") as f:
+    with open("terraform/terraform.tfstate", "w") as f:
         json.dump(state, f, sort_keys=True, indent=2)
 
 

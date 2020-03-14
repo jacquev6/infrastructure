@@ -179,7 +179,7 @@ resource "multiverse_custom_resource" "static_dhcp_lease" {
   }
 
   executor = "python3"
-  script = "/terraform-provider-multiverse-freebox.py"
+  script = "/infra/terraform-provider-multiverse-freebox.py"
   id_key = "id"
   data = <<-JSON
     {
@@ -198,7 +198,7 @@ resource "multiverse_custom_resource" "host_naming" {
   }
 
   executor = "python3"
-  script = "/terraform-provider-multiverse-freebox.py"
+  script = "/infra/terraform-provider-multiverse-freebox.py"
   id_key = "id"
   data = <<-JSON
     {
@@ -218,7 +218,7 @@ resource "multiverse_custom_resource" "port_forwarding" {
   }
 
   executor = "python3"
-  script = "/terraform-provider-multiverse-freebox.py"
+  script = "/infra/terraform-provider-multiverse-freebox.py"
   id_key = "id"
   data = <<-JSON
     {
