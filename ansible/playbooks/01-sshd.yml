@@ -1,3 +1,4 @@
+# @todo Investigate Galaxy and consider installing https://github.com/vitalk/ansible-secure-ssh from Galaxy
 - hosts: all
   tasks:
     - name: add vincent@home key to .ssh/authorized_keys
