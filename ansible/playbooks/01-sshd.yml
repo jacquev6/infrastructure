@@ -8,3 +8,29 @@
       authorized_key:
         user: jacquev6
         key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5iVVxOaSrC5vwlnLRDeHaUzIOr7nSBDtvoK8rglbiebubF+P7KK4gCSlPTE3Kr0dfAFgNPW4j2EcDBTN5YWHnfISo8EeSW8gM6lfvvugqz0lFBf1i98Uj2fGAIExalAOdicLgXheUHcS/RAMR2xiZfKnBfcjvhO+E7njr2SN5J8eMQydJWlrk09BDV1Wc15J2p9bsSC+ERZ9LL9jv14msy1mVpL2gH/gL8opHqCl2STzth0TYk8NrUGRUNp57ISquvFPdf7lh7/EL7Zu/d+5VOMg8zlOoipPPnqc33dUhG1S56oZ6k1BJ6G2kirNwxN+N5t+XuesDvhZYfakIHH33 doorman"
+- hosts: all
+  become: yes
+  tasks:
+    - name: disable password authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PasswordAuthentication '
+        line: "PasswordAuthentication no"
+      notify: restart sshd
+    - name: disable root login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitRootLogin '
+        line: "PermitRootLogin no"
+      notify: restart sshd
+    - name: disable empty password login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitEmptyPasswords '
+        line: "PermitEmptyPasswords no"
+      notify: restart sshd
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted

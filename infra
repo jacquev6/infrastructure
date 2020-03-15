@@ -2,7 +2,7 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_VERSION=20200314-182219
+INFRASTRUCTURE_TOOLS_VERSION=20200315-084635
 
 # Clean-up:
 # docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_VERSION | xargs docker image rm
