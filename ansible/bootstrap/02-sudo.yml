@@ -1,0 +1,9 @@
+- hosts: all
+  tasks:
+    - name: ensure password-less sudo (for ansible)
+      lineinfile:
+        path: /etc/sudoers.d/010_jacquev6-nopasswd
+        state: present
+        create: yes
+        line: "jacquev6 ALL=(ALL) NOPASSWD: ALL"
+        mode: 0440

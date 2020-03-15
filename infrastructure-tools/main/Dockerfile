@@ -65,7 +65,9 @@ FROM ubuntu:18.04
 
 RUN set -x \
     && apt-get update \
-    && apt-get install --yes --no-install-recommends python3-pip python3-setuptools ssh git \
+    && apt-get install --yes --no-install-recommends \
+      python3-pip python3-setuptools \
+      ansible \
     && rm -rf /var/lib/apt/lists/*
 RUN pip3 install click==7.0 requests==2.22.0
 
@@ -77,7 +79,7 @@ COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/
 COPY --from=terraform_provider_uptimerobot /terraform-provider-uptimerobot/terraform-provider-uptimerobot /usr/local/bin/
 COPY --from=terraform_provider_multiverse /root/go/bin/terraform-provider-multiverse /usr/local/bin/
 
+COPY known_hosts /root/.ssh/known_hosts
 WORKDIR /infra
 COPY infra.py .
 COPY terraform-provider-multiverse-freebox.py .
-WORKDIR /infra

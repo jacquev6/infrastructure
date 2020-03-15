@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import glob
 import json
 import subprocess
 
@@ -19,24 +20,24 @@ def tf():
 
 @tf.command()
 def init():
-    delegate_to("terraform", "init", cwd="terraform")
+    delegate_to("terraform", "init")
 
 
 @tf.command()
 def refresh():
-    delegate_to("terraform", "refresh", cwd="terraform")
+    delegate_to("terraform", "refresh")
 
 
 @tf.command()
 def plan():
     refresh_data_sources()
-    delegate_to("terraform", "plan", "-refresh=false", cwd="terraform")
+    delegate_to("terraform", "plan", "-refresh=false")
 
 
 @tf.command()
 def apply():
     refresh_data_sources()
-    delegate_to("terraform", "apply", "-refresh=false", "-auto-approve", cwd="terraform")
+    delegate_to("terraform", "apply", "-refresh=false", "-auto-approve")
 
 
 def refresh_data_sources():
@@ -45,11 +46,30 @@ def refresh_data_sources():
     subprocess.run(["terraform", "refresh"] + targets, check=True, cwd="terraform")
 
 
+@cli.group()
+def ansible():
+    pass
+
+
+@ansible.command()
+@click.argument("node")
+def bootstrap(node):
+    playbooks = [
+        playbook[8:]
+        for playbook in sorted(glob.glob("ansible/bootstrap/*.yml"))
+    ]
+    delegate_to(
+        "ansible-playbook",
+        "--limit", node,
+        *playbooks,
+        "--become", "--ask-become-pass",
+    )
+
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def raw(args):
-    delegate_to(*args, cwd="terraform")
+    delegate_to(*args)
 
 
 
@@ -79,6 +99,12 @@ def get(path):
 
 def delegate_to(*args, **kwds):
     assert "check" not in kwds
+    if args[0] == "terraform":
+        kwds["cwd"] = "terraform"
+    elif args[0] == "ansible" or args[0].startswith("ansible-"):
+        args = list(args)
+        args[1:1] = ["--inventory", "inventory.yml"]
+        kwds["cwd"] = "ansible"
     try:
         exit(subprocess.run(args, **kwds).returncode)
     finally:

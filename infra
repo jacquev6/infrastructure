@@ -17,7 +17,8 @@ then
   docker run \
     --rm --name $NAME --detach \
     --mount type=bind,src=$PWD/terraform,dst=/infra/terraform \
-    --mount type=bind,src=$HOME/.ssh,dst=/root/.ssh \
+    --mount type=bind,src=$PWD/ansible,dst=/infra/ansible \
+    --mount type=bind,src=$HOME/.ssh/id_rsa,dst=/root/.ssh/id_rsa,ro \
     jacquev6/infrastructure-tools:main-$INFRASTRUCTURE_TOOLS_VERSION \
     bash -c "tail -f /dev/null" \
   >/dev/null

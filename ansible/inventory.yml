@@ -1,0 +1,6 @@
+all:
+  hosts:
+    doorman.home.jacquev6.net:
+    idee.home.jacquev6.net:
+  vars:
+    ansible_user: jacquev6
