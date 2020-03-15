@@ -77,7 +77,20 @@ def apply():
     delegate_to(
         "ansible-playbook",
         *playbooks,
-        "--become",
+    )
+
+
+@an.command()
+def plan():
+    playbooks = [
+        os.path.join("playbooks", playbook)
+        for playbook in sorted(os.listdir("ansible/playbooks"))
+        if playbook.endswith(".yml")
+    ]
+    delegate_to(
+        "ansible-playbook",
+        *playbooks,
+        "--check", "--diff",
     )
 
 
