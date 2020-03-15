@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import glob
 import json
+import os
 import subprocess
 
 import click
@@ -47,22 +47,37 @@ def refresh_data_sources():
 
 
 @cli.group()
-def ansible():
+def an():
     pass
 
 
-@ansible.command()
+@an.command()
 @click.argument("node")
 def bootstrap(node):
     playbooks = [
-        playbook[8:]
-        for playbook in sorted(glob.glob("ansible/bootstrap/*.yml"))
+        os.path.join("bootstrap", playbook)
+        for playbook in sorted(os.listdir("ansible/bootstrap"))
+        if playbook.endswith(".yml")
     ]
     delegate_to(
         "ansible-playbook",
         "--limit", node,
         *playbooks,
         "--become", "--ask-become-pass",
+    )
+
+
+@an.command()
+def apply():
+    playbooks = [
+        os.path.join("playbooks", playbook)
+        for playbook in sorted(os.listdir("ansible/playbooks"))
+        if playbook.endswith(".yml")
+    ]
+    delegate_to(
+        "ansible-playbook",
+        *playbooks,
+        "--become",
     )
 
 
