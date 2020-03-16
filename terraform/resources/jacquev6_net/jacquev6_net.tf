@@ -115,16 +115,22 @@ locals {
       dns = false
     },
     {
-      name = "media"
-      mac = "B8:27:EB:21:C9:E7"
-      ip = "192.168.1.66"
-      dns = false
-    },
-    {
       name = "eeepc"
       mac = "74:2F:68:2D:EB:F2"
       ip = "192.168.1.67"
       dns = false
+    },
+    {
+      name = "probe-eth"
+      mac = "B8:27:EB:74:9C:B2"
+      ip = "192.168.1.68"
+      dns = false
+    },
+    {
+      name = "probe"
+      mac = "B8:27:EB:21:C9:E7"
+      ip = "192.168.1.69"
+      dns = true
     }
     # @todo Add kindle.claire
     # @todo Add ipad.claire
