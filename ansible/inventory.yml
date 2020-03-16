@@ -1,6 +1,18 @@
 all:
   hosts:
     doorman.home.jacquev6.net:
+      # Raspberry Pi 2
+      # Main entry point from WAN (using port forwarding)
+      # Always on, monitored by Uptime Robot
     idee.home.jacquev6.net:
+      # AMD64 with a big GPU
+      # Used for machine learning
+      # Turned on only when needed
+    probe.home.jacquev6.net:
+      # Raspberry Pi 3 model B
+      # Used for various experiments
+      # Turned on only when needed
+      ansible_user: ansible
+      ansible_ssh_private_key_file: ansible.id_rsa
   vars:
     ansible_user: jacquev6

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import datetime
 import json
 import os
 import subprocess
@@ -52,18 +53,21 @@ def an():
 
 
 @an.command()
-@click.argument("node")
-def bootstrap(node):
+@click.argument("name")
+def bootstrap_pi(name):
     playbooks = [
-        os.path.join("bootstrap", playbook)
-        for playbook in sorted(os.listdir("ansible/bootstrap"))
+        os.path.join("bootstrap-raspbian", playbook)
+        for playbook in sorted(os.listdir("ansible/bootstrap-raspbian"))
+        if playbook.endswith(".yml")
+    ] + [
+        os.path.join("playbooks", playbook)
+        for playbook in sorted(os.listdir("ansible/playbooks"))
         if playbook.endswith(".yml")
     ]
     delegate_to(
         "ansible-playbook",
-        "--limit", node,
+        "--limit", f"{name}.home.jacquev6.net",
         *playbooks,
-        "--become", "--ask-become-pass",
     )
 
 

@@ -67,7 +67,7 @@ RUN set -x \
     && apt-get update \
     && apt-get install --yes --no-install-recommends \
       python3-pip python3-setuptools \
-      ssh \
+      ssh sshpass \
       ansible \
     && rm -rf /var/lib/apt/lists/*
 RUN pip3 install click==7.0 requests==2.22.0

@@ -1,0 +1,48 @@
+# This bootstrap playbook is NOT idempotent.
+# It must be run exactly once on a fresh Raspbian install.
+# See README for the few manual steps required beforehand
+- hosts: all
+  become: yes
+  vars:
+    ansible_user: pi
+    ansible_ssh_pass: raspberry
+  tasks:
+    - name: Add user 'ansible'
+      user:
+        name: ansible
+        append: yes
+        groups:
+          - sudo
+          - users
+        create_home: yes
+        shell: /bin/bash
+        comment: Ansible
+    - name: Add SSH authorized key for user 'ansible'
+      authorized_key:
+        user: ansible
+        exclusive: yes
+        key: "{{ lookup('file', '/infra/ansible/ansible.id_rsa.pub') }}"
+    - name: Enable password-less sudo for user 'ansible'
+      lineinfile:
+        path: /etc/sudoers.d/010_ansible-nopasswd
+        line: 'ansible ALL=(ALL) NOPASSWD: ALL'
+        create: yes
+        mode: 0440
+        validate: visudo -c %s
+- hosts: all
+  become: yes
+  tasks:
+    - name: Kill last processes of user 'pi'
+      command: killall --user pi
+    - name: Remove user 'pi'
+      user:
+        name: pi
+        state: absent
+    - name: Remove sudo configuration for user 'pi'
+      file:
+        path: /etc/sudoers.d/010_pi-nopasswd
+        state: absent
+    - name: Remove home for user 'pi'
+      file:
+        path: /home/pi
+        state: absent
