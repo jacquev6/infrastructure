@@ -26,5 +26,19 @@ all:
       vars:
         ansible_user: ansible
         ansible_ssh_private_key_file: ansible.id_rsa
+    raspbian:
+      hosts:
+        probe.home.jacquev6.net:
+        doorman.home.jacquev6.net:
+      vars:
+        bootstrap_user: pi
+        bootstrap_password: raspberry
+    ubuntu:
+      hosts:
+        eeepc.home.jacquev6.net:
+        idee.home.jacquev6.net:
+      vars:
+        bootstrap_user: user
+        bootstrap_password: password
   vars:
     ansible_python_interpreter: /usr/bin/python3

@@ -53,11 +53,11 @@ def an():
 
 
 @an.command()
-@click.argument("name")
-def bootstrap_raspbian(name):
+@click.argument("names", nargs=-1)
+def bootstrap(names):
     playbooks = [
-        os.path.join("bootstrap-raspbian", playbook)
-        for playbook in sorted(os.listdir("ansible/bootstrap-raspbian"))
+        os.path.join("bootstrap", playbook)
+        for playbook in sorted(os.listdir("ansible/bootstrap"))
         if playbook.endswith(".yml")
     ] + [
         os.path.join("playbooks", playbook)
@@ -66,52 +66,45 @@ def bootstrap_raspbian(name):
     ]
     delegate_to(
         "ansible-playbook",
-        "--limit", f"{name}.home.jacquev6.net",
+        "--limit", ",".join(f"{name}.home.jacquev6.net" for name in names),
         *playbooks,
     )
 
 
 @an.command()
-@click.argument("name")
-def bootstrap_ubuntu(name):
+@click.argument("names", nargs=-1)
+def apply(names):
     playbooks = [
-        os.path.join("bootstrap-ubuntu", playbook)
-        for playbook in sorted(os.listdir("ansible/bootstrap-ubuntu"))
-        if playbook.endswith(".yml")
-    ] + [
         os.path.join("playbooks", playbook)
         for playbook in sorted(os.listdir("ansible/playbooks"))
         if playbook.endswith(".yml")
     ]
+    if names:
+        limit = ("--limit", ",".join(f"{name}.home.jacquev6.net" for name in names))
+    else:
+        limit = ()
     delegate_to(
         "ansible-playbook",
-        "--limit", f"{name}.home.jacquev6.net",
+        *limit,
         *playbooks,
     )
 
 
 @an.command()
-def apply():
+@click.argument("names", nargs=-1)
+def plan(names):
     playbooks = [
         os.path.join("playbooks", playbook)
         for playbook in sorted(os.listdir("ansible/playbooks"))
         if playbook.endswith(".yml")
     ]
+    if names:
+        limit = ("--limit", ",".join(f"{name}.home.jacquev6.net" for name in names))
+    else:
+        limit = ()
     delegate_to(
         "ansible-playbook",
-        *playbooks,
-    )
-
-
-@an.command()
-def plan():
-    playbooks = [
-        os.path.join("playbooks", playbook)
-        for playbook in sorted(os.listdir("ansible/playbooks"))
-        if playbook.endswith(".yml")
-    ]
-    delegate_to(
-        "ansible-playbook",
+        *limit,
         *playbooks,
         "--check", "--diff",
     )
