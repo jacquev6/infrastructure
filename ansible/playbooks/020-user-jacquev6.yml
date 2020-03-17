@@ -1,0 +1,50 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Add user 'jacquev6'
+      user:
+        name: jacquev6
+        create_home: yes
+        shell: /bin/bash
+        comment: Vincent Jacques
+    - name: Add SSH authorized key for user 'jacquev6'
+      authorized_key:
+        user: jacquev6
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDO5LxWssyK3ZqlBkYOPZhZseUlsL7ebp68x9SA/KR91afkW4sFVVcVzmlVDui4Js/YrYlUd14cGZ311oXqKIDT1x09MSfST6fO5+LCJbTTNl0pmZq/i11OsBJSOcmWq2mHBh0YRV/DWnpoJ/+cjOODLn0sTuo8VEM5ryxVsDs315JRKkrUwOsmDDW/Hu9mf6QccnUqLx518h8eSU+NHlaCk+cIfxDySwacIXZSOLSbK4q9nUSbG98T+85IWPUM7r3QwMVYmfLFBtX0DA+AMA6DBZkXW6eFaRujEP6B6mYkW8Q+6oyx6uNX6e6YS5u3nF2emiO+eR88Th42M9LFby+n jacquev6"
+    - name: Enable password-less sudo for user 'jacquev6'
+      lineinfile:
+        path: /etc/sudoers.d/010_jacquev6-nopasswd
+        line: 'jacquev6 ALL=(ALL) NOPASSWD: ALL'
+        create: yes
+        mode: 0440
+        validate: visudo -c -f %s
+
+- hosts: all
+  become: yes
+  tasks:
+    # @todo Make this a loop over inventory
+    - name: Add idee to known_hosts for user 'jacquev6'
+      known_hosts:
+        path: ~jacquev6/.ssh/known_hosts
+        name: idee.home.jacquev6.net
+        key: "idee.home.jacquev6.net ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3iHNygO4RdEkPs3KMKTVyvQz39lS73KvSBUV/Auq2Pu+xwXWXeX/y79GaFsU4iiC4OayS6M8XzjQwtVEI0vLTesHuE7EQaVMKDQxfeDkwJcU9qdMMNqsMmBBHb3mHcKRVtmE6SGXGHCu59zLXgFSsF2enwwB9SXyYJ3uZBfmLkgsCWXwExJyumWqf8iMLr9luRDoe/t8oJPBuE/jkZvjr5ul9Lyr71U5hR3lTQ3KoC9WOpiV6BEltn5YMhySvR3zM0pZ++z6QFJ5yMqU6LVU1g4wq/fDpbf7y5qKeA99dYrx7Uncu8O/+5vMDRTdYEGFjodjClVYSEh4qRq3ZZU8T"
+    - name: Add doorman to known_hosts for user 'jacquev6'
+      known_hosts:
+        path: ~jacquev6/.ssh/known_hosts
+        name: doorman.home.jacquev6.net
+        key: "doorman.home.jacquev6.net ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxCrt0qFhGfoTyUAxU/ryHWkwEMY5YMYka3j/jioW/wZSFMCHhb6+aOdDv6LfDcabZ/OglXufaogIugk0CflWs1vMV078olYY46Dz+FvsX/IRvsrtoqjjLnkipiOLhsiB9EAr1Pv/tDwiC20YvKSF/mYlJaEL1qb2ICBwonNd0uqS3PVgsckr/VrQXdN5/iPYWcrjZkb9LusQ3bKCOfKx7Zu9JxiGyUhM6XfEmPb9HyWOILflTZoeX9tMDsVE2oJ9IqAfEgSCdLhe67fGVGFtqP3ik4eta2eumJM2CqpgZ9w9iP+7TWj+lXOmPO+Cr1EPFTog9TEM4T5k9WmB4FDfZ"
+    - name: Add probe to known_hosts for user 'jacquev6'
+      known_hosts:
+        path: ~jacquev6/.ssh/known_hosts
+        name: probe.home.jacquev6.net
+        key: "probe.home.jacquev6.net,192.168.1.69 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEc0IbUXrMNlN3PVLveLSPJOD3oeAWUA+Tgboe9QQkLyrU4Nrb2GI1uqRqZDLF17K9i1lojR6v1CsP2u2RIIFKg="
+    - name: Add eeepc to known_hosts for user 'jacquev6'
+      known_hosts:
+        path: ~jacquev6/.ssh/known_hosts
+        name: eeepc.home.jacquev6.net
+        key: "eeepc.home.jacquev6.net,192.168.1.67 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMJ+nR/4r1xL12HW+mp9E+FVyqIymRvuNC8MPyDhXBmx1QRdmcxifHX6BYZnAhyRO+/4a+SYYUKm9kWYk/+rxq0="
+    - name: Fix ownership of known_hosts for user 'jacquev6'
+      file:
+        path: ~jacquev6/.ssh/known_hosts
+        owner: jacquev6
+        group: jacquev6

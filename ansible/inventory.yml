@@ -1,6 +1,6 @@
 all:
   children:
-    # @todo (when group "legacy" is empty: remove groups "legacy" and "modern")
+    # @todo (when group "legacy" is empty): remove groups "legacy" and "modern"
     legacy:
       hosts:
         # @todo Install butler, migrate doorman's duties to butler, decommission doorman

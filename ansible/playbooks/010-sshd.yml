@@ -1,0 +1,27 @@
+# @todo Investigate Galaxy and consider installing https://github.com/vitalk/ansible-secure-ssh from Galaxy
+- hosts: all
+  become: yes
+  tasks:
+    - name: Disable password authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PasswordAuthentication '
+        line: "PasswordAuthentication no"
+      notify: restart sshd
+    - name: Disable root login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitRootLogin '
+        line: "PermitRootLogin no"
+      notify: restart sshd
+    - name: Disable empty password login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitEmptyPasswords '
+        line: "PermitEmptyPasswords no"
+      notify: restart sshd
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
