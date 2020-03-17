@@ -17,11 +17,9 @@ all:
       hosts:
         probe.home.jacquev6.net:
           # Raspberry Pi 3 model B
-          # OS: Raspbian
           # Read-only /boot and overlayfs on / (using raspi-config's "Advanced" menu)
         eeepc.home.jacquev6.net:
           # Old eeePC laptop
-          # OS: Ubuntu (minimal)
           # overlayfs on / (using Ubuntu's overlayroot package)
       vars:
         ansible_user: ansible

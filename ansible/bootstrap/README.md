@@ -63,6 +63,11 @@ Next steps are automated using Ansible:
 Ubuntu (minimal) on PC
 ======================
 
+Download network installer from https://ubuntu.com/download/alternative-downloads.
+
+    diskutil umountDisk /dev/diskN
+    sudo dd bs=10m if=ubuntu-19.10-mini.iso of=/dev/rdiskN
+
 Boot on the USB flashdrive, select "Install".
 
 Go through the install process:
