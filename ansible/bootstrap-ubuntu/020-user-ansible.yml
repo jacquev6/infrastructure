@@ -1,12 +1,13 @@
 # This bootstrap playbook's second play removes the user
 # used for its first play. So, it's NOT idempotent.
-# It must be run exactly once on a fresh Raspbian install.
+# It must be run exactly once on a fresh Ubuntu install.
 # See README for the few manual steps required beforehand
 - hosts: all
   become: yes
   vars:
-    ansible_user: pi
-    ansible_ssh_pass: raspberry
+    ansible_user: user
+    ansible_ssh_pass: password
+    ansible_become_password: password
   tasks:
     - name: Add user 'ansible'
       user:
@@ -29,21 +30,17 @@
         line: 'ansible ALL=(ALL) NOPASSWD: ALL'
         create: yes
         mode: 0440
-        validate: visudo -c %s
+        validate: visudo -c -f %s
 - hosts: all
   become: yes
   tasks:
-    - name: Kill last processes of user 'pi'
-      command: killall --user pi
-    - name: Remove user 'pi'
+    - name: Kill last processes of user 'user'
+      command: killall --user user
+    - name: Remove user 'user'
       user:
-        name: pi
+        name: user
         state: absent
-    - name: Remove sudo configuration for user 'pi'
+    - name: Remove home for user 'user'
       file:
-        path: /etc/sudoers.d/010_pi-nopasswd
-        state: absent
-    - name: Remove home for user 'pi'
-      file:
-        path: /home/pi
+        path: /home/user
         state: absent

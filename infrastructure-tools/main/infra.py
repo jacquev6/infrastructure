@@ -54,10 +54,29 @@ def an():
 
 @an.command()
 @click.argument("name")
-def bootstrap_pi(name):
+def bootstrap_raspbian(name):
     playbooks = [
         os.path.join("bootstrap-raspbian", playbook)
         for playbook in sorted(os.listdir("ansible/bootstrap-raspbian"))
+        if playbook.endswith(".yml")
+    ] + [
+        os.path.join("playbooks", playbook)
+        for playbook in sorted(os.listdir("ansible/playbooks"))
+        if playbook.endswith(".yml")
+    ]
+    delegate_to(
+        "ansible-playbook",
+        "--limit", f"{name}.home.jacquev6.net",
+        *playbooks,
+    )
+
+
+@an.command()
+@click.argument("name")
+def bootstrap_ubuntu(name):
+    playbooks = [
+        os.path.join("bootstrap-ubuntu", playbook)
+        for playbook in sorted(os.listdir("ansible/bootstrap-ubuntu"))
         if playbook.endswith(".yml")
     ] + [
         os.path.join("playbooks", playbook)

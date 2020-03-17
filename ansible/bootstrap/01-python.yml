@@ -1,8 +1,0 @@
-- hosts: all
-  tasks:
-    - name: ensure python is installed (for ansible)
-      # @todo Implement using module raw (to be able to run this lpaybook on a fresh machine without python)
-      apt:
-        name: python
-        state: latest
-        install_recommends: no

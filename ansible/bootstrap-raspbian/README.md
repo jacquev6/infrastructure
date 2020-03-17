@@ -54,4 +54,4 @@ If you want to run repeatable experiments from an as freshly installed as possib
 
 Next steps are automated using Ansible:
 
-    ./infra an bootstrap-pi $name
+    ./infra an bootstrap-raspbian $name

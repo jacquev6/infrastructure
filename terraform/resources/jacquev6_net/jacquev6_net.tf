@@ -115,10 +115,16 @@ locals {
       dns = false
     },
     {
+      name = "eeepc-eth"
+      mac = "54:04:A6:29:1F:1B"
+      ip = "192.168.1.66"
+      dns = false
+    },
+    {
       name = "eeepc"
       mac = "74:2F:68:2D:EB:F2"
       ip = "192.168.1.67"
-      dns = false
+      dns = true
     },
     {
       name = "probe-eth"

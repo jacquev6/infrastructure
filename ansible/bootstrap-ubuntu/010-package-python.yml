@@ -1,0 +1,10 @@
+- hosts: all
+  gather_facts: no
+  become: yes
+  vars:
+    ansible_user: user
+    ansible_ssh_pass: password
+    ansible_become_password: password
+  tasks:
+    - name: Add package 'python'
+      raw: apt-get install --yes --no-install-recommends python
