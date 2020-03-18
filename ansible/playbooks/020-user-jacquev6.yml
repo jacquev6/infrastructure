@@ -43,6 +43,11 @@
         path: ~jacquev6/.ssh/known_hosts
         name: eeepc.home.jacquev6.net
         key: "eeepc.home.jacquev6.net,192.168.1.67 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMJ+nR/4r1xL12HW+mp9E+FVyqIymRvuNC8MPyDhXBmx1QRdmcxifHX6BYZnAhyRO+/4a+SYYUKm9kWYk/+rxq0="
+    - name: Add nas2 to known_hosts for user 'jacquev6'
+      known_hosts:
+        path: ~jacquev6/.ssh/known_hosts
+        name: nas2.home.jacquev6.net
+        key: "nas2.home.jacquev6.net,192.168.1.50 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBElrRuUiwpXhin+oBsfVUeLw4yRbvkahJCnZBp19XXa1Oq9ToskAWVr/dpC/RWZ6KqIBXjsRiUX6S8cnCioN2A0="
     - name: Fix ownership of known_hosts for user 'jacquev6'
       file:
         path: ~jacquev6/.ssh/known_hosts
