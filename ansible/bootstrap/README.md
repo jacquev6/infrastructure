@@ -2,20 +2,20 @@ Raspbian on Raspberry Pi
 ========================
 
 Find MAC address(es)
-====================
+--------------------
 
 @todo Describe how to find Raspberry Pi's MAC addresses headless (https://github.com/raspberrypi/noobs/issues/501#issuecomment-394164088)
 Formatting for PINN: `diskutil partitionDisk /dev/diskN 1 MBR MS-DOS PINN 15g`
 @todo Describe how to add them to the Freebox using Terraform.
 
 Download Raspbian
-=================
+-----------------
 
     curl -O http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip
     unzip 2020-02-13-raspbian-buster-lite.zip
 
 Write Raspbian to SD card (on a *macOS* computer)
-=================================================
+-------------------------------------------------
 
 Without the SD card:
 
@@ -35,7 +35,7 @@ Note the index of the newly inserted device (/dev/diskN).
 Eject the SD card.
 
 Boot for the first time and do manual bootstraping
-==================================================
+--------------------------------------------------
 
 Set the new node's name:
 
@@ -57,7 +57,7 @@ If you want to run repeatable experiments from an as freshly installed as possib
 
 Next steps are automated using Ansible:
 
-    ./infra an bootstrap-raspbian $name
+    ./infra an bootstrap $name
 
 
 Ubuntu (minimal) on PC
@@ -92,4 +92,4 @@ If you want to run repeatable experiments from an as freshly installed as possib
 
 Next steps are automated using Ansible:
 
-    ./infra an bootstrap-ubuntu $name
+    ./infra an bootstrap $name
