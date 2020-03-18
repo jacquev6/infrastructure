@@ -18,12 +18,3 @@
         create: yes
         mode: 0440
         validate: visudo -c -f %s
-
-- hosts: all
-  become: yes
-  tasks:
-    # @todo Remove this play once run on all machines
-    - name: Remove known_hosts for user 'jacquev6'
-      file:
-        path: ~jacquev6/.ssh/known_hosts
-        state: absent
