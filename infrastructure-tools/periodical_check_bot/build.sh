@@ -48,7 +48,7 @@ docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
 
 sed -i "" \
   -e "s/^  periodical_check_bot_version = .*/  periodical_check_bot_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
-  ../../sources/resources/doorman_containers/doorman_containers.tf
+  ../../terraform/resources/doorman_containers/doorman_containers.tf
 
 if $RUN
 then
@@ -62,5 +62,8 @@ then
     NAME=$(docker buildx imagetools inspect $NAME | grep -B2 "^  Platform:  linux/arm/v7$" | head -n 1 | cut -b 14-)
   fi
 
-  docker run --rm --name periodical_check_bot --volume $HOME/.ssh/id_rsa:/root/.ssh/id_rsa $NAME
+  docker run --rm --name periodical_check_bot \
+    --volume $HOME/.ssh/id_rsa:/root/.ssh/id_rsa:ro \
+    --volume $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro \
+    $NAME jacquev6 idee.home.jacquev6.net jacquev6@gmail.com --delay 1800
 fi

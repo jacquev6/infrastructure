@@ -134,7 +134,7 @@ resource "docker_container" "always_200" {
 
 
 locals {
-  periodical_check_bot_version = "20200314-150402"
+  periodical_check_bot_version = "20200318-144050"
 }
 
 resource "docker_image" "periodical_check_bot" {
@@ -148,14 +148,27 @@ resource "docker_container" "periodical_check_bot" {
   image = docker_image.periodical_check_bot.latest
   rm = "false"
   restart = "always"
-  command = ["--delay", "10800", "--period", "10800"]
+  command = [
+    "jacquev6", "idee.home.jacquev6.net",
+    "jacquev6@gmail.com",
+    "--delay", "10800", "--period", "10800"
+  ]
   env = [
-    "GANDI_SMTP_PASSWORD=${var.gandi_smtp_password}",
+    "SMTP_HOST=mail.gandi.net",
+    "SMTP_PORT=465",
+    "SMTP_USER=no-reply@vincent-jacques.net",
+    "SMTP_PASSWORD=${var.gandi_smtp_password}",
     "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",  # Weirdly required to avoid re-creating the container on every "infra apply"
   ]
   upload {
     file = "/root/.ssh/id_rsa"
-    content = file("${path.module}/id_rsa")
+    content = file("${path.module}/doorman.id_rsa")
+  }
+  mounts {
+    type = "bind"
+    target = "/etc/ssh/ssh_known_hosts"
+    source = "/etc/ssh/ssh_known_hosts"
+    read_only = true
   }
 }
 
@@ -180,6 +193,6 @@ resource "docker_container" "network_perf_graph" {
   }
   upload {
     file = "/root/.ssh/id_rsa"
-    content = file("${path.module}/id_rsa")
+    content = file("${path.module}/doorman.id_rsa")
   }
 }
