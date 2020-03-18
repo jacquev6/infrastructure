@@ -63,3 +63,7 @@ all:
     gpu:
       children:
         idee:
+    docker:
+      children:
+        idee:
+        doorman:

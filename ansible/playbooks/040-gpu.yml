@@ -1,0 +1,28 @@
+- hosts: gpu
+  become: yes
+  tasks:
+    - name: Install NVidia drivers and utilities
+      apt:
+        name:
+          - nvidia-headless-435
+          - nvidia-utils-435
+        install_recommends: no
+        state: latest
+- hosts: "gpu:&docker"
+  become: yes
+  tasks:
+    - apt_key:
+        url: https://nvidia.github.io/nvidia-container-runtime/gpgkey
+    # Repositories from https://nvidia.github.io/nvidia-container-runtime/ubuntu19.10/nvidia-container-runtime.list
+    - apt_repository:
+        filename: nvidia-container-runtime
+        repo: deb https://nvidia.github.io/libnvidia-container/ubuntu18.04/$(ARCH) /
+    - apt_repository:
+        filename: nvidia-container-runtime
+        repo: deb https://nvidia.github.io/nvidia-container-runtime/ubuntu18.04/$(ARCH) /
+    - name: Install NVidia container runtime
+      apt:
+        name:
+          - nvidia-container-runtime
+        install_recommends: no
+        state: latest

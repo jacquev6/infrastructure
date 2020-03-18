@@ -1,0 +1,13 @@
+- hosts: docker
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: latest
+    - name: Add user 'jacquev6' to group 'docker'
+      user:
+        name: jacquev6
+        groups:
+          - docker
+        append: true
