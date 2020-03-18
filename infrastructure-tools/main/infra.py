@@ -53,61 +53,32 @@ def an():
 
 
 @an.command()
-@click.argument("names", nargs=-1)
-def bootstrap(names):
-    playbooks = [
-        os.path.join("bootstrap", playbook)
-        for playbook in sorted(os.listdir("ansible/bootstrap"))
-        if playbook.endswith(".yml")
-    ] + [
-        os.path.join("playbooks", playbook)
-        for playbook in sorted(os.listdir("ansible/playbooks"))
-        if playbook.endswith(".yml")
-    ]
-    delegate_to(
-        "ansible-playbook",
-        "--limit", ",".join(f"{name}.home.jacquev6.net" for name in names),
-        *playbooks,
-    )
+@click.argument("groups", nargs=-1)
+@click.option("--playbook", "-pb", multiple=True)
+def apply(groups, playbook):
+    ansible_playbook(groups, playbook, ())
 
 
 @an.command()
-@click.argument("names", nargs=-1)
-def apply(names):
-    playbooks = [
-        os.path.join("playbooks", playbook)
-        for playbook in sorted(os.listdir("ansible/playbooks"))
-        if playbook.endswith(".yml")
-    ]
-    if names:
-        limit = ("--limit", ",".join(f"{name}.home.jacquev6.net" for name in names))
-    else:
-        limit = ()
-    delegate_to(
-        "ansible-playbook",
-        *limit,
-        *playbooks,
-    )
+@click.argument("groups", nargs=-1)
+@click.option("--playbook", "-pb", multiple=True)
+def plan(groups, playbook):
+    ansible_playbook(groups, playbook, ("--check", "--diff"))
 
 
-@an.command()
-@click.argument("names", nargs=-1)
-def plan(names):
-    playbooks = [
-        os.path.join("playbooks", playbook)
-        for playbook in sorted(os.listdir("ansible/playbooks"))
-        if playbook.endswith(".yml")
-    ]
-    if names:
-        limit = ("--limit", ",".join(f"{name}.home.jacquev6.net" for name in names))
-    else:
-        limit = ()
-    delegate_to(
-        "ansible-playbook",
-        *limit,
-        *playbooks,
-        "--check", "--diff",
-    )
+def ansible_playbook(groups, playbook_dirs, options):
+    command = ["ansible-playbook"] + list(options)
+    if groups:
+        command += ["--limit", ",".join(groups)]
+    if not playbook_dirs:
+        playbook_dirs = ["playbooks"]
+    for playbook_dir in playbook_dirs:
+        command += [
+            os.path.join(playbook_dir, playbook)
+            for playbook in sorted(os.listdir(f"ansible/{playbook_dir}"))
+            if playbook.endswith(".yml")
+        ]
+    delegate_to(*command)
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True, help_option_names=[]))

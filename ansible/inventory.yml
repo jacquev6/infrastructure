@@ -1,41 +1,65 @@
 all:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: ansible
+    ansible_ssh_private_key_file: ansible.id_rsa
+
   children:
-    # @todo (when group "legacy" is empty): remove groups "legacy" and "modern"
-    legacy:
+
+    # Groups with one machines used as convenient short aliases
+    doorman:
       hosts:
         # @todo Install butler, migrate doorman's duties to butler, decommission doorman
         doorman.home.jacquev6.net:
           # Headless Raspberry Pi 2
           # Main entry point from WAN (using port forwarding)
           # Always on, monitored by Uptime Robot
-      vars:
-        ansible_user: jacquev6
-    modern:
+    idee:
       hosts:
         idee.home.jacquev6.net:
           # Headless AMD64 with a big GPU
+    probe:
+      hosts:
         probe.home.jacquev6.net:
           # Raspberry Pi 3 model B
           # Read-only /boot and overlayfs on / (using raspi-config's "Advanced" menu)
+    eeepc:
+      hosts:
         eeepc.home.jacquev6.net:
           # Old eeePC laptop
           # overlayfs on / (using Ubuntu's overlayroot package)
+
+    # Temporary groups used during transition to Ansible
+    # @todo (when group "legacy" is empty): remove groups "legacy" and "modern"
+    legacy:
+      children:
+        doorman:
+          hosts:
       vars:
-        ansible_user: ansible
-        ansible_ssh_private_key_file: ansible.id_rsa
+        ansible_user: jacquev6
+        ansible_ssh_private_key_file: null
+    modern:
+      children:
+        idee:
+        eeepc:
+        probe:
+
+    # Groups used as tags to decide which machines get which playbooks
+    # @todo Read more about Ansible (anti-)patterns. Could/should we use facts discovery instead?
     raspbian:
-      hosts:
-        probe.home.jacquev6.net:
-        doorman.home.jacquev6.net:
+      children:
+        probe:
+        doorman:
       vars:
         bootstrap_user: pi
         bootstrap_password: raspberry
     ubuntu:
-      hosts:
-        eeepc.home.jacquev6.net:
-        idee.home.jacquev6.net:
+      children:
+        eeepc:
+        idee:
       vars:
         bootstrap_user: user
         bootstrap_password: password
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
+    gpu:
+      children:
+        idee:
