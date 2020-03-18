@@ -160,6 +160,8 @@ class StaticDhcpLease(StandardResource):
 
 
 class PortForwarding(StandardResource):
+    # @todo Handle reboots of Freebox: ids are reset to 1, 2, 3...
+
     def __init__(self, freebox):
         super().__init__(freebox, "fw/redir")
 
@@ -187,6 +189,8 @@ class PortForwarding(StandardResource):
 
 
 class HostNaming:
+    # @todo Handle update of MAC address: this changes the ID
+
     def __init__(self, freebox):
         self.__freebox = freebox
 
