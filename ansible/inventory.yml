@@ -8,13 +8,12 @@ all:
           # Headless Raspberry Pi 2
           # Main entry point from WAN (using port forwarding)
           # Always on, monitored by Uptime Robot
-        # @todo Migrate idee to group "modern"
-        idee.home.jacquev6.net:
-          # Headless AMD64 with a big GPU
       vars:
         ansible_user: jacquev6
     modern:
       hosts:
+        idee.home.jacquev6.net:
+          # Headless AMD64 with a big GPU
         probe.home.jacquev6.net:
           # Raspberry Pi 3 model B
           # Read-only /boot and overlayfs on / (using raspi-config's "Advanced" menu)
