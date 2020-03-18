@@ -1,0 +1,9 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+    - name: Mark automatic packages
+      command: apt-mark minimize-manual --yes
