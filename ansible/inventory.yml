@@ -73,5 +73,6 @@ all:
         idee:
     docker:
       children:
+        butler:
         idee:
         doorman:
