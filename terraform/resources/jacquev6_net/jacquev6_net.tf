@@ -137,6 +137,20 @@ locals {
       mac = "B8:27:EB:21:C9:E7"
       ip = "192.168.1.69"
       dns = true
+    },
+    {
+      name = "butler"
+      mac = "DC:A6:32:6F:D6:94"
+      # WiFi MAC address is DC:A6:32:6F:D6:95
+      ip = "192.168.1.70"
+      dns = true
+    },
+    {
+      name = "media"
+      mac = "DC:A6:32:6F:D6:80"
+      # Ethernet MAC address is DC:A6:32:6F:D6:7F
+      ip = "192.168.1.71"
+      dns = true
     }
     # @todo Add kindle.claire
     # @todo Add ipad.claire

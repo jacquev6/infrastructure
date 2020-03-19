@@ -29,7 +29,7 @@ Note the index of the newly inserted device (/dev/diskN).
 
     diskutil umountDisk /dev/diskN
     sudo dd bs=10m if=2020-02-13-raspbian-buster-lite.img of=/dev/rdiskN
-    cp ansible/bootstrap-debian/add-to-raspbian-boot/* /Volumes/boot
+    cp ansible/bootstrap/add-to-raspbian-boot/* /Volumes/boot
     diskutil umountDisk /dev/diskN
 
 Eject the SD card.
@@ -46,6 +46,7 @@ Set the new node's name:
 Boot the Pi with the SD card. Then:
 
     ssh pi@$name.home.jacquev6.net sudo raspi-config --expand-rootfs
+    ssh pi@$name.home.jacquev6.net sudo reboot now
     ssh pi@$name.home.jacquev6.net sudo raspi-config nonint do_hostname $name
     ssh pi@$name.home.jacquev6.net sudo reboot now
 
@@ -57,7 +58,7 @@ If you want to run repeatable experiments from an as freshly installed as possib
 
 Next steps are automated using Ansible:
 
-    ./infra an bootstrap $name
+    ./infra an apply -pb bootstrap $name
 
 
 Ubuntu (minimal) on PC
