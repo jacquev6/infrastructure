@@ -22,6 +22,13 @@ locals {
     ip = "192.168.1.51"
     dns = true
   }
+  butler = {
+    name = "butler"
+    mac = "DC:A6:32:6F:D6:94"
+    # WiFi MAC address is DC:A6:32:6F:D6:95
+    ip = "192.168.1.70"
+    dns = true
+  }
   home_machines = [
     {
       name = "nas2"
@@ -138,13 +145,7 @@ locals {
       ip = "192.168.1.69"
       dns = true
     },
-    {
-      name = "butler"
-      mac = "DC:A6:32:6F:D6:94"
-      # WiFi MAC address is DC:A6:32:6F:D6:95
-      ip = "192.168.1.70"
-      dns = true
-    },
+    local.butler,
     {
       name = "media"
       mac = "DC:A6:32:6F:D6:80"
@@ -238,9 +239,18 @@ resource "multiverse_custom_resource" "host_naming" {
 
 resource "multiverse_custom_resource" "port_forwarding" {
   for_each = {
-    ssh = 22
-    http = 80
-    https = 443
+    ssh = {
+      port = 22
+      machine = local.butler
+    }
+    http = {
+      port = 80
+      machine = local.butler
+    }
+    https = {
+      port = 443
+      machine = local.butler
+    }
   }
 
   executor = "python3"
@@ -249,8 +259,8 @@ resource "multiverse_custom_resource" "port_forwarding" {
   data = <<-JSON
     {
       "kind": "port_forwarding",
-      "port": ${each.value},
-      "ip": "${local.doorman.ip}"
+      "port": ${each.value.port},
+      "ip": "${each.value.machine.ip}"
     }
   JSON
 }
