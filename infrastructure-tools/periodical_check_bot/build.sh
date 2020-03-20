@@ -48,13 +48,13 @@ docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
 
 sed -i "" \
   -e "s/^  periodical_check_bot_version = .*/  periodical_check_bot_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
-  ../../terraform/resources/doorman_containers/doorman_containers.tf
+  ../../terraform/resources/butler_containers/butler_containers.tf
 
 if $RUN
 then
-  echo "----------------------------------------------------"
-  echo "Runing $NAME"
-  echo "----------------------------------------------------"
+  echo "-----------------------------------------------------"
+  echo "Running $NAME"
+  echo "-----------------------------------------------------"
 
 
   if ! [ -z $BUILDX ]

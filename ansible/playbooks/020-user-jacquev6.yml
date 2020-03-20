@@ -18,6 +18,7 @@
         create: yes
         mode: 0440
         validate: visudo -c -f %s
+    # @todo Remove this key
     - name: Add SSH authorized key to maskarade 'doorman' as 'jacquev6'
       authorized_key:
         user: jacquev6
