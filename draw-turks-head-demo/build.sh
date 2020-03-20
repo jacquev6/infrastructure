@@ -48,7 +48,7 @@ docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
 
 sed -i "" \
   -e "s/^  draw_turks_head_demo_version = .*/  draw_turks_head_demo_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
-  ../sources/resources/doorman_containers/doorman_containers.tf
+  ../sources/resources/butler_containers/butler_containers.tf
 
 if $RUN
 then
