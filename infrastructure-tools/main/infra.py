@@ -107,9 +107,17 @@ def login():
 
 
 @freebox.command()
+def logs():
+    with open("/terraform-provider-multiverse-freebox.log") as f:
+        for line in f:
+            print(line.rstrip())
+
+
+@freebox.command()
 @click.argument("path")
 def get(path):
     delegate_to("/infra/terraform-provider-multiverse-freebox.py", "get", path)
+
 
 
 def delegate_to(*args, **kwds):

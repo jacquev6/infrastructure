@@ -9,7 +9,7 @@ all:
     # Groups with one machines used as convenient short aliases
     doorman:
       hosts:
-        # @todo Install butler, migrate doorman's duties to butler, decommission doorman
+        # @todo Decommission doorman
         doorman.home.jacquev6.net:
           # Headless Raspberry Pi 2
           # Main entry point from WAN (using port forwarding)
@@ -20,6 +20,14 @@ all:
           # Headless Raspberry Pi 4 with 4GB of RAM
           # Main entry point from WAN (using port forwarding)
           # Always on, monitored by Uptime Robot
+    media:
+      hosts:
+        media.home.jacquev6.net:
+          # Raspberry Pi 4 with 4GB of RAM
+          # Used as a media center
+          # Several operating systems on several SD cards (Raspbian, LibreElec, RecalBox, etc.)
+          # Headless when running Raspbian
+          # Only the Raspbian OS is managed by Ansible
     idee:
       hosts:
         idee.home.jacquev6.net:
@@ -56,6 +64,7 @@ all:
     raspbian:
       children:
         butler:
+        media:
         probe:
         doorman:
       vars:
@@ -74,5 +83,6 @@ all:
     docker:
       children:
         butler:
+        media:
         idee:
         doorman:
