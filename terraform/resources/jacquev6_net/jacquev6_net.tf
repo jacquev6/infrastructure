@@ -16,12 +16,6 @@ variable "home_ip" {
 
 
 locals {
-  doorman = {
-    name = "doorman"
-    mac = "B8:27:EB:39:27:DF"
-    ip = "192.168.1.51"
-    dns = true
-  }
   butler = {
     name = "butler"
     mac = "DC:A6:32:6F:D6:94"
@@ -36,7 +30,6 @@ locals {
       ip = "192.168.1.50"
       dns = true
     },
-    local.doorman,
     {
       name = "idee"
       mac = "00:0C:F6:0E:D4:BB"
@@ -182,7 +175,7 @@ module "dns" {
       {
         type = "A"
         name = "infra"
-        values = [local.doorman.ip]
+        values = [local.butler.ip]
       },
       {
         type = "CNAME"

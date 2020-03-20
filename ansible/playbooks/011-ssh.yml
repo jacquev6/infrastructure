@@ -7,11 +7,13 @@
         path: /etc/ssh/ssh_known_hosts
         name: idee.home.jacquev6.net
         key: "idee.home.jacquev6.net,192.168.1.52 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN2pOBLyTwBBUtIR3mxNwo94vbvAmBmSGWPLvmk7wNTWWquhWLmSkhMGUBpgG2Hlos079qjaHDc7nCuQUW0WnhA="
-    - name: Add doorman to known_hosts
+    # @todo Remove this task when it's applied on group 'persisted'
+    - name: Remove doorman from known_hosts
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
         name: doorman.home.jacquev6.net
         key: "doorman.home.jacquev6.net,192.168.1.51 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBONA/+RKU5Ax101KoQCELPJT/fT9zuA/g4j+ArlieitJO06l68PWqS6GIS8uoM7cCnSeX8ot+Oq97W0aO+20Oyo="
+        state: absent
     - name: Add probe to known_hosts
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
