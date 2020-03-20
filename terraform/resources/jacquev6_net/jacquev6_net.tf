@@ -191,6 +191,8 @@ module "dns" {
   )
 }
 
+# @todo Add and monitor www. (for http and https, cf ../vincent_jacques_net)
+
 
 resource "multiverse_custom_resource" "static_dhcp_lease" {
   for_each = {

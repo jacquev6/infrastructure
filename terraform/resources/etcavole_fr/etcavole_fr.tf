@@ -10,6 +10,7 @@ module "dns" {
   a_at_ips = var.github_pages_ips
 }
 
+# @todo Add and monitor www. (for http and https, cf ../vincent_jacques_net)
 
 data "uptimerobot_account" "account" {}
 

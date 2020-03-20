@@ -6,6 +6,10 @@ import urlparse
 import cairo
 import DrawTurksHead
 
+# @todo Provide a disovery API describing the parameters (name, description (localized), value range, suggested values)
+# @todo Pre-compute and cache images for all combinations of suggested parameter values
+# @todo (In https://jacquev6.github.io/DrawTurksHead/demo.html) Use the discovery API to populate the dropboxes.
+
 # A bare WSGI app, because it's a very simple use-case, but we should
 # use Flask or Django if it get any more complex.
 def app(environ, start_response):
