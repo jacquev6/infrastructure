@@ -1,34 +1,31 @@
 from __future__ import print_function
 
 import StringIO
-import urlparse
 
 import cairo
 import DrawTurksHead
+import flask
 
 # @todo Provide a disovery API describing the parameters (name, description (localized), value range, suggested values)
 # @todo Pre-compute and cache images for all combinations of suggested parameter values
 # @todo (In https://jacquev6.github.io/DrawTurksHead/demo.html) Use the discovery API to populate the dropboxes.
 
-# A bare WSGI app, because it's a very simple use-case, but we should
-# use Flask or Django if it get any more complex.
-def app(environ, start_response):
-    # We should use python.2.7.16's max_num_fields parameter (not yet available even in Alpine 3.9)
-    qs = urlparse.parse_qs(environ.get("QUERY_STRING", ""))
+app = flask.Flask(__name__)
 
+
+@app.route("/")
+def index():
     def get(name, convert, default, validate=lambda x: True):
-        v = qs.get(name)
+        v = flask.request.args.get(name)
         if v:
             # We don't want 500s or even 400s, we prefer to silently ignore invalid parameters
             try:
-                v = convert(v[0])
+                v = convert(v)
             except Exception:
-                print("Parameter", name, ": unable to convert", v[0], "to", convert)
                 return default
             if validate(v):
                 return v
             else:
-                print("Parameter", name, ": invalid value", v)
                 return default
         else:
             return default
@@ -52,5 +49,4 @@ def app(environ, start_response):
     output = StringIO.StringIO()
     img.write_to_png(output)
 
-    start_response('200 OK', [('Content-type', 'image/png')])
-    return [output.getvalue()]
+    return flask.Response(output.getvalue(), mimetype='image/png')

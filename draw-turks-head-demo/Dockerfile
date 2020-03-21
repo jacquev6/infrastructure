@@ -3,7 +3,7 @@ FROM alpine:3.8 AS builder
 RUN apk add boost-dev python2-dev cairomm-dev g++ pkgconf-dev py2-pip
 # Freeze pycairo to the last version supporting Python 2
 RUN pip install pycairo==1.18.2
-RUN pip install DrawTurksHead==0.3.5 gunicorn==19.9.0
+RUN pip install DrawTurksHead gunicorn flask
 
 # Make a list of files actually required.
 # This is in the same spirit as https://github.com/GoogleContainerTools/distroless

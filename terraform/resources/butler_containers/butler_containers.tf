@@ -98,7 +98,7 @@ resource "docker_container" "fanout" {
 
 
 locals {
-  draw_turks_head_demo_version = "20200312-160319"
+  draw_turks_head_demo_version = "20200321-072601"
 }
 
 resource "docker_image" "draw_turks_head_demo" {
