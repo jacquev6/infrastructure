@@ -32,7 +32,7 @@ resource "docker_image" "nginx" {
 }
 
 resource "docker_container" "redirect_http_to_https" {
-  name  = "redirect_http_to_https"
+  name = "redirect_http_to_https"
   image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
@@ -47,7 +47,7 @@ resource "docker_container" "redirect_http_to_https" {
 }
 
 resource "docker_container" "fanout" {
-  name  = "fanout"
+  name = "fanout"
   image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
@@ -108,7 +108,7 @@ resource "docker_image" "draw_turks_head_demo" {
 }
 
 resource "docker_container" "draw_turks_head_demo" {
-  name  = "draw_turks_head_demo"
+  name = "draw_turks_head_demo"
   image = docker_image.draw_turks_head_demo.latest
   rm = "false"
   restart = "always"
@@ -119,7 +119,7 @@ resource "docker_container" "draw_turks_head_demo" {
 }
 
 resource "docker_container" "always_200" {
-  name  = "always_200"
+  name = "always_200"
   image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
@@ -144,7 +144,7 @@ resource "docker_image" "periodical_check_bot" {
 }
 
 resource "docker_container" "periodical_check_bot" {
-  name  = "periodical_check_bot"
+  name = "periodical_check_bot"
   image = docker_image.periodical_check_bot.latest
   rm = "false"
   restart = "always"
