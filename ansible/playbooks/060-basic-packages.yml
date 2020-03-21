@@ -1,0 +1,14 @@
+- hosts: idee
+  become: yes
+  tasks:
+    - name: Install Python3 utils
+      apt:
+        name:
+          - python3-virtualenv
+          - python3-pip
+        state: latest
+    - name: Install ffmpeg
+      apt:
+        name:
+          - ffmpeg
+        state: latest

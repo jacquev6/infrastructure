@@ -66,18 +66,21 @@ def plan(groups, playbook):
     ansible_playbook(groups, playbook, ("--check", "--diff"))
 
 
-def ansible_playbook(groups, playbook_dirs, options):
+def ansible_playbook(groups, playbook_names, options):
     command = ["ansible-playbook"] + list(options)
     if groups:
         command += ["--limit", ",".join(groups)]
-    if not playbook_dirs:
-        playbook_dirs = ["playbooks"]
-    for playbook_dir in playbook_dirs:
-        command += [
-            os.path.join(playbook_dir, playbook)
-            for playbook in sorted(os.listdir(f"ansible/{playbook_dir}"))
-            if playbook.endswith(".yml")
-        ]
+    if not playbook_names:
+        playbook_names = ["playbook_names"]
+    for playbook_name in playbook_names:
+        if "/" in playbook_name:
+            command.append(playbook_name)
+        else:
+            command += [
+                os.path.join(playbook_name, playbook)
+                for playbook in sorted(os.listdir(f"ansible/{playbook_name}"))
+                if playbook.endswith(".yml")
+            ]
     delegate_to(*command)
 
 
