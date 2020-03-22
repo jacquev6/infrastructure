@@ -29,7 +29,7 @@ Note the index of the newly inserted device (/dev/diskN).
 
     diskutil umountDisk /dev/diskN
     sudo dd bs=10m if=2020-02-13-raspbian-buster-lite.img of=/dev/rdiskN
-    cp ansible/bootstrap/add-to-raspbian-boot/* /Volumes/boot
+    cp $(find ansible/bootstrap/add-to-raspbian-boot -type f -not -name "*.tmpl") /Volumes/boot
     diskutil umountDisk /dev/diskN
 
 Eject the SD card.
