@@ -36,7 +36,7 @@ do
 done
 
 VERSION=$(date "+%Y%m%d-%H%M%S")
-NAME=jacquev6/infrastructure-tools:periodical_check_bot-$VERSION
+NAME=registry.jacquev6.net/periodical_check_bot:$VERSION
 
 echo "---------------------------------------------------------------------------"
 echo "Building $NAME"

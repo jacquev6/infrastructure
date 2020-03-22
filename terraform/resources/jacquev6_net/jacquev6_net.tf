@@ -172,9 +172,17 @@ module "dns" {
         name = "home"
         values = [var.home_ip]
       },
+      # @todo Forbid access to "infra" and "registry" from outside
+      # (Currently, hitting home_ip with an https request with header
+      # "Host: infra" does access the website)
       {
         type = "A"
         name = "infra"
+        values = [local.butler.ip]
+      },
+      {
+        type = "A"
+        name = "registry"
         values = [local.butler.ip]
       },
       {
@@ -261,10 +269,11 @@ resource "multiverse_custom_resource" "port_forwarding" {
 }
 
 
+# @todo Deduplicate uptimerobot_account and uptimerobot_alert_contact
 data "uptimerobot_account" "account" {}
 
 data "uptimerobot_alert_contact" "default" {
-  friendly_name = "${data.uptimerobot_account.account.email}"
+  friendly_name = data.uptimerobot_account.account.email
 }
 
 resource "uptimerobot_monitor" "http_jacquev6_net" {
@@ -320,9 +329,18 @@ module "infra_jacquev6_net_certificate" {
   domain_name = "infra.jacquev6.net"
 }
 
+module "registry_jacquev6_net_certificate" {
+  source = "../../modules/acme_certificate_using_gandi"
+
+  acme_account_key = var.acme_account_key
+  gandi_api_key = var.gandi_api_key
+  domain_name = "registry.jacquev6.net"
+}
+
 output "certificates" {
   value = {
     "home.jacquev6.net" = module.home_jacquev6_net_certificate.certificate
     "infra.jacquev6.net" = module.infra_jacquev6_net_certificate.certificate
+    "registry.jacquev6.net" = module.registry_jacquev6_net_certificate.certificate
   }
 }

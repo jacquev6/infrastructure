@@ -36,7 +36,7 @@ do
 done
 
 VERSION=$(date "+%Y%m%d-%H%M%S")
-NAME=jacquev6/infrastructure-tools:ubuntu_shell-$VERSION
+NAME=registry.jacquev6.net/ubuntu_shell:$VERSION
 
 echo "---------------------------------------------------------------------------"
 echo "Building $NAME"

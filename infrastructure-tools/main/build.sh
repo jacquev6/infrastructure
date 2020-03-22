@@ -25,26 +25,27 @@ do
 done
 
 VERSION=$(date "+%Y%m%d-%H%M%S")
+NAME=jacquev6/infrastructure-tools:$VERSION
 
 echo "-----------------------------------------------------------"
-echo "Building jacquev6/infrastructure-tools:main-$VERSION"
+echo "Building $NAME"
 echo "-----------------------------------------------------------"
 
-docker build $NO_CACHE --tag jacquev6/infrastructure-tools:main-$VERSION --build-arg version=$VERSION .
+docker build $NO_CACHE --tag $NAME --build-arg version=$VERSION .
 
 # Tag intermediate images to avoid losing them on "docker image prune"
 for ID in $(docker image ls --filter label=infrastructure-tools-builder-version=$VERSION --quiet)
 do
   docker tag \
     $(docker inspect $(docker inspect $ID --format "{{.Parent}}") --format "{{.Parent}}") \
-    infrastructure-tools-builder:main-$VERSION-$(docker inspect $ID --format "{{json .Config.Labels}}" | jq -r '.["infrastructure-tools-builder-stage"]')
+    infrastructure-tools-builder:$VERSION-$(docker inspect $ID --format "{{json .Config.Labels}}" | jq -r '.["infrastructure-tools-builder-stage"]')
 
   docker image rm $ID
 done
 
 if $PUSH
 then
-  docker push jacquev6/infrastructure-tools:main-$VERSION
+  docker push $NAME
 fi
 
 sed -i "" \

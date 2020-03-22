@@ -1,0 +1,15 @@
+- hosts: butler
+  become: yes
+  tasks:
+    - name: Add nas2 credentials
+      copy:
+        src: nas2.secret.credentials
+        dest: /etc/nas2_credentials
+        mode: u=r,g=,o=
+    - name: Mount nas2/vincent
+      mount:
+        path: /media/nas2
+        src: //nas2.home.jacquev6.net/vincent
+        fstype: cifs
+        opts: credentials=/etc/nas2_credentials,vers=2.0
+        state: mounted

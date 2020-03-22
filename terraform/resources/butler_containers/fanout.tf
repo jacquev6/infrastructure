@@ -52,6 +52,14 @@ resource "docker_container" "fanout" {
     content = var.certificates["infra.jacquev6.net"].key
   }
   upload {
+    file = "/etc/nginx/registry.jacquev6.net.crt"
+    content = var.certificates["registry.jacquev6.net"].crt
+  }
+  upload {
+    file = "/etc/nginx/registry.jacquev6.net.key"
+    content = var.certificates["registry.jacquev6.net"].key
+  }
+  upload {
     file = "/etc/nginx/www.vincent-jacques.net.crt"
     content = var.certificates["www.vincent-jacques.net"].crt
   }

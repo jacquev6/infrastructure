@@ -2,13 +2,13 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_VERSION=20200317-191641
+INFRASTRUCTURE_TOOLS_VERSION=20200322-102241
 
 # Clean-up:
 # docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_VERSION | xargs docker image rm
 # docker image ls infrastructure-tools-builder --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_VERSION | xargs docker image rm
 
-NAME=infrastructure-tools-main-$INFRASTRUCTURE_TOOLS_VERSION
+NAME=infrastructure-tools-$INFRASTRUCTURE_TOOLS_VERSION
 
 if [ -z $(docker ps --quiet --filter name=$NAME) ]
 then
@@ -22,7 +22,7 @@ then
     --mount type=bind,src=$HOME/.ssh/known_hosts,dst=/root/.ssh/known_hosts,ro \
     --mount type=bind,src=$PWD/infrastructure-tools/main/infra.py,dst=/infra/infra.py,ro \
     --mount type=bind,src=$PWD/infrastructure-tools/main/terraform-provider-multiverse-freebox.py,dst=/infra/terraform-provider-multiverse-freebox.py,ro \
-    jacquev6/infrastructure-tools:main-$INFRASTRUCTURE_TOOLS_VERSION \
+    jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_VERSION \
     bash -c "tail -f /dev/null" \
   >/dev/null
 fi

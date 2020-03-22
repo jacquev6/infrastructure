@@ -1,9 +1,9 @@
 locals {
-  ubuntu_shell_version = "20200321-155158"
+  ubuntu_shell_version = "20200322-102346"
 }
 
 resource "docker_image" "ubuntu_shell" {
-  name = "jacquev6/infrastructure-tools:ubuntu_shell-${local.ubuntu_shell_version}"
+  name = "registry.jacquev6.net/ubuntu_shell:${local.ubuntu_shell_version}"
   pull_triggers = [local.ubuntu_shell_version]
   keep_locally = true
 }
