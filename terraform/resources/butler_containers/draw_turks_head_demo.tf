@@ -1,5 +1,5 @@
 locals {
-  draw_turks_head_demo_version = "20200321-072601"
+  draw_turks_head_demo_version = "20200322-152746"
 }
 
 resource "docker_image" "draw_turks_head_demo" {

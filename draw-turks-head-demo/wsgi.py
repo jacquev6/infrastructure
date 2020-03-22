@@ -1,42 +1,66 @@
 from __future__ import print_function
 
+import json
 import StringIO
 
 import cairo
 import DrawTurksHead
 import flask
 
-# @todo Provide a disovery API describing the parameters (name, description (localized), value range, suggested values)
+
 # @todo Pre-compute and cache images for all combinations of suggested parameter values
-# @todo (In https://jacquev6.github.io/DrawTurksHead/demo.html) Use the discovery API to populate the dropboxes.
 
 app = flask.Flask(__name__)
 
 
+class Parameter:
+    def __init__(self, name, description, min_value, default_value, max_value, suggested_values):
+        self.name = name
+        self.description = description
+        self.min_value = min_value
+        self.default_value = default_value
+        self.max_value = max_value
+        self.suggested_values = sorted(set(suggested_values) | set([default_value]))
+
+
+parameters = [
+    Parameter("leads", "Number of leads", 1, 3, 32, list(range(1, 11))),
+    Parameter("bights", "Number of bights", 1, 4, 32, list(range(1, 11))),
+    Parameter("line_width", "Line width (pixels)", 1, 25, 500, [12, 18, 25, 35, 50, 70]),
+    Parameter("inner_radius", "Inner radius (pixels)", 20, 50, 800, [50, 75, 100, 150]),
+    Parameter("width", "Width (pixels)", 1, 640, 2000, []),
+    Parameter("height", "Height (pixels)", 1, 480, 2000, []),
+    Parameter("margin", "Margin (pixels)", 0, 10, 1000, []),
+]
+
+
 @app.route("/")
 def index():
-    def get(name, convert, default, validate=lambda x: True):
-        v = flask.request.args.get(name)
-        if v:
-            # We don't want 500s or even 400s, we prefer to silently ignore invalid parameters
-            try:
-                v = convert(v)
-            except Exception:
-                return default
-            if validate(v):
-                return v
-            else:
-                return default
-        else:
-            return default
+    params = {parameter.name: parameter for parameter in parameters}
 
-    leads = get("leads", int, 3, lambda x: 1 <= x <= 32)
-    bights = get("bights", int, 4, lambda x: 1 <= x <= 32)
-    width = get("width", int, 640, lambda x: 1 <= x <= 2000)
-    height = get("height", int, 480, lambda x: 1 <= x <= 2000)
-    margin = get("margin", int, 10, lambda x: 0 <= x <= 1000)
-    line_width = get("line_width", int, 25, lambda x: 1 <= x <= 500)
-    inner_radius = get("inner_radius", int, 50, lambda x: 20 <= x <= 800)
+    def get(name):
+        parameter = params[name]
+        value = flask.request.args.get(name)
+
+        # Silently ignore invalid parameters
+        try:
+            value = int(value)
+        except (ValueError, TypeError):
+            pass
+        else:
+            if parameter.min_value <= value <= parameter.max_value:
+                return value
+
+        return parameter.default_value
+
+    leads = get("leads")
+    bights = get("bights")
+    width = get("width")
+    height = get("height")
+    margin = get("margin")
+    line_width = get("line_width")
+    inner_radius = get("inner_radius")
+
     outer_radius = min(width, height) / 2 - margin
 
     img = cairo.ImageSurface(cairo.FORMAT_RGB24, width, height)
@@ -49,4 +73,26 @@ def index():
     output = StringIO.StringIO()
     img.write_to_png(output)
 
-    return flask.Response(output.getvalue(), mimetype='image/png')
+    return flask.Response(output.getvalue(), mimetype="image/png")
+
+
+@app.route("/parameters")
+def params():
+    return flask.Response(
+        json.dumps(
+            [
+                dict(
+                    name=parameter.name,
+                    description=parameter.description,
+                    min_value=parameter.min_value,
+                    max_value=parameter.max_value,
+                    default_value=parameter.default_value,
+                    suggested_values=parameter.suggested_values,
+                )
+                for parameter in parameters
+            ],
+            separators=(",", ":"),
+        ),
+        headers={"Access-Control-Allow-Origin":"*"},
+        mimetype="application/json",
+    )
