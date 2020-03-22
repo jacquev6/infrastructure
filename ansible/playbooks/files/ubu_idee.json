@@ -1,0 +1,20 @@
+{
+  "groups": [
+    {
+      "name": "docker",
+      "gid": 117
+    },
+    {
+      "name": "jacquev6",
+      "gid": 1002
+    }
+  ],
+  "users": [
+    {
+      "name": "jacquev6",
+      "uid": 1002,
+      "gid": 1002,
+      "groups": [117]
+    }
+  ]
+}

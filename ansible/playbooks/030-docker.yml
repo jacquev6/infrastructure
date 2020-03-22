@@ -3,11 +3,43 @@
   tasks:
     - name: Install Docker
       apt:
-        name: docker.io
-        state: latest
+        name:
+          - docker.io
+          - python3-docker
+        state: present
     - name: Add user 'jacquev6' to group 'docker'
       user:
         name: jacquev6
         groups:
           - docker
         append: true
+    - name: Upload 'ubuntu_shell.json'
+      # @todo Generate this file from ansible facts
+      copy:
+        src: "ubu_{{ inventory_hostname_short }}.json"
+        dest: /etc/ubuntu_shell.json
+    - name: Create volume for ubuntu_shell_host_keys
+      docker_volume:
+        volume_name: ubuntu_shell_host_keys
+    - name: Launch 'ubuntu_shell' container
+      docker_container:
+        name: "ubu_{{ inventory_hostname_short }}"
+        hostname: "ubu_{{ inventory_hostname_short }}"
+        image: registry.jacquev6.net/ubuntu_shell:20200322-102346
+        auto_remove: yes
+        init: yes
+        published_ports:
+          - "2222:22"
+        mounts:
+          - source: "/etc/ubuntu_shell.json"
+            target: "/ubuntu_shell.json"
+            read_only: yes
+            type: bind
+          - source: "ubuntu_shell_host_keys"
+            target: "/etc/ssh/host_keys"
+          - source: "/home/jacquev6"
+            target: "/home/jacquev6"
+            type: bind
+          - source: "/var/run/docker.sock"
+            target: "/var/run/docker.sock"
+            type: bind

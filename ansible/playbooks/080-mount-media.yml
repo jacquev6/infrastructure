@@ -1,0 +1,9 @@
+- hosts: media
+  become: yes
+  tasks:
+    - name: Mount Media
+      mount:
+        path: /media/media
+        src: /dev/sda2
+        fstype: ntfs
+        state: mounted
