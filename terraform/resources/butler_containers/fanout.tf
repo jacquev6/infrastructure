@@ -9,20 +9,13 @@ resource "docker_network" "fanout" {
   name = "fanout"
 }
 
-resource "docker_image" "nginx" {
+data "docker_registry_image" "nginx" {
   name = "nginx:1.17-alpine"
+}
 
-  # It's very weird that changing name does not trigger a new resource.
-  # As a result, without pull_triggers, we need to run "infra apply" twice
-  # after building a new version of draw_turks_head_demo.
-  # This might be a bug in the provider. This might be fixed in more recent versions of Terraform and/or the provider.
-  # @todo (after upgrading to latest terraform and provider versions) Remove the pull_triggers workaround and test if changing the name does replace the associated container.
-  # If not, open an issue on https://github.com/terraform-providers/terraform-provider-docker.
-  pull_triggers = ["nginx:1.17-alpine"]
-
-  # Too many issues when deleting the image through Terrafom:
-  #  - container stays down longer because next download is slow because common layers have been deleted
-  #  - delete error because the image is still being used by another container
+resource "docker_image" "nginx" {
+  name = data.docker_registry_image.nginx.name
+  pull_triggers = [data.docker_registry_image.nginx.sha256_digest]
   keep_locally = true
 }
 
