@@ -48,7 +48,7 @@ docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
 
 sed -i "" \
   -e "s/^  ubuntu_shell_version = .*/  ubuntu_shell_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
-  ../../terraform/resources/butler_containers/butler_containers.tf
+  ../../terraform/resources/butler_containers/ubuntu_shell.tf
 
 if $RUN
 then
