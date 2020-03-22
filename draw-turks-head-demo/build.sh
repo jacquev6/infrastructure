@@ -8,7 +8,7 @@ RUN=false
 BUILDX=""
 PLATFORM=""
 PUSH=""
-NOT_PUSHED_WARNING=" # Image not pushed to hub.docker.io, DO NOT COMMIT"
+NOT_PUSHED_WARNING=" # Image not pushed to registry, DO NOT COMMIT"
 NO_CACHE=""
 
 while [[ "$#" > 0 ]]
@@ -105,13 +105,13 @@ docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
 
 sed -i "" \
   -e "s/^  draw_turks_head_demo_version = .*/  draw_turks_head_demo_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
-  ../terraform/resources/butler_containers/butler_containers.tf
+  ../terraform/resources/butler_containers/draw_turks_head_demo.tf
 
 if $RUN
 then
-  echo "----------------------------------------------------"
-  echo "Runing $NAME"
-  echo "----------------------------------------------------"
+  echo "-----------------------------------------------------"
+  echo "Running $NAME"
+  echo "-----------------------------------------------------"
 
 
   if ! [ -z $BUILDX ]

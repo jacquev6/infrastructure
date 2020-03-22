@@ -4,7 +4,7 @@ set -o errexit
 cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 
 PUSH=false
-NOT_PUSHED_WARNING=" # Image not pushed to hub.docker.io, DO NOT COMMIT"
+NOT_PUSHED_WARNING=" # Image not pushed to registry, DO NOT COMMIT"
 NO_CACHE=""
 
 while [[ "$#" > 0 ]]
@@ -27,9 +27,9 @@ done
 VERSION=$(date "+%Y%m%d-%H%M%S")
 NAME=jacquev6/infrastructure-tools:$VERSION
 
-echo "-----------------------------------------------------------"
+echo "------------------------------------------------------"
 echo "Building $NAME"
-echo "-----------------------------------------------------------"
+echo "------------------------------------------------------"
 
 docker build $NO_CACHE --tag $NAME --build-arg version=$VERSION .
 
@@ -50,4 +50,4 @@ fi
 
 sed -i "" \
   -e "s/^INFRASTRUCTURE_TOOLS_VERSION=.*/INFRASTRUCTURE_TOOLS_VERSION=$VERSION$NOT_PUSHED_WARNING/" \
-  ../../infra
+  ../infra

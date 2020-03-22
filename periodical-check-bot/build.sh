@@ -7,7 +7,7 @@ RUN=false
 BUILDX=""
 PLATFORM=""
 PUSH=""
-NOT_PUSHED_WARNING=" # Image not pushed to hub.docker.io, DO NOT COMMIT"
+NOT_PUSHED_WARNING=" # Image not pushed to registry, DO NOT COMMIT"
 NO_CACHE=""
 
 while [[ "$#" > 0 ]]
@@ -36,19 +36,19 @@ do
 done
 
 VERSION=$(date "+%Y%m%d-%H%M%S")
-NAME=registry.jacquev6.net/ubuntu_shell:$VERSION
+NAME=registry.jacquev6.net/periodical_check_bot:$VERSION
 
-echo "---------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------"
 echo "Building $NAME"
-echo "---------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------"
 
 # Make sure we're using BuildKit as described in:
 # https://www.docker.com/blog/multi-arch-images/
 docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
 
 sed -i "" \
-  -e "s/^  ubuntu_shell_version = .*/  ubuntu_shell_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
-  ../../terraform/resources/butler_containers/ubuntu_shell.tf
+  -e "s/^  periodical_check_bot_version = .*/  periodical_check_bot_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
+  ../terraform/resources/butler_containers/periodical_check_bot.tf
 
 if $RUN
 then
@@ -56,18 +56,14 @@ then
   echo "Running $NAME"
   echo "------------------------------------------------------------------"
 
+
   if ! [ -z $BUILDX ]
   then
     NAME=$(docker buildx imagetools inspect $NAME | grep -B2 "^  Platform:  linux/arm/v7$" | head -n 1 | cut -b 14-)
   fi
 
-  docker volume create ubuntu_shell_host_keys
-
-  docker run --rm --init --name ubuntu_shell \
-    --hostname ubuntu_shell \
-    --publish 2222:22 \
-    --volume ubuntu_shell_host_keys:/etc/ssh/host_keys \
-    --volume $PWD/ubuntu_shell.json:/ubuntu_shell.json:ro \
-    --volume $HOME:/home/$(id -n -u) \
-    $NAME
+  docker run --rm --name periodical_check_bot \
+    --volume $HOME/.ssh/id_rsa:/root/.ssh/id_rsa:ro \
+    --volume $HOME/.ssh/known_hosts:/etc/ssh/ssh_known_hosts:ro \
+    $NAME jacquev6 idee.home.jacquev6.net jacquev6@gmail.com --delay 1800
 fi

@@ -20,8 +20,8 @@ then
     --mount type=bind,src=$PWD/ansible,dst=/infra/ansible \
     --mount type=bind,src=$HOME/.ssh/id_rsa,dst=/root/.ssh/id_rsa,ro \
     --mount type=bind,src=$HOME/.ssh/known_hosts,dst=/root/.ssh/known_hosts,ro \
-    --mount type=bind,src=$PWD/infrastructure-tools/main/infra.py,dst=/infra/infra.py,ro \
-    --mount type=bind,src=$PWD/infrastructure-tools/main/terraform-provider-multiverse-freebox.py,dst=/infra/terraform-provider-multiverse-freebox.py,ro \
+    --mount type=bind,src=$PWD/infrastructure-tools/infra.py,dst=/infra/infra.py,ro \
+    --mount type=bind,src=$PWD/infrastructure-tools/terraform-provider-multiverse-freebox.py,dst=/infra/terraform-provider-multiverse-freebox.py,ro \
     jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_VERSION \
     bash -c "tail -f /dev/null" \
   >/dev/null
