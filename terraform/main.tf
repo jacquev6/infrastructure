@@ -22,12 +22,16 @@ provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }
 
-module "acme_registration" {
-  source = "./resources/acme_registration"
+resource "tls_private_key" "acme_account" {
+  algorithm = "RSA"
+}
+
+resource "acme_registration" "registration" {
+  account_key_pem = tls_private_key.acme_account.private_key_pem
+  email_address = "letsencrypt.org@vincent-jacques.net"
 }
 
 
-# https://account.gandi.net/fr/users/jacquev6/security
 variable "gandi_api_key" {
   type = string
 }
@@ -67,7 +71,7 @@ module "etcavole_fr" {
 module "jacquev6_net" {
   source = "./resources/jacquev6_net"
 
-  acme_account_key = module.acme_registration.account_key_pem
+  acme_account_key = acme_registration.registration.account_key_pem
   gandi_api_key = var.gandi_api_key
   uptimerobot_alert_contact_id = data.uptimerobot_alert_contact.default.id
   github_pages_ips = local.github_pages_ips
@@ -78,7 +82,7 @@ module "jacquev6_net" {
 module "vincent_jacques_net" {
   source = "./resources/vincent_jacques_net"
 
-  acme_account_key = module.acme_registration.account_key_pem
+  acme_account_key = acme_registration.registration.account_key_pem
   gandi_api_key = var.gandi_api_key
   uptimerobot_alert_contact_id = data.uptimerobot_alert_contact.default.id
   github_pages_ips = local.github_pages_ips
