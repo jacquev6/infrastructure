@@ -71,7 +71,7 @@ def ansible_playbook(groups, playbook_names, options):
     if groups:
         command += ["--limit", ",".join(groups)]
     if not playbook_names:
-        playbook_names = ["playbook_names"]
+        playbook_names = ["playbooks"]
     for playbook_name in playbook_names:
         if "/" in playbook_name:
             command.append(playbook_name)
