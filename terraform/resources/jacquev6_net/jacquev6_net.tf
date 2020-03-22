@@ -149,10 +149,15 @@ locals {
       # Ethernet MAC address is DC:A6:32:6F:D6:7F
       ip = "192.168.1.71"
       dns = true
+    },
+    {
+      name = "msi.claire"
+      mac = "6C:62:6D:1A:36:B9"
+      ip = "192.168.1.72"
+      dns = false
     }
     # @todo Add kindle.claire
     # @todo Add ipad.claire
-    # @todo Add msi.claire (6C:62:6D:1A:36:B9)
   ]
 }
 
