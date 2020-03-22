@@ -179,6 +179,11 @@ module "dns" {
       },
       {
         type = "A"
+        name = "www"
+        values = [var.home_ip]
+      },
+      {
+        type = "A"
         name = "infra"
         values = [local.butler.ip]
       },
@@ -200,8 +205,6 @@ module "dns" {
     ]
   )
 }
-
-# @todo Add and monitor www. (for http and https, cf ../vincent_jacques_net)
 
 
 resource "multiverse_custom_resource" "static_dhcp_lease" {
@@ -311,6 +314,24 @@ resource "uptimerobot_monitor" "https_home_jacquev6_net" {
   }
 }
 
+resource "uptimerobot_monitor" "http_www_jacquev6_net" {
+  friendly_name = "http://www.jacquev6.net/"
+  type = "http"
+  url = "http://www.jacquev6.net/"
+  alert_contact {
+    id = var.uptimerobot_alert_contact_id
+  }
+}
+
+resource "uptimerobot_monitor" "https_www_jacquev6_net" {
+  friendly_name = "https://www.jacquev6.net/"
+  type = "http"
+  url = "https://www.jacquev6.net/"
+  alert_contact {
+    id = var.uptimerobot_alert_contact_id
+  }
+}
+
 
 module "home_jacquev6_net_certificate" {
   source = "../../modules/acme_certificate_using_gandi"
@@ -336,10 +357,19 @@ module "registry_jacquev6_net_certificate" {
   domain_name = "registry.jacquev6.net"
 }
 
+module "www_jacquev6_net_certificate" {
+  source = "../../modules/acme_certificate_using_gandi"
+
+  acme_account_key = var.acme_account_key
+  gandi_api_key = var.gandi_api_key
+  domain_name = "www.jacquev6.net"
+}
+
 output "certificates" {
   value = {
     "home.jacquev6.net" = module.home_jacquev6_net_certificate.certificate
     "infra.jacquev6.net" = module.infra_jacquev6_net_certificate.certificate
     "registry.jacquev6.net" = module.registry_jacquev6_net_certificate.certificate
+    "www.jacquev6.net" = module.www_jacquev6_net_certificate.certificate
   }
 }

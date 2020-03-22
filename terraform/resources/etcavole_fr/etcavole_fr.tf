@@ -1,3 +1,11 @@
+variable "acme_account_key" {
+  type = string
+}
+
+variable "gandi_api_key" {
+  type = string
+}
+
 variable "uptimerobot_alert_contact_id" {
   type = string
 }
@@ -6,14 +14,25 @@ variable "github_pages_ips" {
   type = list(string)
 }
 
+variable "home_ip" {
+  type = string
+}
+
+
 module "dns" {
   source = "../../modules/gandi_dns"
 
   domain_name = "etcavole.fr"
   a_at_ips = var.github_pages_ips
+  records = [
+    {
+      type = "A"
+      name = "www"
+      values = [var.home_ip]
+    },
+  ]
 }
 
-# @todo Add and monitor www. (for http and https, cf ../vincent_jacques_net)
 
 resource "uptimerobot_monitor" "http_etcavole_fr" {
   friendly_name = "http://etcavole.fr/"
@@ -30,5 +49,38 @@ resource "uptimerobot_monitor" "https_etcavole_fr" {
   url = "https://etcavole.fr/"
   alert_contact {
     id = var.uptimerobot_alert_contact_id
+  }
+}
+
+resource "uptimerobot_monitor" "http_www_etcavole_fr" {
+  friendly_name = "http://www.etcavole.fr/"
+  type = "http"
+  url = "http://www.etcavole.fr/"
+  alert_contact {
+    id = var.uptimerobot_alert_contact_id
+  }
+}
+
+resource "uptimerobot_monitor" "https_www_etcavole_fr" {
+  friendly_name = "https://www.etcavole.fr/"
+  type = "http"
+  url = "https://www.etcavole.fr/"
+  alert_contact {
+    id = var.uptimerobot_alert_contact_id
+  }
+}
+
+
+module "www_etcavole_fr_certificate" {
+  source = "../../modules/acme_certificate_using_gandi"
+
+  acme_account_key = var.acme_account_key
+  gandi_api_key = var.gandi_api_key
+  domain_name = "www.etcavole.fr"
+}
+
+output "certificates" {
+  value = {
+    "www.etcavole.fr" = module.www_etcavole_fr_certificate.certificate
   }
 }

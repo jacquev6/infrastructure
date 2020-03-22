@@ -19,6 +19,14 @@ resource "docker_container" "public_fanout" {
     content = file("${path.module}/public_fanout.nginx.conf")
   }
   upload {
+    file = "/etc/nginx/www.jacquev6.net.crt"
+    content = var.certificates["www.jacquev6.net"].crt
+  }
+  upload {
+    file = "/etc/nginx/www.jacquev6.net.key"
+    content = var.certificates["www.jacquev6.net"].key
+  }
+  upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
     content = var.certificates["home.jacquev6.net"].crt
   }
@@ -41,5 +49,13 @@ resource "docker_container" "public_fanout" {
   upload {
     file = "/etc/nginx/dyn.vincent-jacques.net.key"
     content = var.certificates["dyn.vincent-jacques.net"].key
+  }
+  upload {
+    file = "/etc/nginx/www.etcavole.fr.crt"
+    content = var.certificates["www.etcavole.fr"].crt
+  }
+  upload {
+    file = "/etc/nginx/www.etcavole.fr.key"
+    content = var.certificates["www.etcavole.fr"].key
   }
 }

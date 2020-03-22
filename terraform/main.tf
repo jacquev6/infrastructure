@@ -63,8 +63,11 @@ data "uptimerobot_alert_contact" "default" {
 module "etcavole_fr" {
   source = "./resources/etcavole_fr"
 
+  acme_account_key = acme_registration.registration.account_key_pem
+  gandi_api_key = var.gandi_api_key
   uptimerobot_alert_contact_id = data.uptimerobot_alert_contact.default.id
   github_pages_ips = local.github_pages_ips
+  home_ip = local.home_ip
 }
 
 
@@ -103,6 +106,6 @@ module "butler_containers" {
     docker = docker.butler
   }
 
-  certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates)
+  certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates, module.etcavole_fr.certificates)
   gandi_smtp_password = var.gandi_smtp_password
 }
