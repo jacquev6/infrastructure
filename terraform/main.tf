@@ -49,10 +49,17 @@ provider "uptimerobot" {
   api_key = var.uptimerobot_api_key
 }
 
+data "uptimerobot_account" "account" {}
+
+data "uptimerobot_alert_contact" "default" {
+  friendly_name = data.uptimerobot_account.account.email
+}
+
 
 module "etcavole_fr" {
   source = "./resources/etcavole_fr"
 
+  uptimerobot_alert_contact_id = data.uptimerobot_alert_contact.default.id
   github_pages_ips = local.github_pages_ips
 }
 
@@ -62,6 +69,7 @@ module "jacquev6_net" {
 
   acme_account_key = module.acme_registration.account_key_pem
   gandi_api_key = var.gandi_api_key
+  uptimerobot_alert_contact_id = data.uptimerobot_alert_contact.default.id
   github_pages_ips = local.github_pages_ips
   home_ip = local.home_ip
 }
@@ -72,6 +80,7 @@ module "vincent_jacques_net" {
 
   acme_account_key = module.acme_registration.account_key_pem
   gandi_api_key = var.gandi_api_key
+  uptimerobot_alert_contact_id = data.uptimerobot_alert_contact.default.id
   github_pages_ips = local.github_pages_ips
   home_ip = local.home_ip
 }

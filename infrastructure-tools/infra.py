@@ -43,7 +43,7 @@ def apply():
 
 def refresh_data_sources():
     resources = subprocess.check_output(["terraform", "state", "list"], universal_newlines=True, cwd="terraform")
-    targets = [f"-target={resource}" for resource in resources.splitlines() if ".data." in resource]
+    targets = [f"-target={resource}" for resource in resources.splitlines() if ".data." in resource or resource.startswith("data.")]
     subprocess.run(["terraform", "refresh"] + targets, check=True, cwd="terraform")
 
 
@@ -142,7 +142,7 @@ def stabilize_terraform_state():
     with open("terraform/terraform.tfstate") as f:
         state = json.load(f)
     # Keep resources sorted
-    state["resources"] = sorted(state["resources"], key=lambda r: ".".join([r["module"], r["mode"], r["type"], r["name"]]))
+    state["resources"] = sorted(state["resources"], key=lambda r: ([r.get("module", ""), r["mode"], r["type"], r["name"]]))
     # Remove changing id
     for resource in state["resources"]:
         if resource["type"] == "uptimerobot_account":

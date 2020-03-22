@@ -6,6 +6,10 @@ variable "gandi_api_key" {
   type = string
 }
 
+variable "uptimerobot_alert_contact_id" {
+  type = string
+}
+
 variable "github_pages_ips" {
   type = list(string)
 }
@@ -271,19 +275,12 @@ resource "multiverse_custom_resource" "port_forwarding" {
 }
 
 
-# @todo Deduplicate uptimerobot_account and uptimerobot_alert_contact
-data "uptimerobot_account" "account" {}
-
-data "uptimerobot_alert_contact" "default" {
-  friendly_name = data.uptimerobot_account.account.email
-}
-
 resource "uptimerobot_monitor" "http_jacquev6_net" {
   friendly_name = "http://jacquev6.net/"
   type = "http"
   url = "http://jacquev6.net/"
   alert_contact {
-    id = data.uptimerobot_alert_contact.default.id
+    id = var.uptimerobot_alert_contact_id
   }
 }
 
@@ -292,7 +289,7 @@ resource "uptimerobot_monitor" "https_jacquev6_net" {
   type = "http"
   url = "https://jacquev6.net/"
   alert_contact {
-    id = data.uptimerobot_alert_contact.default.id
+    id = var.uptimerobot_alert_contact_id
   }
 }
 
@@ -301,7 +298,7 @@ resource "uptimerobot_monitor" "http_home_jacquev6_net" {
   type = "http"
   url = "http://home.jacquev6.net/"
   alert_contact {
-    id = data.uptimerobot_alert_contact.default.id
+    id = var.uptimerobot_alert_contact_id
   }
 }
 
@@ -310,7 +307,7 @@ resource "uptimerobot_monitor" "https_home_jacquev6_net" {
   type = "http"
   url = "https://home.jacquev6.net/"
   alert_contact {
-    id = data.uptimerobot_alert_contact.default.id
+    id = var.uptimerobot_alert_contact_id
   }
 }
 
