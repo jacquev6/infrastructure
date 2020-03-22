@@ -4,7 +4,7 @@ resource "docker_container" "always_200" {
   rm = "false"
   restart = "always"
   networks_advanced {
-    name = docker_network.fanout.name
+    name = docker_network.public_fanout.name
   }
   upload {
     file = "/etc/nginx/nginx.conf"

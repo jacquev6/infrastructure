@@ -4,8 +4,8 @@ resource "docker_container" "redirect_http_to_https" {
   rm = "false"
   restart = "always"
   ports {
-    internal = "80"
     external = "80"
+    internal = "80"
   }
   upload {
     file = "/etc/nginx/nginx.conf"

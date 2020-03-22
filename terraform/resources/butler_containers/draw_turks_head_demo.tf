@@ -14,7 +14,7 @@ resource "docker_container" "draw_turks_head_demo" {
   rm = "false"
   restart = "always"
   networks_advanced {
-    name = docker_network.fanout.name
+    name = docker_network.public_fanout.name
   }
   working_dir = "/"  # Weirdly required to avoid re-creating the container on every "infra apply"
 }

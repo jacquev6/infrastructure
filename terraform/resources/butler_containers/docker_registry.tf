@@ -14,7 +14,7 @@ resource "docker_container" "docker_registry" {
   rm = "false"
   restart = "always"
   networks_advanced {
-    name = docker_network.fanout.name
+    name = docker_network.private_fanout.name
   }
   mounts {
     type = "bind"

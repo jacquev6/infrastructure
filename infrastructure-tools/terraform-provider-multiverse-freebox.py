@@ -168,22 +168,27 @@ class PortForwarding(StandardResource):
     def _create(self, payload):
         return {
             "enabled": True,
-            "lan_port": payload["port"],
-            "wan_port_end": payload["port"],
-            "wan_port_start": payload["port"],
+            "lan_port": payload["internal_port"],
+            "wan_port_end": payload["external_port"],
+            "wan_port_start": payload["external_port"],
             "lan_ip": payload["ip"],
             "ip_proto": "tcp",
             "src_ip": "0.0.0.0",
         }
 
     def _return(self, r):
-        return {"id": r["id"], "port": r["lan_port"], "ip": r["lan_ip"]}
+        return {
+            "id": r["id"],
+            "internal_port": r["lan_port"],
+            "external_port": r["wan_port_start"],
+            "ip": r["lan_ip"],
+        }
 
     def _update(self, payload):
         return {
-            "lan_port": payload["port"],
-            "wan_port_end": payload["port"],
-            "wan_port_start": payload["port"],
+            "lan_port": payload["internal_port"],
+            "wan_port_end": payload["external_port"],
+            "wan_port_start": payload["external_port"],
             "lan_ip": payload["ip"],
         }
 

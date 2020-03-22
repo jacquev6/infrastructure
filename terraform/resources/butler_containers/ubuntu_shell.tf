@@ -24,8 +24,8 @@ resource "docker_container" "ubuntu_shell" {
     content = file("${path.module}/ubuntu_shell.json")
   }
   ports {
-    internal = "22"
     external = "2222"
+    internal = "22"
   }
   mounts {
     type = "volume"

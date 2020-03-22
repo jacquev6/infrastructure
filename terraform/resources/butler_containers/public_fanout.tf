@@ -5,8 +5,8 @@ variable "certificates" {
   }))
 }
 
-resource "docker_network" "fanout" {
-  name = "fanout"
+resource "docker_network" "public_fanout" {
+  name = "public_fanout"
 }
 
 data "docker_registry_image" "nginx" {
@@ -19,21 +19,21 @@ resource "docker_image" "nginx" {
   keep_locally = true
 }
 
-resource "docker_container" "fanout" {
-  name = "fanout"
+resource "docker_container" "public_fanout" {
+  name = "public_fanout"
   image = docker_image.nginx.latest
   rm = "false"
   restart = "always"
   networks_advanced {
-    name = docker_network.fanout.name
+    name = docker_network.public_fanout.name
   }
   ports {
+    external = "10443"
     internal = "443"
-    external = "443"
   }
   upload {
     file = "/etc/nginx/nginx.conf"
-    content = file("${path.module}/fanout.nginx.conf")
+    content = file("${path.module}/public_fanout.nginx.conf")
   }
   upload {
     file = "/etc/nginx/home.jacquev6.net.crt"
@@ -42,22 +42,6 @@ resource "docker_container" "fanout" {
   upload {
     file = "/etc/nginx/home.jacquev6.net.key"
     content = var.certificates["home.jacquev6.net"].key
-  }
-  upload {
-    file = "/etc/nginx/infra.jacquev6.net.crt"
-    content = var.certificates["infra.jacquev6.net"].crt
-  }
-  upload {
-    file = "/etc/nginx/infra.jacquev6.net.key"
-    content = var.certificates["infra.jacquev6.net"].key
-  }
-  upload {
-    file = "/etc/nginx/registry.jacquev6.net.crt"
-    content = var.certificates["registry.jacquev6.net"].crt
-  }
-  upload {
-    file = "/etc/nginx/registry.jacquev6.net.key"
-    content = var.certificates["registry.jacquev6.net"].key
   }
   upload {
     file = "/etc/nginx/www.vincent-jacques.net.crt"

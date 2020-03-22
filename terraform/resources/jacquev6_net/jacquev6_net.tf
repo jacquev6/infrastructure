@@ -148,6 +148,7 @@ locals {
     }
     # @todo Add kindle.claire
     # @todo Add ipad.claire
+    # @todo Add msi.claire (6C:62:6D:1A:36:B9)
   ]
 }
 
@@ -172,9 +173,6 @@ module "dns" {
         name = "home"
         values = [var.home_ip]
       },
-      # @todo Forbid access to "infra" and "registry" from outside
-      # (Currently, hitting home_ip with an https request with header
-      # "Host: infra" does access the website)
       {
         type = "A"
         name = "infra"
@@ -243,16 +241,19 @@ resource "multiverse_custom_resource" "host_naming" {
 resource "multiverse_custom_resource" "port_forwarding" {
   for_each = {
     ssh = {
-      port = 22
-      machine = local.butler
+      external_port = 22
+      internal_machine = local.butler
+      internal_port = 22
     }
     http = {
-      port = 80
-      machine = local.butler
+      external_port = 80
+      internal_machine = local.butler
+      internal_port = 80
     }
     https = {
-      port = 443
-      machine = local.butler
+      external_port = 443
+      internal_machine = local.butler
+      internal_port = 10443
     }
   }
 
@@ -262,8 +263,9 @@ resource "multiverse_custom_resource" "port_forwarding" {
   data = <<-JSON
     {
       "kind": "port_forwarding",
-      "port": ${each.value.port},
-      "ip": "${each.value.machine.ip}"
+      "internal_port": ${each.value.internal_port},
+      "external_port": ${each.value.external_port},
+      "ip": "${each.value.internal_machine.ip}"
     }
   JSON
 }
