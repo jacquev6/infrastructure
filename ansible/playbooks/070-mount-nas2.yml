@@ -1,6 +1,12 @@
-- hosts: butler
+- hosts:
+    - butler
+    - idee
   become: yes
   tasks:
+    - name: Install 'cifs-utils' package
+      apt:
+        name: cifs-utils
+        state: present
     - name: Add nas2 credentials
       copy:
         src: nas2.secret.credentials
