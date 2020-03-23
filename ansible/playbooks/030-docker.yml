@@ -26,7 +26,8 @@
         name: "ubu_{{ inventory_hostname_short }}"
         hostname: "ubu_{{ inventory_hostname_short }}"
         image: registry.jacquev6.net/ubuntu_shell:20200322-102346
-        auto_remove: yes
+        restart_policy: always
+        auto_remove: no
         init: yes
         published_ports:
           - "2222:22"
