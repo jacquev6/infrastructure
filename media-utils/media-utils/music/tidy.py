@@ -45,7 +45,7 @@ def make_tidy_track_actions(music, album, encoders):
 
     for (extension, encoder) in encoders.items():
         if extension != ".wav":
-            encoded_files = files_by_extension[extension]
+            encoded_files = files_by_extension.get(extension, {})
             for track_number in track_numbers:
                 wav_file_name = wav_files[track_number].name
                 wav_file_path = os.path.join(music.path, album.name, wav_file_name)

@@ -24,7 +24,7 @@ def music_():
 @click.argument("path")
 @click.option("--dry-run", is_flag=True)
 def tidy(path, dry_run):
-    encoders = [music.WavEncoder(), music.OggEncoder()]
+    encoders = [music.WavEncoder(), music.OggEncoder(), music.Mp3Encoder()]
     tidy = music.make_tidy_action(music.load(path, encoders), encoders)
     if dry_run:
         for a in tidy.get_possible_execution_order():

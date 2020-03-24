@@ -17,13 +17,13 @@ class Encoder:
         )
 
     def compute_tags(self, album, track_number):
-        return sorted([
-            f"title={album.tracks[track_number-1]}",
+        return [
+            f"album={album.title}",
             f"artist={album.artist}",
             f"date={album.year}",
-            f"album={album.title}",
+            f"title={album.tracks[track_number-1]}",
             f"tracknumber={track_number}",
-        ])
+        ]
 
     class make_tag_action(ActionTree.Action):
         def __init__(self, label, dependencies, path, tags):
