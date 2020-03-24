@@ -113,7 +113,6 @@ then
   echo "Running $NAME"
   echo "-----------------------------------------------------"
 
-
   if ! [ -z $BUILDX ]
   then
     NAME=$(docker buildx imagetools inspect $NAME | grep -B2 "^  Platform:  linux/arm/v7$" | head -n 1 | cut -b 14-)
