@@ -115,6 +115,7 @@ def expected_tags(track_number, album, segment, track, extension):
     if extension == ".mp3" and  album.cd and album.cds:
         album_title += f" (CD {album.cd} of {album.cds})"
 
+    # @todo Fix Herbert von Karajan - 03.2 09.1 10.1 and 10.2: put album artist back (for naming album directory) and change code to fix tags
     artist = artists_separator.join(
         []
         + album.artists
