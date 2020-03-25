@@ -1,8 +1,10 @@
+from . import info
+
 class Encoder:
     extension = ".wav"
 
     def load_tags(self, file_path):
-        return None
+        return info.Tags()
 
-    def compute_tags(self, album, track_number):
-        return None
+    def accept_tags(self, tags):
+        return info.Tags()

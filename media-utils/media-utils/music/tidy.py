@@ -8,104 +8,79 @@ import ActionTree
 import ActionTree.stock
 
 
-def make_tidy_action(music, encoders):
-    encoders = {encoder.extension: encoder for encoder in encoders}
-    return regroup_actions(make_tidy_music_actions(music, encoders)) or ActionTree.stock.NullAction()
+def make_action(music):
+    return regroup_actions(make_tidy_music_actions(music)) or ActionTree.stock.NullAction()
 
 
-def make_tidy_music_actions(music, encoders):
+def make_tidy_music_actions(music):
     for album in music.albums:
-        yield make_tidy_album_action(music, album, encoders)
+        yield make_tidy_album_action(music, album)
 
 
-def make_tidy_album_action(music, album, encoders):
-    rename_track_actions = filter_actions(make_tidy_track_actions(music, album, encoders))
+def make_tidy_album_action(music, album):
+    file_actions = list(make_tidy_files_actions(music, album))
 
-    expected_album_name = compute_album_name(album)
-    actual_album_path = os.path.join(music.path, album.name)
-    if album.name == expected_album_name:
-        return regroup_actions(rename_track_actions)
+    if album.current_name == album.expected_name:
+        return regroup_actions(file_actions)
     else:
         return RenameAction(
             music.path,
-            album.name,
-            expected_album_name,
-            dependencies=rename_track_actions,
+            album.current_name,
+            album.expected_name,
+            dependencies=file_actions,
         )
 
 
-def make_tidy_track_actions(music, album, encoders):
-    files_by_extension = group_files_by_extension(album.files)
+def make_tidy_files_actions(music, album):
+    # Encode
+    rename_depencencies = {}
+    for file in album.files:
+        if file.current_name is None:
+            wav_file_path = os.path.join(music.path, album.current_name, file.source_name)
+            encoded_file_path = os.path.join(music.path, album.current_name, file.expected_name)
+            encode_action = EncodeAction(
+                file.encoder,
+                wav_file_path,
+                encoded_file_path,
+            )
+            rename_depencencies.setdefault(wav_file_path, []).append(encode_action)
+            yield TagAction(
+                file.encoder,
+                encoded_file_path,
+                file.current_tags,
+                file.expected_tags,
+                dependencies=[encode_action],
+            )
 
-    wav_files = files_by_extension[".wav"]
-    track_numbers = set(range(1, 1 + len(album.tracks)))
-    assert set(wav_files.keys()) == track_numbers
+    # Tag
+    for file in album.files:
+        if file.current_tags and file.expected_tags and str(file.current_tags) != str(file.expected_tags):
+            path = os.path.join(music.path, album.current_name, file.current_name)
+            tag_action = TagAction(
+                file.encoder,
+                path,
+                file.current_tags,
+                file.expected_tags,
+            )
+            rename_depencencies.setdefault(path, []).append(tag_action)
+            yield tag_action
 
-    encode_actions = {}
-
-    for (extension, encoder) in encoders.items():
-        if extension != ".wav":
-            encoded_files = files_by_extension.get(extension, {})
-            for track_number in track_numbers:
-                wav_file_name = wav_files[track_number].name
-                wav_file_path = os.path.join(music.path, album.name, wav_file_name)
-                if track_number not in encoded_files:
-                    encoded_file_name = compute_track_name(album, track_number, extension)
-                    encoded_file_path = os.path.join(music.path, album.name, encoded_file_name)
-                    encode_action = encoder.make_encode_action(
-                        f"Encode '{wav_file_path}' to '{encoded_file_name}'",
-                        wav_file_path,
-                        encoded_file_path,
-                    )
-                    encode_actions.setdefault(wav_file_name, []).append(encode_action)
-                    yield encoder.make_tag_action(
-                        f"Tag '{encoded_file_path}'",
-                        [encode_action],
-                        encoded_file_path,
-                        encoder.compute_tags(album, track_number),
-                    )
-
-    for (extension, files) in files_by_extension.items():
-        encoder = encoders[extension]
-        for (track_number, file) in files.items():
-            dependencies = []
-
-            expected_tags = encoder.compute_tags(album, track_number)
-            if file.tags != expected_tags:
-                dependencies.append(encoder.make_tag_action(
-                    f"Retag '{os.path.join(music.path, album.name, file.name)}'",
-                    [],
-                    os.path.join(music.path, album.name, file.name),
-                    expected_tags,
-                ))
-
-            expected_track_name = compute_track_name(album, track_number, extension)
-            if file.name == expected_track_name:
-                yield regroup_actions(dependencies)
-            else:
-                yield RenameAction(
-                    os.path.join(music.path, album.name),
-                    file.name,
-                    expected_track_name,
-                    dependencies=dependencies + encode_actions.get(file.name, []),
-                )
-
-
-def group_files_by_extension(files):
-    def ext(file):
-        return os.path.splitext(file.name)[1]
-
-    return {
-        extension: {get_track_number(file.name): file for file in track_names}
-        for (extension, track_names) in itertools.groupby(sorted(files, key=ext), key=ext)
-    }
-
-
-def get_track_number(file_name):
-    m = re.match(r"^(\d\d) -.*$", file_name) or re.match(r"^track(\d\d)\.cdda\..*$", file_name)
-    assert m, file_name
-    return int(m.group(1))
-
+    # Rename
+    for file in album.files:
+        if file.current_name and file.expected_name and file.current_name != file.expected_name:
+            path = os.path.join(music.path, album.current_name, file.current_name)
+            yield RenameAction(
+                os.path.join(music.path, album.current_name),
+                file.current_name,
+                file.expected_name,
+                dependencies=rename_depencencies.get(path, []),
+            )
+ 
+    # Delete
+    for file in album.files:
+        if file.expected_name is None:
+            # @todo Delete file?
+            pass
 
 
 def regroup_actions(actions):
@@ -133,30 +108,29 @@ class RenameAction(ActionTree.Action):
         os.rename(os.path.join(self.__where, self.__src), os.path.join(self.__where, self.__dst))
 
 
-class SubprocessRun(ActionTree.Action):
-    def __init__(self, label, *args, dependencies=[], **kwds):
+class TagAction(ActionTree.Action):
+    def __init__(self, encoder, path, old_tags, tags, *, dependencies=[]):
+        if old_tags:
+            label = f"Retag '{path}': {old_tags} -> {tags}"
+        else:
+            label = f"Tag '{path}': {tags}"
         super().__init__(label, dependencies=dependencies)
-        self.__args = args
-        self.__kwds = kwds
+        self.__encoder = encoder
+        self.__path = path
+        self.__tags = tags
 
     def do_execute(self, dependency_statuses):
-        subprocess.run(*self.__args, **self.__kwds)
+        self.__encoder.tag(self.__path, self.__tags)
 
 
-def compute_album_name(album):
-    return normalize_name(f"{album.artist} - {album.year} - {album.title}")
+class EncodeAction(ActionTree.Action):
+    def __init__(self, encoder, wav_file_path, encoded_file_path):
+        super().__init__(f"Encode '{wav_file_path}' to '{os.path.basename(encoded_file_path)}'")
+        self.__encoder = encoder
+        self.__wav_file_path = wav_file_path
+        self.__encoded_file_path = encoded_file_path
 
-
-def compute_track_name(album, track_number, extension):
-    return normalize_name(f"{track_number:02} - {album.tracks[track_number-1]}") + extension
-
-
-def normalize_name(name):
-    name = unicodedata.normalize("NFKD", name)
-    name = name.replace("/", "-")
-    name = "".join(c for c in name if c in set("-_.![](),;&' %s%s" % (string.ascii_letters, string.digits)))
-    name = re.sub("\\s+", " ", name)
-    name = name.strip()
-    name = name.lstrip("-")
-    name = name.strip(".")
-    return name
+    def do_execute(self, dependency_statuses):
+        tmp_file_path = self.__encoded_file_path + ".tmp"
+        self.__encoder.encode(self.__wav_file_path, tmp_file_path)
+        os.rename(tmp_file_path, self.__encoded_file_path)

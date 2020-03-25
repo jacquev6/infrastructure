@@ -3,11 +3,24 @@ import re
 import subprocess
 
 import ActionTree
-import ActionTree.stock
+
+from . import info
 
 
 class Encoder:
     extension = ".mp3"
+
+    def encode(self, wav_file_path, encoded_file_path):
+        subprocess.run(
+            [
+                "lame",
+                # "--quiet",
+                "--preset", "medium",
+                wav_file_path,
+                encoded_file_path,
+            ],
+            check=True,
+        )
 
     def load_tags(self, file_path):
         tags = {}
@@ -22,45 +35,53 @@ class Encoder:
             if m:
                 tags[m.group(1)] = m.group(2)
 
-        return [
-            "--song", tags.get("TIT2"),
-            "--artist", tags.get("TPE1"),
-            "--year", tags.get("TYER"),
-            "--album", tags.get("TALB"),
-            "--track", tags.get("TRCK"),
-        ]
+        def int_opt(i):
+            return None if i is None else int(i)
 
-    def compute_tags(self, album, track_number):
-        return [
-            "--song", album.tracks[track_number-1],
-            "--artist", album.artist,
-            "--year", album.year,
-            "--album", album.title,
-            "--track", f"{track_number}/{len(album.tracks)}",
-        ]
+        if "TYER" in tags:
+            year = int(tags["TYER"])
+        else:
+            year = None
 
-    class make_tag_action(ActionTree.Action):
-        def __init__(self, label, dependencies, path, tags):
-            super().__init__(label, dependencies=dependencies)
-            self.__path = path
-            self.__tags = tags
+        if "TRCK" in tags:
+            (n, c) = tags["TRCK"].split("/")
+            track_number = int(n)
+            tracks_count = int(c)
+        else:
+            track_number = None
+            tracks_count = None
 
-        def do_execute(self, dependency_statuses):
-            subprocess.run(
-                ["id3v2", "-2"] + self.__tags + [self.__path],
-                check=True,
-            )
+        return info.Tags(
+            year=year,
+            album=tags.get("TALB"),
+            artist=tags.get("TPE1"),
+            title=tags.get("TIT2"),
+            track_number=track_number,
+            tracks_count=tracks_count,
+        )
 
-    class make_encode_action(ActionTree.Action):
-        def __init__(self, label, wav_file_path, mp3_file_path):
-            super().__init__(label)
-            self.__wav_file_path = wav_file_path
-            self.__mp3_file_path = mp3_file_path
+    def accept_tags(self, tags):
+        return info.Tags(
+            year=tags.year,
+            album=tags.album,
+            artist=tags.artist,
+            title=tags.title,
+            track_number=tags.track_number,
+            tracks_count=tags.tracks_count,
+        )
 
-        def do_execute(self, dependency_statuses):
-            tmp_file_path = self.__mp3_file_path + ".tmp"
-            subprocess.run(
-                ["lame", "--quiet", "--preset", "medium", self.__wav_file_path, tmp_file_path],
-                check=True,
-            )
-            os.rename(tmp_file_path, self.__mp3_file_path)
+    def tag(self, path, tags):
+        subprocess.run(["id3v2", "-delete", path], check=True)
+        command = ["id3v2", "-2"]
+        if tags.title:
+            command += ["--song", tags.title]
+        if tags.artist:
+            command += ["--artist", tags.artist]
+        if tags.year:
+            command += ["--year", str(tags.year)]
+        if tags.album:
+            command += ["--album", tags.album]
+        if tags.track_number and tags.tracks_count:
+            command += ["--track", f"{tags.track_number}/{tags.tracks_count}"]
+        command.append(path)
+        subprocess.run(command, check=True)

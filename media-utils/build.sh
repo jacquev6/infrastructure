@@ -59,23 +59,38 @@ then
     NAME=$(docker buildx imagetools inspect $NAME | grep -B2 "^  Platform:  linux/arm/v7$" | head -n 1 | cut -b 14-)
   fi
 
-  rm -rf /tmp/music-for-media-utils-test
-  cp -r ~/music-for-media-utils-test /tmp
+  if ! [ -z $BUILDX ]
+  then
+    echo "Dry run on media:"
+    ssh media docker run --rm --name music_utils \
+      --volume /media/media/Music:/music \
+      $NAME music tidy /music --dry-run
+      # | grep "Retag" | sed -e $'s/: /\\\n/' -e $'s/ -> /\\\n/' -e $'s/$/\\\n/' >media.dry-run.$(date +"%Y%m%d-%H%M%S").txt
+  else
+    rm -rf /tmp/music-for-media-utils-test
+    cp -r ~/music-for-media-utils-test /tmp
 
-  echo "Dry run:"
-  docker run --rm --name music_utils \
-    --volume /tmp/music-for-media-utils-test:/music \
-    $NAME music tidy /music --dry-run
-  echo
+    echo "Dry run on shuffled:"
+    docker run --rm --name music_utils \
+      --volume /tmp/music-for-media-utils-test/shuffled:/music \
+      $NAME music tidy /music --dry-run
+    echo
 
-  echo "First actual run:"
-  docker run --rm --name music_utils \
-    --volume /tmp/music-for-media-utils-test:/music \
-    $NAME music tidy /music
-  echo
+    echo "First actual run on shuffled:"
+    docker run --rm --name music_utils \
+      --volume /tmp/music-for-media-utils-test/shuffled:/music \
+      $NAME music tidy /music
+    echo
 
-  echo "Second actual run:"
-  docker run --rm --name music_utils \
-    --volume /tmp/music-for-media-utils-test:/music \
-    $NAME music tidy /music
+    echo "Second actual run on shuffled:"
+    docker run --rm --name music_utils \
+      --volume /tmp/music-for-media-utils-test/shuffled:/music \
+      $NAME music tidy /music
+    echo
+
+    echo "Dry run on tidied:"
+    docker run --rm --name music_utils \
+      --volume /tmp/music-for-media-utils-test/tidied:/music \
+      $NAME music tidy /music --dry-run
+  fi
 fi
