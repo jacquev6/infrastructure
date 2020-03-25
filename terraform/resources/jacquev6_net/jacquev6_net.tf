@@ -83,7 +83,7 @@ locals {
       dns = false
     },
     {
-      name = "alexa"
+      name = "alexa-1"
       mac = "CC:F7:35:A3:05:19"
       ip = "192.168.1.60"
       dns = false
@@ -154,6 +154,12 @@ locals {
       name = "msi.claire"
       mac = "6C:62:6D:1A:36:B9"
       ip = "192.168.1.72"
+      dns = false
+    },
+    {
+      name = "alexa-2"
+      mac = "F0:F0:A4:AC:86:82"
+      ip = "192.168.1.73"
       dns = false
     }
     # @todo Add kindle.claire
