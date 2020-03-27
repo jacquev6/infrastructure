@@ -55,10 +55,9 @@ def name_files(album, encoders):
         (file.track_number, file.extension): file
         for file in album.files
     }
-    all_files = dict(current_files)
 
     def make_file():
-        current_file = current_files.pop((track_number, encoder.extension), None)
+        current_file = current_files.get((track_number, encoder.extension))
         current_name = current_file.name if current_file else None
         current_tags = current_file.tags if current_file else None
 
@@ -66,7 +65,7 @@ def name_files(album, encoders):
             current_name=current_name,
             expected_name=normalize_name(" - ".join(expected_file_name(track_number, segment, track))) + encoder.extension,
             encoder=encoder,
-            source_name=all_files[(track_number, ".wav")].name,
+            source_name=current_files[(track_number, ".wav")].name,
             current_tags=current_tags,
             expected_tags=encoder.accept_tags(expected_tags(track_number, album, segment, track, encoder.extension)),
         )
@@ -86,12 +85,6 @@ def name_files(album, encoders):
             for track in segment.tracks:
                 yield make_file()
                 track_number += 1
-
-    for current_file in current_files.values():
-        yield File(
-            current_name=current_file.name,
-            expected_name=None,
-        )
 
 
 def expected_file_name(track_number, segment, track):
