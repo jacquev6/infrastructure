@@ -161,6 +161,12 @@ locals {
       mac = "F0:F0:A4:AC:86:82"
       ip = "192.168.1.73"
       dns = false
+    },
+    {
+      name = "msi-eth.claire"
+      mac = "40:61:86:BA:61:91"
+      ip = "192.168.1.74"
+      dns = false
     }
     # @todo Add kindle.claire
     # @todo Add ipad.claire
