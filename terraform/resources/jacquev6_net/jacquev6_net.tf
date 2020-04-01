@@ -265,16 +265,19 @@ resource "multiverse_custom_resource" "host_naming" {
 resource "multiverse_custom_resource" "port_forwarding" {
   for_each = {
     ssh = {
+      protocol = "tcp"
       external_port = 22
       internal_machine = local.butler
       internal_port = 22
     }
     http = {
+      protocol = "tcp"
       external_port = 80
       internal_machine = local.butler
       internal_port = 80
     }
     https = {
+      protocol = "tcp"
       external_port = 443
       internal_machine = local.butler
       internal_port = 10443
@@ -287,9 +290,10 @@ resource "multiverse_custom_resource" "port_forwarding" {
   data = <<-JSON
     {
       "kind": "port_forwarding",
-      "internal_port": ${each.value.internal_port},
+      "protocol": "${each.value.protocol}",
       "external_port": ${each.value.external_port},
-      "ip": "${each.value.internal_machine.ip}"
+      "ip": "${each.value.internal_machine.ip}",
+      "internal_port": ${each.value.internal_port}
     }
   JSON
 }

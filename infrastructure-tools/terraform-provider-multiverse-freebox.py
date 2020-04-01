@@ -172,16 +172,17 @@ class PortForwarding(StandardResource):
             "wan_port_end": payload["external_port"],
             "wan_port_start": payload["external_port"],
             "lan_ip": payload["ip"],
-            "ip_proto": "tcp",
+            "ip_proto": payload["protocol"],
             "src_ip": "0.0.0.0",
         }
 
     def _return(self, r):
         return {
             "id": r["id"],
+            "protocol": r["ip_proto"],
             "internal_port": r["lan_port"],
-            "external_port": r["wan_port_start"],
             "ip": r["lan_ip"],
+            "external_port": r["wan_port_start"],
         }
 
     def _update(self, payload):
@@ -190,6 +191,7 @@ class PortForwarding(StandardResource):
             "wan_port_end": payload["external_port"],
             "wan_port_start": payload["external_port"],
             "lan_ip": payload["ip"],
+            "ip_proto": payload["protocol"],
         }
 
 
