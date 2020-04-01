@@ -27,6 +27,12 @@ locals {
     ip = "192.168.1.70"
     dns = true
   }
+  macbook = {
+    name = "macbook"
+    mac = "A4:83:E7:5E:19:B1"
+    ip = "192.168.1.53"
+    dns = true
+  }
   home_machines = [
     {
       name = "nas2"
@@ -40,12 +46,7 @@ locals {
       ip = "192.168.1.52"
       dns = true
     },
-    {
-      name = "macbook"
-      mac = "A4:83:E7:5E:19:B1"
-      ip = "192.168.1.53"
-      dns = true
-    },
+    local.macbook,
     {
       name = "icule"
       mac = "08:00:27:EE:68:DC"
@@ -201,6 +202,11 @@ module "dns" {
       },
       {
         type = "A"
+        name = "ts3"
+        values = [var.home_ip]
+      },
+      {
+        type = "A"
         name = "infra"
         values = [local.butler.ip]
       },
@@ -281,6 +287,24 @@ resource "multiverse_custom_resource" "port_forwarding" {
       external_port = 443
       internal_machine = local.butler
       internal_port = 10443
+    }
+    teamspeak_voice = {
+      protocol = "udp"
+      external_port = 9987
+      internal_machine = local.macbook
+      internal_port = 9987
+    }
+    teamspeak_data = {
+      protocol = "tcp"
+      external_port = 30033
+      internal_machine = local.macbook
+      internal_port = 30033
+    }
+    teamspeak_query = {
+      protocol = "tcp"
+      external_port = 10011
+      internal_machine = local.macbook
+      internal_port = 10011
     }
   }
 
