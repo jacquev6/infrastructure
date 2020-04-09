@@ -18,7 +18,7 @@ resource "docker_container" "docker_registry" {
   }
   mounts {
     type = "bind"
-    source = "/media/nas2/DockerRegistry"
+    source = "/media/DockerRegistry"
     target = "/var/lib/registry"
   }
 }
