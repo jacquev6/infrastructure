@@ -12,3 +12,11 @@
         name:
           - ffmpeg
         state: latest
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install screen
+      apt:
+        name:
+          - screen
+        state: latest
