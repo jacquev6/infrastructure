@@ -4,8 +4,9 @@
     - name: Install NVidia drivers and utilities
       apt:
         name:
-          - nvidia-headless-435
-          - nvidia-utils-435
+          - nvidia-headless-430  # If we drop nvtop, we can upgrade to 435
+          - nvidia-utils-430
+          - nvtop
         install_recommends: no
         state: latest
 - hosts: "gpu:&docker"
