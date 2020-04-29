@@ -211,6 +211,7 @@ module "dns" {
         values = [local.butler.ip]
       },
       {
+        # @todo Rename to docker.jacquev6.net?
         type = "A"
         name = "registry"
         values = [local.butler.ip]
