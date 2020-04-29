@@ -3,12 +3,12 @@ variable "gandi_smtp_password" {
 }
 
 locals {
-  periodical_check_bot_version = "20200322-101724"
+  periodical_check_bot_version = "20200429-110006"
 }
 
 resource "docker_image" "periodical_check_bot" {
-  name = "registry.jacquev6.net/periodical_check_bot:${local.periodical_check_bot_version}"
-  pull_triggers = [local.periodical_check_bot_version]
+  name = "registry.jacquev6.net/periodical-check-bot:${local.periodical_check_bot_version}"
+  pull_triggers = [local.periodical_check_bot_version, "a"]
   keep_locally = true
 }
 
