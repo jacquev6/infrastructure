@@ -3,19 +3,19 @@
 set -o errexit
 cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 
-PUSH=false
-NOT_PUSHED_WARNING=" # Image not pushed to registry, DO NOT COMMIT"
-NO_CACHE=""
+push=false
+not_pushed_warning=" # Image not pushed to registry, DO NOT COMMIT"
+no_cache=""
 
 while [[ "$#" > 0 ]]
 do
   case $1 in
     --push)
-      PUSH=true
-      NOT_PUSHED_WARNING=""
+      push=true
+      not_pushed_warning=""
       ;;
     --no-cache)
-      NO_CACHE="--no-cache --pull"
+      no_cache="--no-cache --pull"
       ;;
     *)
       echo "Unknown parameter passed: $1"
@@ -24,30 +24,30 @@ do
   shift
 done
 
-VERSION=$(date "+%Y%m%d-%H%M%S")
-NAME=jacquev6/infrastructure-tools:$VERSION
+version=$(date "+%Y%m%d-%H%M%S")
+name=jacquev6/infrastructure-tools:$version
 
 echo "------------------------------------------------------"
-echo "Building $NAME"
+echo "Building $name"
 echo "------------------------------------------------------"
 
-docker build $NO_CACHE --tag $NAME --build-arg version=$VERSION .
+docker build $no_cache --tag $name --build-arg version=$version .
 
 # Tag intermediate images to avoid losing them on "docker image prune"
-for ID in $(docker image ls --filter label=infrastructure-tools-builder-version=$VERSION --quiet)
+for ID in $(docker image ls --filter label=infrastructure-tools-builder-version=$version --quiet)
 do
   docker tag \
     $(docker inspect $(docker inspect $ID --format "{{.Parent}}") --format "{{.Parent}}") \
-    infrastructure-tools-builder:$VERSION-$(docker inspect $ID --format "{{json .Config.Labels}}" | jq -r '.["infrastructure-tools-builder-stage"]')
+    infrastructure-tools-builder:$version-$(docker inspect $ID --format "{{json .Config.Labels}}" | jq -r '.["infrastructure-tools-builder-stage"]')
 
   docker image rm $ID
 done
 
-if $PUSH
+if $push
 then
-  docker push $NAME
+  docker push $name
 fi
 
 sed -i "" \
-  -e "s/^INFRASTRUCTURE_TOOLS_VERSION=.*/INFRASTRUCTURE_TOOLS_VERSION=$VERSION$NOT_PUSHED_WARNING/" \
+  -e "s/^infrastructure_tools_version=.*/infrastructure_tools_version=$version$not_pushed_warning/" \
   ../infra

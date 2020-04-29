@@ -2,36 +2,36 @@
 
 set -o errexit
 
-INFRASTRUCTURE_TOOLS_VERSION=20200322-102241
+infrastructure_tools_version=20200322-102241
 
 # Clean-up:
-# docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_VERSION | xargs docker image rm
-# docker image ls infrastructure-tools-builder --format "{{.Repository}}:{{.Tag}}" | grep -v $INFRASTRUCTURE_TOOLS_VERSION | xargs docker image rm
+# docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $infrastructure_tools_version | xargs docker image rm
+# docker image ls infrastructure-tools-builder --format "{{.Repository}}:{{.Tag}}" | grep -v $infrastructure_tools_version | xargs docker image rm
 
-NAME=infrastructure-tools-$INFRASTRUCTURE_TOOLS_VERSION
+name=infrastructure-tools-$infrastructure_tools_version
 
-if [ -z $(docker ps --quiet --filter name=$NAME) ]
+if [ -z $(docker ps --quiet --filter name=$name) ]
 then
   docker ps --quiet --filter name=infrastructure-tools- | xargs docker kill >/dev/null
 
   docker run \
-    --rm --name $NAME --detach \
+    --rm --name $name --detach \
     --mount type=bind,src=$PWD/terraform,dst=/infra/terraform \
     --mount type=bind,src=$PWD/ansible,dst=/infra/ansible \
     --mount type=bind,src=$HOME/.ssh/id_rsa,dst=/root/.ssh/id_rsa,ro \
     --mount type=bind,src=$HOME/.ssh/known_hosts,dst=/root/.ssh/known_hosts,ro \
     --mount type=bind,src=$PWD/infrastructure-tools/infra.py,dst=/infra/infra.py,ro \
     --mount type=bind,src=$PWD/infrastructure-tools/terraform-provider-multiverse-freebox.py,dst=/infra/terraform-provider-multiverse-freebox.py,ro \
-    jacquev6/infrastructure-tools:$INFRASTRUCTURE_TOOLS_VERSION \
+    jacquev6/infrastructure-tools:$infrastructure_tools_version \
     bash -c "tail -f /dev/null" \
   >/dev/null
 fi
 
-TTY_OPTION=""
+tty_option=""
 
 if [ -t 0 -a -t 1 -a -t 2 ]
 then
-  TTY_OPTION="--tty"
+  tty_option="--tty"
 fi
 
-docker exec --interactive $TTY_OPTION $NAME /infra/infra.py "$@"
+docker exec --interactive $tty_option $name /infra/infra.py "$@"

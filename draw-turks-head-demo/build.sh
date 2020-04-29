@@ -3,34 +3,34 @@
 set -o errexit
 cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 
-MINIMIZE_LIST=false
-RUN=false
-BUILDX=""
-PLATFORM=""
-PUSH=""
-NOT_PUSHED_WARNING=" # Image not pushed to registry, DO NOT COMMIT"
-NO_CACHE=""
+minimize_list=false
+run=false
+buildx=""
+platform=""
+push=""
+not_pushed_warning=" # Image not pushed to registry, DO NOT COMMIT"
+no_cache=""
 
 while [[ "$#" > 0 ]]
 do
   case $1 in
     --mini-list)
-      MINIMIZE_LIST=true
+      minimize_list=true
       ;;
     --run)
-      RUN=true
+      run=true
       ;;
     --runx)
-      RUN=true
+      run=true
       ;& # https://riptutorial.com/bash/example/18601/case-statement-with-fall-through
     --push)
-      BUILDX="buildx"
-      PLATFORM="--platform linux/amd64,linux/arm/v7"
-      PUSH="--push"
-      NOT_PUSHED_WARNING=""
+      buildx="buildx"
+      platform="--platform linux/amd64,linux/arm/v7"
+      push="--push"
+      not_pushed_warning=""
       ;;
     --no-cache)
-      NO_CACHE="--no-cache --pull"
+      no_cache="--no-cache --pull"
       ;;
     *)
       echo "Unknown parameter passed: $1"
@@ -39,11 +39,11 @@ do
   shift
 done
 
-VERSION=$(date "+%Y%m%d-%H%M%S")
-NAME=jacquev6/draw-turks-head-demo:$VERSION
+version=$(date "+%Y%m%d-%H%M%S")
+name=jacquev6/draw-turks-head-demo:$version
 
 
-if $MINIMIZE_LIST
+if $minimize_list
 then
   echo "-------------------"
   echo "Minimizing list.txt"
@@ -96,26 +96,26 @@ fi
 
 
 echo "------------------------------------------------------"
-echo "Building $NAME"
+echo "Building $name"
 echo "------------------------------------------------------"
 
 # Make sure we're using BuildKit as described in:
 # https://www.docker.com/blog/multi-arch-images/
-docker $BUILDX build $NO_CACHE $PLATFORM --tag $NAME $PUSH .
+docker $buildx build $no_cache $platform --tag $name $push .
 
 sed -i "" \
-  -e "s/^  draw_turks_head_demo_version = .*/  draw_turks_head_demo_version = \"$VERSION\"$NOT_PUSHED_WARNING/" \
+  -e "s/^  draw_turks_head_demo_version = .*/  draw_turks_head_demo_version = \"$version\"$not_pushed_warning/" \
   ../terraform/resources/butler_containers/draw_turks_head_demo.tf
 
-if $RUN
+if $run
 then
   echo "-----------------------------------------------------"
-  echo "Running $NAME"
+  echo "Running $name"
   echo "-----------------------------------------------------"
 
-  if ! [ -z $BUILDX ]
+  if ! [ -z $buildx ]
   then
-    NAME=$(docker buildx imagetools inspect $NAME | grep -B2 "^  Platform:  linux/arm/v7$" | head -n 1 | cut -b 14-)
+    name=$(docker buildx imagetools inspect $name | grep -B2 "^  Platform:  linux/arm/v7$" | head -n 1 | cut -b 14-)
   fi
 
   docker run --rm --name draw_turks_head_demo --publish 8080:80 $NAME
