@@ -13,15 +13,20 @@
         groups:
           - docker
         append: true
-    - name: Upload 'ubuntu_shell.json'
-      # @todo Generate this file from ansible facts
-      copy:
-        src: "ubu_{{ inventory_hostname_short }}.json"
-        dest: /etc/ubuntu_shell.json
-    - name: Create volume for ubuntu_shell_host_keys
+    # - name: Upload 'ubuntu_shell.json'
+    #   # @todo Generate this file from ansible facts
+    #   copy:
+    #     src: "ubu_{{ inventory_hostname_short }}.json"
+    #     dest: /etc/ubuntu_shell.json
+    - name: Remove 'ubuntu_shell.json'
+      file:
+        path: /etc/ubuntu_shell.json
+        state: absent
+    - name: Remove volume for ubuntu_shell_host_keys
       docker_volume:
         volume_name: ubuntu_shell_host_keys
-    - name: Launch 'ubuntu_shell' container
+        state: absent
+    - name: Remove 'ubuntu_shell' container
       docker_container:
         name: "ubu_{{ inventory_hostname_short }}"
         hostname: "ubu_{{ inventory_hostname_short }}"
@@ -44,3 +49,4 @@
           - source: "/var/run/docker.sock"
             target: "/var/run/docker.sock"
             type: bind
+        state: absent
