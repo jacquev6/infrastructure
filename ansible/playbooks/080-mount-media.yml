@@ -7,3 +7,4 @@
         src: /dev/sda2
         fstype: ntfs
         state: mounted
+        opts: nofail
