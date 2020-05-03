@@ -4,7 +4,7 @@ resource "docker_container" "redirect_http_to_https" {
   rm = "false"
   restart = "always"
   ports {
-    external = "80"
+    external = "10080"
     internal = "80"
   }
   upload {

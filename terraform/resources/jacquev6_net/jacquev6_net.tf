@@ -281,7 +281,7 @@ resource "multiverse_custom_resource" "port_forwarding" {
       protocol = "tcp"
       external_port = 80
       internal_machine = local.butler
-      internal_port = 80
+      internal_port = 10080
     }
     https = {
       protocol = "tcp"
