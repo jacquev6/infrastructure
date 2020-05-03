@@ -4,8 +4,8 @@
     - name: Install NVidia drivers and utilities
       apt:
         name:
-          - nvidia-headless-430  # If we drop nvtop, we can upgrade to 435
-          - nvidia-utils-430
+          - nvidia-headless-440
+          - nvidia-utils-440
           - nvtop
         install_recommends: no
         state: latest
