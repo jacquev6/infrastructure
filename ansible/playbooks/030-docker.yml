@@ -6,6 +6,7 @@
         name:
           - docker.io
           - python3-docker
+          - docker-compose
         state: present
     - name: Add user 'jacquev6' to group 'docker'
       user:
