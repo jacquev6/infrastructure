@@ -1,19 +1,27 @@
 - hosts: idee
   become: yes
   tasks:
-    - name: Install exfat
+    - name: Install exfat and bindfs
       apt:
         name:
           - exfat-fuse
+          - bindfs
         state: latest
-    - name: Mount Black for MongoDb
+    - name: Mount Black
       mount:
-        path: /media/BlackForMongoDb
         src: /dev/sdc2
         fstype: exfat
+        opts: nofail
+        path: /media/Black
         state: mounted
+    - name: Mount MongoDB data with appropriate uid:gid
+      mount:
+        src: /media/Black/my-video-collection/.mongo
+        fstype: fuse.bindfs
         # mongodb user's id in mongo image
-        opts: nofail,uid=999,gid=999
+        opts: force-user=999,force-group=999
+        path: /home/jacquev6/Data/Hacking/MyVideoCollection/MongoDB
+        state: mounted
     - name: Run My Video Collection
       docker_compose:
         state: present
@@ -30,11 +38,11 @@
             mongo:
               image: mongo:4.2.6
               volumes:
-                - /media/BlackForMongoDb/my-video-collection/.mongo:/data/db
+                - /home/jacquev6/Data/Hacking/MyVideoCollection/MongoDB:/data/db
             graphql-api:
               image: registry.jacquev6.net/my-video-collection:latest
               volumes:
-                - /media/BlackForMongoDb/my-video-collection:/mvc-collection
+                - /media/Black/my-video-collection:/mvc-collection
               working_dir: /my-video-collection/graphql-api
               environment:
                 FLASK_RUN_HOST: "0.0.0.0"
@@ -52,7 +60,7 @@
             rq-worker:
               image: registry.jacquev6.net/my-video-collection:latest
               volumes:
-                - /media/BlackForMongoDb/my-video-collection:/mvc-collection
+                - /media/Black/my-video-collection:/mvc-collection
               working_dir: /my-video-collection/graphql-api
               environment:
                 MVC_COLLECTION_PATH: /mvc-collection
