@@ -18,9 +18,9 @@ all:
         media.home.jacquev6.net:
           # Raspberry Pi 4 with 4GB of RAM
           # Used as a media center
-          # Several operating systems on several SD cards (Raspbian, LibreElec, RecalBox, etc.)
-          # Headless when running Raspbian
-          # Only the Raspbian OS is managed by Ansible
+          # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
+          # Headless when running Ubuntu
+          # Only the Ubuntu OS is managed by Ansible
     idee:
       hosts:
         idee.home.jacquev6.net:
@@ -41,7 +41,6 @@ all:
     raspbian:
       children:
         butler:
-        media:
         probe:
       vars:
         bootstrap_user: pi
@@ -50,9 +49,10 @@ all:
       children:
         eeepc:
         idee:
+        media:
       vars:
-        bootstrap_user: user
-        bootstrap_password: password
+        bootstrap_user: ubuntu
+        bootstrap_password: ubuntu
     gpu:
       children:
         idee:

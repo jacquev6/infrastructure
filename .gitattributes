@@ -3,6 +3,7 @@
 id_rsa diff=git-crypt filter=git-crypt
 *.id_rsa diff=git-crypt filter=git-crypt
 wpa_supplicant.conf diff=git-crypt filter=git-crypt
+network-config diff=git-crypt filter=git-crypt
 *.wpa_supplicant.conf diff=git-crypt filter=git-crypt
 terraform.tfstate diff=git-crypt filter=git-crypt
 *.tmpl diff= filter=

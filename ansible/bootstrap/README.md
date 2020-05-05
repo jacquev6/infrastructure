@@ -61,6 +61,30 @@ Next steps are automated using Ansible:
     ./infra an apply -pb bootstrap $name
 
 
+Ubuntu server on Raspberry Pi
+=============================
+
+    sudo dd if=ubuntu-20.04-preinstalled-server-arm64+raspi.img of=/dev/rdiskN bs=32m
+    cp $(find ansible/bootstrap/add-to-raspberry-pi-ubuntu-system-boot -type f -not -name "*.tmpl") /Volumes/system-boot
+    diskutil umountDisk /dev/diskN
+
+Eject the SD card.
+
+Boot, wait 5 minutes. Reboot. Tada, the PI is on the network.
+
+Set host name:
+
+  name=<<<name>>>
+  ssh ubuntu@name.home.jacquev6.net
+  # password is "ubuntu"
+  # Then:
+  hostnamectl set-hostname <<<name>>>
+  sudo reboot
+
+Next steps are automated using Ansible:
+
+    ./infra an apply -pb bootstrap $name
+
 Ubuntu (minimal) on PC
 ======================
 
@@ -76,7 +100,7 @@ Go through the install process:
   - select location, locale, etc.
   - connect to wifi
   - set hostname
-  - set a temporary user named "User McUserface", with login "user" and password "password"
+  - set a temporary user named "User McUserface", with login "ubuntu" and password "ubuntu"
   - select timezone
   - partition with the "Use entire disk" option
   - no automatic updates

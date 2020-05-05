@@ -31,4 +31,4 @@
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
         name: media.home.jacquev6.net
-        key: "media.home.jacquev6.net,192.168.1.71 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIOpzewzGnvS3oi4JTuwuPS2CfOjzsBZxMmEYnrxOle1yDI3gnCgLKgIWlqlICWZDfZTbEyv0l+wSu/JQu9wYsg="
+        key: "media.home.jacquev6.net,192.168.1.71 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKHyeQ/83JVTStkcZreTOuWG4ygEWVkGz42a0BDPH6sLxQeLkTsrFEeIiS0YmCI9vK9VIhPuGihqO6SGvvte+xU="

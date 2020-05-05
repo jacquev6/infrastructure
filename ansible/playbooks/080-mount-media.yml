@@ -3,7 +3,7 @@
   tasks:
     - name: Mount Media
       mount:
-        path: /media/media
+        path: /media/Media
         src: /dev/sda2
         fstype: ntfs
         state: mounted
