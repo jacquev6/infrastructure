@@ -3,7 +3,7 @@ variable "gandi_smtp_password" {
 }
 
 locals {
-  periodical_check_bot_version = "20200429-110925"
+  periodical_check_bot_version = "20200509-142054"
 }
 
 resource "docker_image" "periodical_check_bot" {

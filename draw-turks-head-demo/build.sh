@@ -25,7 +25,7 @@ do
       ;& # https://riptutorial.com/bash/example/18601/case-statement-with-fall-through
     --push)
       buildx="buildx"
-      platform="--platform linux/amd64,linux/arm/v7"
+      platform="--platform linux/amd64,linux/arm/v7,linux/arm64/v8"
       push="--push"
       not_pushed_warning=""
       ;;
