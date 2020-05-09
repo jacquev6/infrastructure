@@ -40,7 +40,6 @@ all:
     # @todo Read more about Ansible (anti-)patterns. Could/should we use facts discovery instead?
     raspbian:
       children:
-        butler:
         probe:
       vars:
         bootstrap_user: pi
@@ -50,6 +49,7 @@ all:
         eeepc:
         idee:
         media:
+        butler:
       vars:
         bootstrap_user: ubuntu
         bootstrap_password: ubuntu

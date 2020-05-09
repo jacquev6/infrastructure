@@ -74,12 +74,12 @@ Boot, wait 5 minutes. Reboot. Tada, the PI is on the network.
 
 Set host name:
 
-  name=<<<name>>>
-  ssh ubuntu@name.home.jacquev6.net
-  # password is "ubuntu"
-  # Then:
-  hostnamectl set-hostname <<<name>>>
-  sudo reboot
+    name=<<<name>>>
+    ssh ubuntu@$name.home.jacquev6.net
+    # password is "ubuntu"
+    # Then:
+    hostnamectl set-hostname <<<name>>>
+    sudo reboot
 
 Next steps are automated using Ansible:
 
