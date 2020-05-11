@@ -21,6 +21,10 @@
         opts: force-user=999,force-group=999
         path: /home/jacquev6/Data/Hacking/MyVideoCollection/MongoDB
         state: mounted
+    - name: Copy NGinx configuration file
+      copy:
+        src: my-video-collection.nginx.conf
+        dest: /home/jacquev6/Data/Hacking/MyVideoCollection/nginx.conf
     - name: Run My Video Collection
       docker_compose:
         state: present
@@ -39,7 +43,7 @@
               volumes:
                 - /home/jacquev6/Data/Hacking/MyVideoCollection/MongoDB:/data/db
             graphql-api:
-              image: registry.jacquev6.net/my-video-collection:latest
+              image: registry.jacquev6.net/my-video-collection/graphql-api:latest
               restart: always
               volumes:
                 - /media/Media/MyVideoCollection:/mvc-collection
@@ -55,17 +59,25 @@
               command:
                 - flask
                 - run
+            website:
+              image: registry.jacquev6.net/my-video-collection/website:latest
+            nginx:
+              image: nginx
+              volumes:
+                - /home/jacquev6/Data/Hacking/MyVideoCollection/nginx.conf:/etc/nginx/nginx.conf
+              depends_on:
+                - graphql-api
+                - website
               ports:
-                - "8000:5000"
+                - "8080:80"
             rq-worker:
-              image: registry.jacquev6.net/my-video-collection:latest
+              image: registry.jacquev6.net/my-video-collection/graphql-api:latest
               restart: always
               volumes:
                 - /media/Media/MyVideoCollection:/mvc-collection
               working_dir: /my-video-collection/graphql-api
               environment:
                 MVC_COLLECTION_PATH: /mvc-collection
-                MVC_REDIS_HOST: redis  # @todo Remove (currently required only because of poor modularisation of graphql-api)
                 MVC_MONGO_HOST: mongo
               depends_on:
                 - redis
@@ -99,6 +111,10 @@
         opts: force-user=999,force-group=999
         path: /home/jacquev6/Data/Hacking/MyVideoCollection/MongoDB
         state: mounted
+    - name: Copy NGinx configuration file
+      copy:
+        src: my-video-collection.nginx.conf
+        dest: /home/jacquev6/Data/Hacking/MyVideoCollection/nginx.conf
     - name: Run My Video Collection
       docker_compose:
         state: present
@@ -117,7 +133,7 @@
               volumes:
                 - /home/jacquev6/Data/Hacking/MyVideoCollection/MongoDB:/data/db
             graphql-api:
-              image: registry.jacquev6.net/my-video-collection:latest
+              image: registry.jacquev6.net/my-video-collection/graphql-api:latest
               restart: always
               volumes:
                 - /media/Black/my-video-collection:/mvc-collection
@@ -133,10 +149,19 @@
               command:
                 - flask
                 - run
+            website:
+              image: registry.jacquev6.net/my-video-collection/website:latest
+            nginx:
+              image: nginx
+              volumes:
+                - /home/jacquev6/Data/Hacking/MyVideoCollection/nginx.conf:/etc/nginx/nginx.conf
+              depends_on:
+                - graphql-api
+                - website
               ports:
-                - "8000:5000"
+                - "8080:80"
             rq-worker:
-              image: registry.jacquev6.net/my-video-collection:latest
+              image: registry.jacquev6.net/my-video-collection/graphql-api:latest
               restart: always
               volumes:
                 - /media/Black/my-video-collection:/mvc-collection
