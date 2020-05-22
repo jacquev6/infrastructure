@@ -14,3 +14,9 @@
         groups:
           - docker
         append: true
+    - name: Start Docker on boot
+      # https://bugs.launchpad.net/ubuntu/+source/docker/+bug/1858441
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
