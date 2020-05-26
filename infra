@@ -17,6 +17,7 @@ then
   docker run \
     --rm --name $name --detach \
     --mount type=bind,src=$PWD/terraform,dst=/infra/terraform \
+    --mount type=bind,src=$(pwd | sed s/Dropbox/Data/)/terraform/.terraform,dst=/infra/terraform/.terraform \
     --mount type=bind,src=$PWD/ansible,dst=/infra/ansible \
     --mount type=bind,src=$HOME/.ssh/id_rsa,dst=/root/.ssh/id_rsa,ro \
     --mount type=bind,src=$HOME/.ssh/known_hosts,dst=/root/.ssh/known_hosts,ro \
