@@ -224,6 +224,7 @@ module "dns" {
       {
         type = "CNAME"
         name = "shared"
+        # @todo Import and manage the associated Google Storage bucket
         values = ["c.storage.googleapis.com."]
       },
     ]
