@@ -1,0 +1,21 @@
+- hosts: idee
+  become: yes
+  tasks:
+    - name: Run Media Utils
+      docker_compose:
+        state: present
+        project_name: media-utils
+        pull: yes
+        remove_orphans: yes
+        definition:
+          version: "3.6"
+          services:
+            chain-rip:
+              image: registry.jacquev6.net/media-utils/main:20200808-091426  # media-utils-version
+              command:
+                - chain-rip
+                - /dev/sr1
+                - /dev/sr2
+            redis:
+              image: redis:alpine
+              restart: always
