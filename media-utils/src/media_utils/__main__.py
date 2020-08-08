@@ -2,7 +2,9 @@ import datetime
 import fcntl
 import itertools
 import os
+import smtplib
 import time
+import urllib.parse
 
 import click
 import rq
@@ -13,19 +15,24 @@ from .check_iso import check_iso
 
 
 redis_connection = None
+smtp = None
 
 
 @click.group()
 @click.option("--redis-url")
-def main(redis_url):
+@click.option("--smtp-url")
+def main(redis_url, smtp_url):
     global redis_connection
     redis_connection = redis.Redis.from_url(redis_url)
+    global smtp
+    smtp = urllib.parse.urlsplit(smtp_url)
 
 
 @main.command()
+@click.option("--mail-to")
 @click.argument("devices", nargs=-1)
 @click.argument("data_path", nargs=1)
-def chain_rip(devices, data_path):
+def chain_rip(mail_to, devices, data_path):
     print("Chain ripping from the following devices:", " ".join(devices), flush=True)
 
     rip_dvds = rq.Queue(name="rip-dvds", default_timeout="2h", connection=redis_connection)
@@ -50,6 +57,8 @@ def chain_rip(devices, data_path):
         )
     }
 
+    mail_sent = False
+
     while True:
         now = datetime.datetime.now()
         print("Polling loop at", now, flush=True)
@@ -72,8 +81,20 @@ def chain_rip(devices, data_path):
         for device in devices:
             if device not in rip_jobs:
                 if has_disk(device):
+                    mail_sent = False
                     print("Start ripping from", device)
                     rip_jobs[device] = rip_dvds.enqueue(rip_dvd, device, os.path.join(data_path, "new"), now)
+
+        if mail_to and not mail_sent and not rip_jobs:
+            mail_sent = True
+            s = smtplib.SMTP_SSL(host=smtp.hostname, port=smtp.port)
+            s.login(smtp.username, smtp.password)
+            s.sendmail(
+                smtp.username,
+                mail_to,
+                f"From: {smtp.username}\r\nTo: {mail_to}\r\nSubject: Chain rip is idle - {now} - TSIA\r\n\r\n",
+            )
+            s.quit()
 
         for file_name, job in dict(check_jobs).items():
             job: rq.job.Job

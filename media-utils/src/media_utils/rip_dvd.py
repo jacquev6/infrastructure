@@ -2,9 +2,6 @@ import os
 import datetime
 import subprocess
 
-import random
-import time
-
 
 def rip_dvd(device: str, output_directory_path: str, now: datetime.datetime):
     os.makedirs(output_directory_path, exist_ok=True)
