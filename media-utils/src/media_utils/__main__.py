@@ -9,6 +9,7 @@ import rq
 import redis
 
 from .rip_dvd import rip_dvd
+from .check_iso import check_iso
 
 
 redis_connection = None
@@ -38,6 +39,17 @@ def chain_rip(devices, data_path):
         )
     }
 
+    check = rq.Queue(name="check", default_timeout="2h", connection=redis_connection)
+
+    check.empty()
+    check_jobs = {
+        job.args[0]: job
+        for job in rq.job.Job.fetch_many(
+            list(check.started_job_registry.get_job_ids()),
+            connection=redis_connection,
+        )
+    }
+
     while True:
         now = datetime.datetime.now()
         print("Polling loop at", now, flush=True)
@@ -62,6 +74,32 @@ def chain_rip(devices, data_path):
                 if has_disk(device):
                     print("Start ripping from", device)
                     rip_jobs[device] = rip_dvds.enqueue(rip_dvd, device, os.path.join(data_path, "new"), now)
+
+        for file_name, job in dict(check_jobs).items():
+            job: rq.job.Job
+            if job.is_queued:
+                print("Checking", file_name, "still queued")
+            elif job.is_started:
+                print("Still checking", file_name)
+            elif job.is_finished:
+                print("Done checking", file_name)
+                del check_jobs[file_name]
+            elif job.is_failed:
+                print("FAILED checking", file_name)
+                del check_jobs[file_name]
+            else:
+                assert False, f"UNEXPECTED job status for {file_name}: {job.get_status()}"
+
+        for file_name in os.listdir(os.path.join(data_path, "new")):
+            file_path = os.path.join(data_path, "new", file_name)
+            if file_path.endswith(".iso") and file_path not in check_jobs:
+                print("Enqueue checking", file_path)
+                check_jobs[file_path] = check.enqueue(
+                    check_iso,
+                    file_path,
+                    os.path.join(data_path, "checked"),
+                    os.path.join(data_path, "errors"),
+                )
 
         print(flush=True)
         time.sleep(10)

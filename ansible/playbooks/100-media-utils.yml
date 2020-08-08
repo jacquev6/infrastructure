@@ -32,7 +32,7 @@
               init: true
               depends_on:
                 - redis
-              image: registry.jacquev6.net/media-utils/main:20200808-170311  # media-utils-version
+              image: registry.jacquev6.net/media-utils/main:20200808-171606  # media-utils-version
               environment:
                 - MEDIA_UTILS_REDIS_URL=redis://redis
               volumes:
@@ -68,9 +68,18 @@
               scale: 2
               depends_on:
                 - redis
-              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-170311  # media-utils-version
+              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-171606  # media-utils-version
               environment:
                 - RQ_REDIS_URL=redis://redis
               volumes:
                 - /home/jacquev6/Data/Hacking/MediaUtils/ChainRip:/data
               privileged: true  # For `eject`
+            check-iso-worker:
+              init: true
+              depends_on:
+                - redis
+              image: registry.jacquev6.net/media-utils/workers/check-iso:20200808-171606  # media-utils-version
+              environment:
+                - RQ_REDIS_URL=redis://redis
+              volumes:
+                - /home/jacquev6/Data/Hacking/MediaUtils/ChainRip:/data
