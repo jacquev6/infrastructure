@@ -18,8 +18,8 @@ def check_iso(iso_path, ok_dir_path, error_dir_path):
         "--main-feature",
     ]
     try:
-        p = subprocess.run(cmd, capture_output=True, universal_newlines=True, check=True)
-        if "ERROR" in p.stdout or "ERROR" in p.stderr:
+        p = subprocess.run(cmd, capture_output=True, check=True)
+        if b"ERROR" in p.stdout or b"ERROR" in p.stderr:
             raise subprocess.CalledProcessError(0, cmd, p.stdout, p.stderr)
     except subprocess.CalledProcessError as e:
         print(e.stdout, flush=True)

@@ -40,7 +40,7 @@
               init: true
               depends_on:
                 - redis
-              image: registry.jacquev6.net/media-utils/main:20200808-180229  # media-utils-version
+              image: registry.jacquev6.net/media-utils/main:20200808-185943  # media-utils-version
               environment:
                 - MEDIA_UTILS_REDIS_URL=redis://redis
                 - MEDIA_UTILS_SMTP_URL={{ smtp_url }}
@@ -79,7 +79,7 @@
               scale: 2
               depends_on:
                 - redis
-              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-180229  # media-utils-version
+              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-185943  # media-utils-version
               environment:
                 - RQ_REDIS_URL=redis://redis
               volumes:
@@ -89,7 +89,7 @@
               init: true
               depends_on:
                 - redis
-              image: registry.jacquev6.net/media-utils/workers/check-iso:20200808-180229  # media-utils-version
+              image: registry.jacquev6.net/media-utils/workers/check-iso:20200808-185943  # media-utils-version
               environment:
                 - RQ_REDIS_URL=redis://redis
               volumes:
