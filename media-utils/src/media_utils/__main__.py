@@ -1,5 +1,6 @@
 import datetime
 import fcntl
+import itertools
 import os
 import time
 
@@ -26,18 +27,41 @@ def main(redis_url):
 def chain_rip(devices, data_path):
     print("Chain ripping from the following devices:", " ".join(devices), flush=True)
 
-    rip_dvds = rq.Queue(name="rip-dvds", connection=redis_connection)
+    rip_dvds = rq.Queue(name="rip-dvds", default_timeout="2h", connection=redis_connection)
+
+    rip_dvds.empty()
+    rip_jobs = {
+        job.args[0]: job
+        for job in rq.job.Job.fetch_many(
+            list(rip_dvds.started_job_registry.get_job_ids()),
+            connection=redis_connection,
+        )
+    }
 
     while True:
         now = datetime.datetime.now()
         print("Polling loop at", now, flush=True)
-        devices_being_ripped = set(job.args[0] for job in rip_dvds.get_jobs())
-        print("Devices being ripped:", " ".join(devices_being_ripped))
+
+        for device, job in dict(rip_jobs).items():
+            job: rq.job.Job
+            if job.is_queued:
+                print("Ripping from", device, "still queued... Do you have enough workers?")
+            elif job.is_started:
+                print("Still ripping from", device)
+            elif job.is_finished:
+                print("Done ripping from", device)
+                del rip_jobs[device]
+            elif job.is_failed:
+                print("FAILED ripping from", device)
+                del rip_jobs[device]
+            else:
+                assert False, f"UNEXPECTED job status for {device}: {job.get_status()}"
+
         for device in devices:
-            if device not in devices_being_ripped:
+            if device not in rip_jobs:
                 if has_disk(device):
-                    print("Ripping from", device)
-                    rip_dvds.enqueue(rip_dvd, device, os.path.join(data_path, "new"), now)
+                    print("Start ripping from", device)
+                    rip_jobs[device] = rip_dvds.enqueue(rip_dvd, device, os.path.join(data_path, "new"), now)
 
         print(flush=True)
         time.sleep(10)

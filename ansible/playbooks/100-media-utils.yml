@@ -22,13 +22,17 @@
       docker_compose:
         state: present
         project_name: media-utils
-        pull: yes
         remove_orphans: yes
         definition:
-          version: "3.6"
+          version: "2.4"
           services:
+            redis:
+              image: redis:alpine
             chain-rip:
-              image: registry.jacquev6.net/media-utils/main:20200808-104917  # media-utils-version
+              init: true
+              depends_on:
+                - redis
+              image: registry.jacquev6.net/media-utils/main:20200808-170311  # media-utils-version
               environment:
                 - MEDIA_UTILS_REDIS_URL=redis://redis
               volumes:
@@ -41,29 +45,32 @@
                 - /dev/sr1
                 - /dev/sr2
                 - /data
-            redis:
-              image: redis:alpine
-              restart: always
             rqmonitor:
+              init: true
+              depends_on:
+                - redis
               image: pranavgupta1234/rqmonitor
               environment:
                 - RQ_MONITOR_REDIS_URL=redis://redis
               ports:
                 - 8899:8899
             rq-dashboard:
+              init: true
+              depends_on:
+                - redis
               image: eoranged/rq-dashboard
               environment:
                 - RQ_DASHBOARD_REDIS_URL=redis://redis
               ports:
                 - 9181:9181
             rip-dvd-worker:
-              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-104917  # media-utils-version
+              init: true
+              scale: 2
+              depends_on:
+                - redis
+              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-170311  # media-utils-version
               environment:
                 - RQ_REDIS_URL=redis://redis
               volumes:
                 - /home/jacquev6/Data/Hacking/MediaUtils/ChainRip:/data
-              devices:
-                - /dev/sr1
-                - /dev/sr2
-        scale:
-          rip-dvd-worker: 2
+              privileged: true  # For `eject`
