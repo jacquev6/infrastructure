@@ -1,6 +1,23 @@
 - hosts: idee
   become: yes
   tasks:
+    - name: Mount Data
+      mount:
+        src: /dev/sdb1
+        fstype: ext4
+        path: /media/Data
+        state: mounted
+    - name: Install bindfs
+      apt:
+        name:
+          - bindfs
+        state: latest
+    - name: Mount Ripping data at appropriate location
+      mount:
+        src: /media/Data/ChainRip
+        fstype: fuse.bindfs
+        path: /home/jacquev6/Data/Hacking/MediaUtils/ChainRip
+        state: mounted
     - name: Run Media Utils
       docker_compose:
         state: present
@@ -11,9 +28,11 @@
           version: "3.6"
           services:
             chain-rip:
-              image: registry.jacquev6.net/media-utils/main:20200808-100910  # media-utils-version
+              image: registry.jacquev6.net/media-utils/main:20200808-104917  # media-utils-version
               environment:
                 - MEDIA_UTILS_REDIS_URL=redis://redis
+              volumes:
+                - /home/jacquev6/Data/Hacking/MediaUtils/ChainRip:/data
               devices:
                 - /dev/sr1
                 - /dev/sr2
@@ -21,13 +40,16 @@
                 - chain-rip
                 - /dev/sr1
                 - /dev/sr2
+                - /data
             redis:
               image: redis:alpine
               restart: always
             rip-dvd-worker:
-              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-100910  # media-utils-version
+              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-104917  # media-utils-version
               environment:
                 - RQ_REDIS_URL=redis://redis
+              volumes:
+                - /home/jacquev6/Data/Hacking/MediaUtils/ChainRip:/data
               devices:
                 - /dev/sr1
                 - /dev/sr2

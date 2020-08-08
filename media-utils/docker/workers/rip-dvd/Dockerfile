@@ -1,6 +1,6 @@
 FROM alpine:3.12
 
-RUN apk add --no-cache py3-pip
+RUN apk add --no-cache py3-pip cdrkit
 
 
 WORKDIR /media-utils
