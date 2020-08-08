@@ -4,8 +4,9 @@ set -o errexit
 cd "$(dirname "${BASH_SOURCE[0]}")"
 . ../_utils.sh
 
-no_cache=""
 do_build=true
+no_cache=""
+do_run=false
 do_push=false
 do_deploy=false
 
@@ -15,10 +16,14 @@ do
     --no-cache)
       no_cache="--no-cache --pull"
       ;;
+    --run)
+      do_run=true
+      ;;
     --push)
       do_push=true
       ;;
     --deploy)
+      do_push=true
       do_deploy=true
       ;;
     *)
@@ -38,6 +43,13 @@ then
     image_name=media-utils/${image_name%/Dockerfile}
     docker build $no_cache --file $dockerfile --tag $image_name:latest .
   done
+fi
+
+if $do_run
+then
+  title "Running"
+
+  docker run --env MEDIA_UTILS_REDIS_HOST=foo --rm -it media-utils/main:latest chain-rip /dev/sr0
 fi
 
 if $do_push

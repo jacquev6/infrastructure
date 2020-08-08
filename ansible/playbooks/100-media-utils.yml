@@ -11,7 +11,12 @@
           version: "3.6"
           services:
             chain-rip:
-              image: registry.jacquev6.net/media-utils/main:20200808-091426  # media-utils-version
+              image: registry.jacquev6.net/media-utils/main:20200808-100910  # media-utils-version
+              environment:
+                - MEDIA_UTILS_REDIS_URL=redis://redis
+              devices:
+                - /dev/sr1
+                - /dev/sr2
               command:
                 - chain-rip
                 - /dev/sr1
@@ -19,3 +24,12 @@
             redis:
               image: redis:alpine
               restart: always
+            rip-dvd-worker:
+              image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-100910  # media-utils-version
+              environment:
+                - RQ_REDIS_URL=redis://redis
+              devices:
+                - /dev/sr1
+                - /dev/sr2
+        scale:
+          rip-dvd-worker: 2
