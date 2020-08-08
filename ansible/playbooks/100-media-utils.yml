@@ -44,6 +44,18 @@
             redis:
               image: redis:alpine
               restart: always
+            rqmonitor:
+              image: pranavgupta1234/rqmonitor
+              environment:
+                - RQ_MONITOR_REDIS_URL=redis://redis
+              ports:
+                - 8899:8899
+            rq-dashboard:
+              image: eoranged/rq-dashboard
+              environment:
+                - RQ_DASHBOARD_REDIS_URL=redis://redis
+              ports:
+                - 9181:9181
             rip-dvd-worker:
               image: registry.jacquev6.net/media-utils/workers/rip-dvd:20200808-104917  # media-utils-version
               environment:
