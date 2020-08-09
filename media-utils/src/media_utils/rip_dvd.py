@@ -17,7 +17,7 @@ def rip_dvd(device: str, output_directory_path: str, now: datetime.datetime):
         assert isoinfo[2].startswith("Volume id: ")
         volume_id = isoinfo[2][11:]
 
-        iso_path = os.path.join(output_directory_path, f"{volume_id}-{now.strftime('%Y%m%d-%H%M%S')}-{os.path.basename(device)}.iso")
+        iso_path = os.path.join(output_directory_path, f"{now.strftime('%Y%m%d-%H%M%S')}-{os.path.basename(device)}-{volume_id}.iso")
         tmp_path = iso_path + ".part"
 
         subprocess.run(["dvdvideo-backup-image", device, tmp_path], check=True)
