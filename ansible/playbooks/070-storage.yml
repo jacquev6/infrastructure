@@ -1,0 +1,53 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install file system packages
+      apt:
+        name:
+          - bindfs
+          - cifs-utils
+          - exfat-fuse
+        state: present
+    - name: Add nas2 credentials
+      copy:
+        src: nas2.secret.credentials
+        dest: /etc/nas2_credentials
+        mode: u=r,g=,o=
+    - name: Mount nas2
+      mount:
+        src: //nas2.home.jacquev6.net/vincent
+        fstype: cifs
+        opts: credentials=/etc/nas2_credentials,vers=2.0,uid=0,gid=0
+        path: /mnt/nas2
+        state: mounted
+    - name: Mount Black
+      mount:
+        src: PARTUUID=e8dada69-fb62-4b3b-87b6-b96bcdcbf3b2
+        fstype: exfat
+        opts: nofail
+        path: /mnt/black
+        state: mounted
+    - name: Mount Big
+      mount:
+        src: PARTUUID=0f11e608-8e52-443b-8474-c59109b0c156
+        fstype: ntfs
+        opts: nofail
+        path: /mnt/big
+        state: mounted
+    - name: Mount Data1
+      mount:
+        src: UUID=ce9890f6-9d50-4e73-923f-cd9da2b9bdd4
+        fstype: ext4
+        opts: nofail
+        path: /mnt/data1
+        state: mounted
+- hosts:
+    - butler
+  become: yes
+  tasks:
+    - name: Mount DockerRegistry
+      mount:
+        src: /mnt/nas2/HackingData/DockerRegistry
+        fstype: fuse.bindfs
+        path: /home/jacquev6/Data/Hacking/DockerRegistry
+        state: mounted

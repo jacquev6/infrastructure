@@ -1,11 +1,9 @@
 - hosts: media
   become: yes
   tasks:
-    - name: Install bindfs
-      apt:
-        name:
-          - bindfs
-        state: latest
+    # @todo (when Big is available) Homogenize with butler:
+    # - remove these three mounts
+    # - bindfs from /mnt/big
     - name: Mount Media
       mount:
         src: /dev/sda2
@@ -30,22 +28,9 @@
 - hosts: butler
   become: yes
   tasks:
-    - name: Install exfat and bindfs
-      apt:
-        name:
-          - exfat-fuse
-          - bindfs
-        state: latest
-    - name: Mount Black
-      mount:
-        src: /dev/sda2
-        fstype: exfat
-        opts: nofail
-        path: /media/Black
-        state: mounted
     - name: Mount MongoDB data with appropriate uid:gid
       mount:
-        src: /media/Black/my-media-gathering/.mongo
+        src: /mnt/black/my-media-gathering/.mongo
         fstype: fuse.bindfs
         # mongodb user's id in mongo image
         opts: force-user=999,force-group=999
@@ -53,7 +38,7 @@
         state: mounted
     - name: Mount Gathering data at appropriate location
       mount:
-        src: /media/Black/my-media-gathering
+        src: /mnt/black/my-media-gathering
         fstype: fuse.bindfs
         path: /home/jacquev6/Data/Hacking/MyMediaGatherer/Gathering
         state: mounted

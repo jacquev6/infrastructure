@@ -18,7 +18,7 @@ resource "docker_container" "docker_registry" {
   }
   mounts {
     type = "bind"
-    source = "/media/DockerRegistry"
+    source = "/home/jacquev6/Data/Hacking/DockerRegistry"
     target = "/var/lib/registry"
   }
 }

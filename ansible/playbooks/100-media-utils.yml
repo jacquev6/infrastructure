@@ -1,23 +1,22 @@
 - hosts: idee
   become: yes
   tasks:
+    # @todo (when volumes can be unmounted) Homogenize using bindfs to mounts in 070-storage.yml
+    # Remove
     - name: Mount Data
       mount:
         src: /dev/sdb1
         fstype: ext4
         path: /media/Data
         state: mounted
-    - name: Install bindfs
-      apt:
-        name:
-          - bindfs
-        state: latest
+    # Bindfs from /mnt/data1
     - name: Mount Ripping data at appropriate location
       mount:
         src: /media/Data/ChainRip
         fstype: fuse.bindfs
         path: /home/jacquev6/Data/Hacking/MediaUtils/ChainRip
         state: mounted
+    # Bindfs from /mnt/nas2
     - name: Mount output directory at appropriate location
       mount:
         src: /media/nas2/Media/IncomingDvdImages
