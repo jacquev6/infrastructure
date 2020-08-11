@@ -19,7 +19,14 @@ LABEL infrastructure-tools-builder-version=$version
 FROM base AS terraform_provider_gandi
 LABEL infrastructure-tools-builder-stage=terraform_provider_gandi
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -a -tags netgo -ldflags '-w -extldflags "-static"' github.com/tiramiseb/terraform-provider-gandi
+WORKDIR /mygo
+RUN wget https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz
+RUN tar zxf go1.13.8.linux-amd64.tar.gz
+WORKDIR /
+ENV PATH=/mygo/go/bin:$PATH
+
+RUN git clone https://github.com/tiramiseb/terraform-provider-gandi.git
+RUN cd terraform-provider-gandi && git checkout v1.1.1 && go build
 
 ARG version
 LABEL infrastructure-tools-builder-version=$version
@@ -75,7 +82,7 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 COPY --from=terraform /terraform /usr/local/bin/
-COPY --from=terraform_provider_gandi /root/go/bin/terraform-provider-gandi /usr/local/bin/
+COPY --from=terraform_provider_gandi /terraform-provider-gandi/terraform-provider-gandi /usr/local/bin/
 COPY --from=terraform_provider_uptimerobot /terraform-provider-uptimerobot/terraform-provider-uptimerobot /usr/local/bin/
 COPY --from=terraform_provider_multiverse /root/go/bin/terraform-provider-multiverse /usr/local/bin/
 
