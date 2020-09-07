@@ -88,12 +88,12 @@ Next steps are automated using Ansible:
 Ubuntu (minimal) on PC
 ======================
 
-Download network installer from https://ubuntu.com/download/alternative-downloads.
+Download network installer from http://archive.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/current/legacy-images/netboot/mini.iso.
 
     diskutil umountDisk /dev/diskN
-    sudo dd bs=10m if=ubuntu-19.10-mini.iso of=/dev/rdiskN
+    sudo dd bs=10m if=ubuntu-20.04-lts-mini.iso of=/dev/rdiskN
 
-Boot on the USB flashdrive, select "Install".
+Boot from the USB flashdrive, select "Install".
 
 Go through the install process:
 
@@ -104,7 +104,7 @@ Go through the install process:
   - select timezone
   - partition with the "Use entire disk" option
   - no automatic updates
-  - In "Software selection", choose "OpenSSH server" ans "Basic Ubuntu server"
+  - In "Software selection", choose "OpenSSH server" and "Basic Ubuntu server"
 
 Set the new node's name:
 
@@ -112,9 +112,9 @@ Set the new node's name:
 
 If you want to run repeatable experiments from an as freshly installed as possible state:
 
-    ssh -t user@$name.home.jacquev6.net sudo sed -i 's/overlayroot=.*/overlayroot=\"tmpfs\"/' /etc/overlayroot.conf
-    ssh -t user@$name.home.jacquev6.net sudo reboot
+    ssh -t ubuntu@$name.home.jacquev6.net sudo sed -i 's/overlayroot=.*/overlayroot=\"tmpfs\"/' /etc/overlayroot.conf
+    ssh -t ubuntu@$name.home.jacquev6.net sudo reboot
 
 Next steps are automated using Ansible:
 
-    ./infra an bootstrap $name
+    ./infra an apply -pb bootstrap $name

@@ -17,7 +17,7 @@
         file: smtp_url.secret.yml
     - name: Run Media Utils
       docker_compose:
-        state: present
+        state: absent
         project_name: media-utils
         remove_orphans: yes
         definition:

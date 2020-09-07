@@ -6,7 +6,6 @@
         name:
           - nvidia-headless-440
           - nvidia-utils-440
-          - nvtop
         install_recommends: no
         state: latest
 - hosts: "gpu:&docker"
