@@ -7,6 +7,10 @@
         create_home: yes
         shell: /bin/bash
         comment: Vincent Jacques
+        # At least one user must have a password, to rescue the system if it fails before starting sshd
+        # Plain-text password: see note "jacquev6 local password" in LastPass
+        # Encrypted using https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-encrypted-passwords-for-the-user-module
+        password: $6$vKWPUcs2g3t0$GMm2VzQl7eJd1ywChkqSF9kNkPcox/15ZwSyGnAgm.5ZA3xQFAcUWu/DDqezMxmxTAXl1Z44E9KgZ9uFOL8ns/
     - name: Add SSH authorized key for user 'jacquev6'
       authorized_key:
         user: jacquev6
