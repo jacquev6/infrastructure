@@ -9,7 +9,11 @@
         state: mounted
     - name: Mount output directory at appropriate location
       mount:
-        src: /mnt/nas2/Media/IncomingDvdImages
+        # Short term location, directly on Big, temporarilly plugged in Idee
+        src: /mnt/big/IncomingDvdImages
+        # Long term location, when we rip new DVDs one by one
+        # (Media will fetch them from the nas)
+        # src: /mnt/nas2/Media/IncomingDvdImages
         fstype: fuse.bindfs
         path: /home/jacquev6/Data/Hacking/MediaUtils/ChainRip/checked
         state: mounted
@@ -17,7 +21,7 @@
         file: smtp_url.secret.yml
     - name: Run Media Utils
       docker_compose:
-        state: absent
+        state: present
         project_name: media-utils
         remove_orphans: yes
         definition:
