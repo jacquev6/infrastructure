@@ -1,6 +1,10 @@
-FROM ubuntu:18.04 AS base
+FROM ubuntu:20.04 AS base
+
+# https://stackoverflow.com/a/44333806/905845
+RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+
 RUN apt-get update
-RUN apt-get install --yes wget unzip golang git
+RUN apt-get install --yes wget unzip golang git build-essential
 
 
 
@@ -68,15 +72,18 @@ LABEL infrastructure-tools-builder-version=$version
 
 
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+
+# https://stackoverflow.com/a/44333806/905845
+RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 RUN set -x \
     && apt-get update \
-    && apt-get install --yes --no-install-recommends \
-      python3-pip python3-setuptools \
+    && apt-get install --yes \
+      python3-pip \
       ssh sshpass \
     && rm -rf /var/lib/apt/lists/*
-RUN pip3 install click requests ansible
+RUN pip3 install click requests ansible terraform-provider-freebox
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8

@@ -1,9 +1,5 @@
 locals {
   github_pages_ips = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
-
-  # Home IP is now fixed, thanks to Free.
-  # Before that, I was using CNAME DNS records pointing at "home-jacquev6-net.synology.me."
-  home_ip = "82.65.16.120"
 }
 
 
@@ -15,6 +11,22 @@ terraform {
     acme = "~> 1.5"
     docker = "~> 2.7"
   }
+}
+
+
+variable "freebox_app_token" {
+  type = string
+}
+
+provider freebox {
+  app_id = "infrastructure"
+  app_token = var.freebox_app_token
+}
+
+data freebox_connection_status home_connection {}
+
+locals {
+  home_ip = data.freebox_connection_status.home_connection.ipv4
 }
 
 

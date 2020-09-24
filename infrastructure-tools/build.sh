@@ -1,13 +1,13 @@
 #!/bin/bash
 
 set -o errexit
-cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
 push=false
 not_pushed_warning=" # Image not pushed to registry, DO NOT COMMIT"
 no_cache=""
 
-while [[ "$#" > 0 ]]
+while [[ "$#" -gt 0 ]]
 do
   case $1 in
     --push)
