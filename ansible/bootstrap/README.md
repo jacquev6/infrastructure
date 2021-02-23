@@ -1,68 +1,38 @@
-Raspbian on Raspberry Pi
-========================
+Raspberry Pis
+=============
+
+About micro-SD cards
+--------------------
+
+[These ones](https://www.amazon.fr/gp/product/B073K14CVB) work great.
+
+Identify the card (before and after inserting it):
+
+    diskutil list
+
+Below, the card is named `/dev/diskN` or `/dev/rdiskN`; change `N` accordingly.
+
+Unmout it (before any block-level operation):
+
+    diskutil umountDisk /dev/diskN
 
 Find MAC address(es)
 --------------------
 
-@todo Describe how to find Raspberry Pi's MAC addresses headless (https://github.com/raspberrypi/noobs/issues/501#issuecomment-394164088)
-Formatting for PINN: `diskutil partitionDisk /dev/diskN 1 MBR MS-DOS PINN 15g`
-@todo Describe how to add them to the Freebox using Terraform.
+- Download PINN from https://sourceforge.net/projects/pinn/
+- Format a SD card with `diskutil partitionDisk /dev/diskN 1 MBR MS-DOS PINN 500m` (change diskN to actual name)
+- Extract the archive onto the SD card
+- Add files from `add-to-pinn`
+- Boot the PI with the SD, give it time (wait for the LEDs to stop blinking, and then 30s more)
+- The MAC address is in `info.txt` on the SD card
+- The SD card is reusable as-is
 
-Download Raspbian
------------------
+Ubuntu server
+-------------
 
-    curl -O http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip
-    unzip 2020-02-13-raspbian-buster-lite.zip
+Download "Ubuntu Server 64 bits" from https://ubuntu.com/download/raspberry-pi.
 
-Write Raspbian to SD card (on a *macOS* computer)
--------------------------------------------------
-
-Without the SD card:
-
-    diskutil list
-
-Insert the SD card, then:
-
-    diskutil list
-
-Note the index of the newly inserted device (/dev/diskN).
-
-    diskutil umountDisk /dev/diskN
-    sudo dd bs=10m if=2020-02-13-raspbian-buster-lite.img of=/dev/rdiskN
-    cp $(find ansible/bootstrap/add-to-raspbian-boot -type f -not -name "*.tmpl") /Volumes/boot
-    diskutil umountDisk /dev/diskN
-
-Eject the SD card.
-
-Boot for the first time and do manual bootstraping
---------------------------------------------------
-
-Set the new node's name:
-
-    name=whatever
-
-(Raspbian user "pi" has initial password "raspberry")
-
-Boot the Pi with the SD card. Then:
-
-    ssh pi@$name.home.jacquev6.net sudo raspi-config --expand-rootfs
-    ssh pi@$name.home.jacquev6.net sudo reboot now
-    ssh pi@$name.home.jacquev6.net sudo raspi-config nonint do_hostname $name
-    ssh pi@$name.home.jacquev6.net sudo reboot now
-
-If you want to run repeatable experiments from an as freshly installed as possible state:
-
-    ssh pi@$name.home.jacquev6.net sudo raspi-config nonint enable_overlayfs
-    ssh pi@$name.home.jacquev6.net sudo raspi-config nonint enable_bootro
-    ssh pi@$name.home.jacquev6.net sudo reboot now
-
-Next steps are automated using Ansible:
-
-    ./infra an apply -pb bootstrap $name
-
-
-Ubuntu server on Raspberry Pi
-=============================
+Extract image on SD card:
 
     sudo dd if=ubuntu-20.04-preinstalled-server-arm64+raspi.img of=/dev/rdiskN bs=32m
     cp $(find ansible/bootstrap/add-to-raspberry-pi-ubuntu-system-boot -type f -not -name "*.tmpl") /Volumes/system-boot

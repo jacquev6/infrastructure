@@ -34,6 +34,7 @@ locals {
     dns = true
   }
   home_machines = [
+    # Pets
     {
       name = "nas2"
       mac = "00:11:32:49:8B:63"
@@ -168,9 +169,27 @@ locals {
       mac = "40:61:86:BA:61:91"
       ip = "192.168.1.74"
       dns = false
-    }
+    },
     # @todo Add kindle.claire
     # @todo Add ipad.claire
+    # Cattle
+    # Naming: prefix-index
+    # Prefix: machine type
+    # pi4b4: Raspberry Pi 4 Model B with 4GB RAM
+    {
+      name = "pi4b4-1"
+      mac = "DC:A6:32:F6:AD:DE"
+      # WiFi MAC address is DC:A6:32:F6:AD:E1
+      ip = "192.168.1.100"
+      dns = true
+    },
+    {
+      name = "pi4b4-2"
+      mac = "DC:A6:32:F8:A4:AE"
+      # WiFi MAC address is DC:A6:32:F8:A4:AF
+      ip = "192.168.1.101"
+      dns = true
+    }
   ]
 }
 
