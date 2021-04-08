@@ -15,8 +15,7 @@
         fstype: fuse.bindfs
         path: /home/jacquev6/Data/Hacking/MyMediaGatherer/Gathering
         state: mounted
-- hosts:
-    - butler
+- hosts: butler
   become: yes
   tasks:
     - name: Copy NGinx configuration file

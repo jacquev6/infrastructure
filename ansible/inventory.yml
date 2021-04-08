@@ -7,45 +7,48 @@ all:
   children:
 
     # Groups with one machines used as convenient short aliases
-    # Pets
-    butler:
-      hosts:
-        butler.home.jacquev6.net:
-          # Headless Raspberry Pi 4 with 4GB of RAM
-          # Main entry point from WAN (using port forwarding)
-          # Always on, monitored by Uptime Robot
-    media:
-      hosts:
-        media.home.jacquev6.net:
-          # Raspberry Pi 4 with 4GB of RAM
-          # Used as a media center
-          # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
-          # Headless when running Ubuntu
-          # Only the Ubuntu OS is managed by Ansible
-    idee:
-      hosts:
-        idee.home.jacquev6.net:
-          # Headless AMD64 with a big GPU
-    probe:
-      hosts:
-        probe.home.jacquev6.net:
-          # Raspberry Pi 3 model B
-          # Read-only /boot and overlayfs on / (using raspi-config's "Advanced" menu)
-    eeepc:
-      hosts:
-        eeepc.home.jacquev6.net:
-          # Old eeePC laptop
-          # overlayfs on / (using Ubuntu's overlayroot package)
+    pets:
+      children:
+        butler:
+          hosts:
+            butler.home.jacquev6.net:
+              # Headless Raspberry Pi 4 with 4GB of RAM
+              # Main entry point from WAN (using port forwarding)
+              # Always on, monitored by Uptime Robot
+        media:
+          hosts:
+            media.home.jacquev6.net:
+              # Raspberry Pi 4 with 4GB of RAM
+              # Used as a media center
+              # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
+              # Headless when running Ubuntu
+              # Only the Ubuntu OS is managed by Ansible
+        idee:
+          hosts:
+            idee.home.jacquev6.net:
+              # Headless AMD64 with a big GPU
+        probe:
+          hosts:
+            probe.home.jacquev6.net:
+              # Raspberry Pi 3 model B
+              # Read-only /boot and overlayfs on / (using raspi-config's "Advanced" menu)
+        eeepc:
+          hosts:
+            eeepc.home.jacquev6.net:
+              # Old eeePC laptop
+              # overlayfs on / (using Ubuntu's overlayroot package)
 
-    # Cattle
-    pi4b4-1:
-      hosts:
-        pi4b4-1.home.jacquev6.net:
-          # Headless Raspberry Pi 4 with 4GB of RAM
-    pi4b4-2:
-      hosts:
-        pi4b4-2.home.jacquev6.net:
-          # Headless Raspberry Pi 4 with 4GB of RAM
+    cattle:
+      children:
+        # Headless Raspberry Pis 4 with 4GB of RAM
+        pi4b4:
+          children:
+            pi4b4_1:
+              hosts:
+                pi4b4-1.home.jacquev6.net:
+            pi4b4_2:
+              hosts:
+                pi4b4-2.home.jacquev6.net:
 
     # Groups used as tags to decide which machines get which playbooks
     # @todo Read more about Ansible (anti-)patterns. Could/should we use facts discovery instead?
@@ -61,8 +64,7 @@ all:
         idee:
         media:
         butler:
-        pi4b4-1:
-        pi4b4-2:
+        cattle:
       vars:
         bootstrap_user: ubuntu
         bootstrap_password: ubuntu

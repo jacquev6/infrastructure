@@ -12,7 +12,7 @@
         name:
           - ffmpeg
         state: latest
-- hosts: all
+- hosts: pets
   become: yes
   tasks:
     - name: Install screen

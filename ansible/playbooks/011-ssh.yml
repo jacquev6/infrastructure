@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: pets
   become: yes
   tasks:
     # @todo Make this a loop over inventory
