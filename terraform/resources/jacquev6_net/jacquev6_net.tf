@@ -170,6 +170,12 @@ locals {
       ip = "192.168.1.74"
       dns = false
     },
+    {
+      name = "teuse"
+      mac = "08:00:27:FE:36:3B"
+      ip = "192.168.1.75"
+      dns = true
+    },
     # @todo Add kindle.claire
     # @todo Add ipad.claire
     # Cattle
