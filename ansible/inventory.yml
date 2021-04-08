@@ -27,6 +27,10 @@ all:
               # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
               # Headless when running Ubuntu
               # Only the Ubuntu OS is managed by Ansible
+        teuse:
+          hosts:
+            teuse.home.jacquev6.net:
+              # VirtualBox
     cattle:
       children:
         pi4b4:
@@ -45,6 +49,7 @@ all:
         butler:
         idee:
         media:
+        teuse:
         cattle:
       vars:
         bootstrap_user: ubuntu
