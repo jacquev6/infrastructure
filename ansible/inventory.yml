@@ -12,36 +12,25 @@ all:
         butler:
           hosts:
             butler.home.jacquev6.net:
-              # Headless Raspberry Pi 4 with 4GB of RAM
+              # Headless Raspberry Pi 4 model B with 4GB of RAM
               # Main entry point from WAN (using port forwarding)
               # Always on, monitored by Uptime Robot
-        media:
-          hosts:
-            media.home.jacquev6.net:
-              # Raspberry Pi 4 with 4GB of RAM
-              # Used as a media center
-              # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
-              # Headless when running Ubuntu
-              # Only the Ubuntu OS is managed by Ansible
         idee:
           hosts:
             idee.home.jacquev6.net:
               # Headless AMD64 with a big GPU
-        probe:
+        media:
           hosts:
-            probe.home.jacquev6.net:
-              # Raspberry Pi 3 model B
-              # Read-only /boot and overlayfs on / (using raspi-config's "Advanced" menu)
-        eeepc:
-          hosts:
-            eeepc.home.jacquev6.net:
-              # Old eeePC laptop
-              # overlayfs on / (using Ubuntu's overlayroot package)
-
+            media.home.jacquev6.net:
+              # Raspberry Pi 4 model B with 4GB of RAM
+              # Used as a media center
+              # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
+              # Headless when running Ubuntu
+              # Only the Ubuntu OS is managed by Ansible
     cattle:
       children:
-        # Headless Raspberry Pis 4 with 4GB of RAM
         pi4b4:
+          # Headless Raspberry Pis 4 model B with 4GB of RAM
           children:
             pi4b4_1:
               hosts:
@@ -51,19 +40,11 @@ all:
                 pi4b4-2.home.jacquev6.net:
 
     # Groups used as tags to decide which machines get which playbooks
-    # @todo Read more about Ansible (anti-)patterns. Could/should we use facts discovery instead?
-    raspbian:
-      children:
-        probe:
-      vars:
-        bootstrap_user: pi
-        bootstrap_password: raspberry
     ubuntu:
       children:
-        eeepc:
+        butler:
         idee:
         media:
-        butler:
         cattle:
       vars:
         bootstrap_user: ubuntu
@@ -76,12 +57,3 @@ all:
         butler:
         media:
         idee:
-    persisted:
-      children:
-        butler:
-        media:
-        idee:
-    ephemeral:
-      children:
-        probe:
-        eeepc:
