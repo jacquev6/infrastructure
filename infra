@@ -3,7 +3,7 @@
 set -o errexit
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-infrastructure_tools_version=20210409-112453
+infrastructure_tools_version=20210409-123043
 
 # Clean-up:
 # docker image ls jacquev6/infrastructure-tools --format "{{.Repository}}:{{.Tag}}" | grep -v $infrastructure_tools_version | xargs docker image rm

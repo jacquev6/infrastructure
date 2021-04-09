@@ -1,0 +1,18 @@
+- hosts: ubuntu
+  become: yes
+  tasks:
+    - name: Install freeze utilities
+      apt:
+        name:
+          - overlayroot
+        install_recommends: no
+        state: latest
+    - name: Configure freeze utilities
+      lineinfile:
+        path: /etc/overlayroot.conf
+        regexp: '^overlayroot='
+        line: overlayroot=tmpfs:recurse=0
+      notify: reboot
+  handlers:
+    - name: reboot
+      reboot:

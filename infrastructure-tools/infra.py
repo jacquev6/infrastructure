@@ -86,6 +86,18 @@ def configure(groups, playbook, plan):
     ansible_playbook(groups, playbook, options)
 
 
+@machine.command()
+@click.argument("groups", nargs=-1, required=True)
+def freeze(groups):
+    ansible_playbook(groups, ["freeze/freeze.yml"], ())
+
+
+@machine.command()
+@click.argument("groups", nargs=-1, required=True)
+def unfreeze(groups):
+    ansible_playbook(groups, ["freeze/unfreeze.yml"], ())
+
+
 def ansible_playbook(groups, playbook_names, options):
     command = ["ansible-playbook"] + list(options)
     if groups:

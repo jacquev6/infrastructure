@@ -1,0 +1,22 @@
+- hosts: ubuntu
+  become: yes
+  tasks:
+    - name: Install freeze utilities
+      apt:
+        name:
+          - overlayroot
+        install_recommends: no
+        state: latest
+    - name: Remount root as writable
+      when: ansible_facts.mounts | selectattr("mount", "equalto", "/media/root-ro") | count
+      command: mount --options remount,rw /media/root-ro
+    - name: Deconfigure freeze utilities
+      when: ansible_facts.mounts | selectattr("mount", "equalto", "/media/root-ro") | count
+      lineinfile:
+        path: /media/root-ro/etc/overlayroot.conf
+        regexp: '^overlayroot='
+        line: overlayroot=disabled
+      notify: reboot
+  handlers:
+    - name: reboot
+      reboot:
