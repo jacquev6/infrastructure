@@ -87,4 +87,4 @@ If you want to run repeatable experiments from an as freshly installed as possib
 
 Next steps are automated using Ansible:
 
-    ./infra an apply -pb bootstrap $name
+    ./infra bootstrap $name
