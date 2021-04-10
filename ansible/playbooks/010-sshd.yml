@@ -1,6 +1,7 @@
 # @todo Investigate Galaxy and consider installing https://github.com/vitalk/ansible-secure-ssh from Galaxy
 - hosts: all
   become: yes
+  gather_facts: no
   tasks:
     - name: Disable password authentication
       lineinfile:

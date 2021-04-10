@@ -1,0 +1,36 @@
+- hosts: pi:&ubuntu:&containers
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Enable cgroups
+      lineinfile:
+        path: /boot/firmware/cmdline.txt
+        backrefs: yes
+        regexp: "^(?:cgroup_enable=memory cgroup_memory=1 )*(.*)$"
+        line: 'cgroup_enable=memory cgroup_memory=1 \1'
+      notify: reboot
+    - name: Install network utilities
+      apt:
+        name:
+          - net-tools
+        state: present
+  handlers:
+    - name: reboot
+      reboot:
+- hosts: pi:&ubuntu:&kubernetes
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install MicroK8s
+      community.general.snap:
+        channel: 1.20/stable
+        name: microk8s
+        classic: yes
+    # @todo - name: Add user 'jacquev6' to group 'microk8s'
+    #   user:
+    #     name: jacquev6
+    #     groups:
+    #       - microk8s
+    #     append: true
+    # @todo Join: https://microk8s.io/docs/clustering
+    # @todo Configure the admin shell: https://microk8s.io/docs/working-with-kubectl
