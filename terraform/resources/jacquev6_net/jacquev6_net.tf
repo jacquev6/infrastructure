@@ -146,13 +146,6 @@ locals {
     },
     local.butler,
     {
-      name = "media"
-      mac = "DC:A6:32:6F:D6:80"
-      # Ethernet MAC address is DC:A6:32:6F:D6:7F
-      ip = "192.168.1.71"
-      dns = true
-    },
-    {
       name = "msi.claire"
       mac = "6C:62:6D:1A:36:B9"
       ip = "192.168.1.72"
@@ -194,6 +187,13 @@ locals {
       mac = "DC:A6:32:F8:A4:AE"
       # WiFi MAC address is DC:A6:32:F8:A4:AF
       ip = "192.168.1.101"
+      dns = true
+    },
+    {
+      name = "pi4b4-3"
+      mac = "DC:A6:32:6F:D6:7F"
+      # WiFi MAC address is DC:A6:32:6F:D6:80"
+      ip = "192.168.1.102"
       dns = true
     }
   ]

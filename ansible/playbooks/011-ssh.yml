@@ -7,16 +7,16 @@
         path: /etc/ssh/ssh_known_hosts
         name: idee.home.jacquev6.net
         key: "idee.home.jacquev6.net,192.168.1.52 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN2pOBLyTwBBUtIR3mxNwo94vbvAmBmSGWPLvmk7wNTWWquhWLmSkhMGUBpgG2Hlos079qjaHDc7nCuQUW0WnhA="
-    - name: Add probe to known_hosts
+    - name: Remove probe from known_hosts (@todo Apply task and remove it)
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
         name: probe.home.jacquev6.net
-        key: "probe.home.jacquev6.net,192.168.1.69 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEc0IbUXrMNlN3PVLveLSPJOD3oeAWUA+Tgboe9QQkLyrU4Nrb2GI1uqRqZDLF17K9i1lojR6v1CsP2u2RIIFKg="
-    - name: Add eeepc to known_hosts
+        state: absent
+    - name: Remove eeepc from known_hosts (@todo Apply task and remove it)
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
         name: eeepc.home.jacquev6.net
-        key: "eeepc.home.jacquev6.net,192.168.1.67 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMJ+nR/4r1xL12HW+mp9E+FVyqIymRvuNC8MPyDhXBmx1QRdmcxifHX6BYZnAhyRO+/4a+SYYUKm9kWYk/+rxq0="
+        state: absent
     - name: Add nas2 to known_hosts
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
@@ -27,8 +27,8 @@
         path: /etc/ssh/ssh_known_hosts
         name: butler.home.jacquev6.net
         key: "butler.home.jacquev6.net,192.168.1.70 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL1GtLrB7b1qm4Y1JNe1890FNnPOOtAhvuf9XlotSB/pnVMQeaou+j/EtmRs5X+7g1bcdbJXXfbbhO5MxWxc7lY="
-    - name: Add media to known_hosts
+    - name: Remove media from known_hosts (@todo Apply task and remove it)
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
         name: media.home.jacquev6.net
-        key: "media.home.jacquev6.net,192.168.1.71 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKHyeQ/83JVTStkcZreTOuWG4ygEWVkGz42a0BDPH6sLxQeLkTsrFEeIiS0YmCI9vK9VIhPuGihqO6SGvvte+xU="
+        state: absent

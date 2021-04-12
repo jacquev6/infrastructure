@@ -19,14 +19,6 @@ all:
           hosts:
             idee.home.jacquev6.net:
               # Headless AMD64 with a big GPU
-        media:
-          hosts:
-            media.home.jacquev6.net:
-              # Raspberry Pi 4 model B with 4GB of RAM
-              # Used as a media center
-              # Several operating systems on several SD cards (Ubuntu, LibreElec, RecalBox, etc.)
-              # Headless when running Ubuntu
-              # Only the Ubuntu OS is managed by Ansible
         teuse:
           hosts:
             teuse.home.jacquev6.net:
@@ -42,13 +34,15 @@ all:
             pi4b4_2:
               hosts:
                 pi4b4-2.home.jacquev6.net:
+            pi4b4_3:
+              hosts:
+                pi4b4-3.home.jacquev6.net:
 
     # Groups used as tags to decide which machines get which playbooks
     ubuntu:
       children:
         butler:
         idee:
-        media:
         teuse:
         cattle:
       vars:
@@ -60,5 +54,4 @@ all:
     docker:
       children:
         butler:
-        media:
         idee:
