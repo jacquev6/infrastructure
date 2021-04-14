@@ -1,0 +1,22 @@
+- hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Ensure config directory exists
+      file:
+        path: /etc/systemd/resolved.conf.d
+        state: directory
+    # Allow `ping pi4b4-1` instead of `ping pi4b4-1.home.jacquev6.net`
+    - name: Set DNS suffix
+      copy:
+        dest: /etc/systemd/resolved.conf.d/00-home.jacquev6.net.conf
+        content: |
+          [Resolve]
+          Domains=home.jacquev6.net
+      notify: reload systemd-resolved
+  handlers:
+    - name: reload systemd-resolved
+      systemd:
+        daemon_reload: yes
+        name: systemd-resolved
+        state: restarted
