@@ -33,6 +33,13 @@ locals {
     ip = "192.168.1.53"
     dns = true
   }
+  pi4b4_1 = {
+    name = "pi4b4-1"
+    mac = "DC:A6:32:F6:AD:DE"
+    # WiFi MAC address is DC:A6:32:F6:AD:E1
+    ip = "192.168.1.100"
+    dns = true
+  }
   home_machines = [
     # Pets
     {
@@ -175,13 +182,7 @@ locals {
     # Naming: prefix-index
     # Prefix: machine type
     # pi4b4: Raspberry Pi 4 Model B with 4GB RAM
-    {
-      name = "pi4b4-1"
-      mac = "DC:A6:32:F6:AD:DE"
-      # WiFi MAC address is DC:A6:32:F6:AD:E1
-      ip = "192.168.1.100"
-      dns = true
-    },
+    local.pi4b4_1,
     {
       name = "pi4b4-2"
       mac = "DC:A6:32:F8:A4:AE"
@@ -306,8 +307,8 @@ resource "multiverse_custom_resource" "port_forwarding" {
     http = {
       protocol = "tcp"
       external_port = 80
-      internal_machine = local.butler
-      internal_port = 10080
+      internal_machine = local.pi4b4_1
+      internal_port = 30080
     }
     https = {
       protocol = "tcp"

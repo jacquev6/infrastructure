@@ -6,3 +6,12 @@ My personal infrastructure, as code.
 Resources are created using [Terraform](https://www.terraform.io/).
 Machines' configuration is managed using [Ansible](https://www.ansible.com/).
 Everything is run in [Docker](https://www.docker.com/), both on client side and on servers.
+
+Cluster:
+- Kubernetes
+- MinIO (s3-like)
+- https://en.wikipedia.org/wiki/Nextcloud or https://en.wikipedia.org/wiki/OwnCloud
+- Gluster (NFS)
+  - https://blog.stephane-robert.info/post/raspberry-cluster-glusterfs-kubernetes/
+
+Google "glusterfs vs minio" to get more candidates for distributed storage.

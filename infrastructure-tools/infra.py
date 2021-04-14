@@ -163,6 +163,8 @@ def delegate_to(*args, **kwds):
         args = list(args)
         args[1:1] = ["--inventory", "inventory.yml"]
         kwds["cwd"] = "ansible"
+    elif args[0] == "kubectl":
+        kwds["cwd"] = "kubernetes"
     try:
         exit(subprocess.run(args, **kwds).returncode)
     finally:

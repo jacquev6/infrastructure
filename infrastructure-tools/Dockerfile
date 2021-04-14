@@ -71,6 +71,15 @@ ARG version
 LABEL infrastructure-tools-builder-version=$version
 
 
+FROM base AS kubectl
+LABEL infrastructure-tools-builder-stage=kubectl
+
+RUN wget https://dl.k8s.io/release/v1.20.5/bin/linux/amd64/kubectl
+RUN chmod +x kubectl
+
+ARG version
+LABEL infrastructure-tools-builder-version=$version
+
 
 FROM ubuntu:20.04
 
@@ -92,6 +101,7 @@ COPY --from=terraform /terraform /usr/local/bin/
 COPY --from=terraform_provider_gandi /terraform-provider-gandi/terraform-provider-gandi /usr/local/bin/
 COPY --from=terraform_provider_uptimerobot /terraform-provider-uptimerobot/terraform-provider-uptimerobot /usr/local/bin/
 COPY --from=terraform_provider_multiverse /root/go/bin/terraform-provider-multiverse /usr/local/bin/
+COPY --from=kubectl /kubectl /usr/local/bin/
 
 WORKDIR /infra
 COPY infra.py .

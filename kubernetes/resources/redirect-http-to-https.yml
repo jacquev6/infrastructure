@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redirect-http-to-https
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes 1;
+
+    error_log /var/log/nginx/error.log warn;
+    pid /var/run/nginx.pid;
+
+    events {
+      worker_connections 1024;
+    }
+
+    http {
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+
+      log_format main '$remote_addr - $remote_user [$time_local] $host "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"';
+      access_log /var/log/nginx/access.log main;
+
+      sendfile on;
+
+      keepalive_timeout 65;
+
+      server {
+        listen 80;
+
+        return 301 https://$host$request_uri;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redirect-http-to-https
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redirect-http-to-https
+  template:
+    metadata:
+      labels:
+        app: redirect-http-to-https
+    spec:
+      containers:
+        - name: redirect-http-to-https
+          image: nginx:1.19.10
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: etc-nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: etc-nginx
+          configMap:
+            name: redirect-http-to-https
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redirect-http-to-https
+spec:
+  type: NodePort
+  selector:
+    app: redirect-http-to-https
+  ports:
+    - port: 80
+      nodePort: 30080
