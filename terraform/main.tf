@@ -48,10 +48,6 @@ variable "gandi_api_key" {
   type = string
 }
 
-variable "gandi_smtp_password" {
-  type = string
-}
-
 provider "gandi" {
   key = var.gandi_api_key
 }
@@ -119,5 +115,4 @@ module "butler_containers" {
   }
 
   certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates, module.etcavole_fr.certificates)
-  gandi_smtp_password = var.gandi_smtp_password
 }
