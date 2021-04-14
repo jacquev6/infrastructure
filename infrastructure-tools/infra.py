@@ -98,6 +98,12 @@ def unfreeze(groups):
     ansible_playbook(groups, ["freeze/unfreeze.yml"], ())
 
 
+@machine.command()
+@click.argument("groups", nargs=-1, required=True)
+def reboot(groups):
+    delegate_to("ansible", ",".join(groups), "-b", "-m", "reboot")
+
+
 def ansible_playbook(groups, playbook_names, options):
     command = ["ansible-playbook"] + list(options)
     if groups:
