@@ -308,12 +308,12 @@ resource "multiverse_custom_resource" "port_forwarding" {
       protocol = "tcp"
       external_port = 80
       internal_machine = local.pi4b4_1
-      internal_port = 30080
+      internal_port = 10080
     }
     https = {
       protocol = "tcp"
       external_port = 443
-      internal_machine = local.butler
+      internal_machine = local.pi4b4_1
       internal_port = 10443
     }
     teamspeak_voice = {

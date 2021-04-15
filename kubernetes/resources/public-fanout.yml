@@ -1,41 +1,74 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: public-fanout
+  name: public-fanout-conf
 data:
-  nginx.conf: |
-    user nginx;
-    worker_processes 1;
+  dyn.vincent-jacques.net.conf: |
+    server {
+      listen 443 ssl;
+      server_name dyn.vincent-jacques.net;
 
-    error_log /var/log/nginx/error.log warn;
-    pid /var/run/nginx.pid;
+      ssl_certificate /etc/letsencrypt/live/dyn.vincent-jacques.net/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/dyn.vincent-jacques.net/privkey.pem;
+      ssl_trusted_certificate /etc/letsencrypt/live/dyn.vincent-jacques.net/chain.pem;
+      ssl_dhparam /etc/letsencrypt/dhparams/dhparam.pem;
 
-    events {
-      worker_connections 1024;
-    }
-
-    http {
-      include /etc/nginx/mime.types;
-      default_type application/octet-stream;
-
-      log_format main '$remote_addr - $remote_user [$time_local] $host "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"';
-      access_log /var/log/nginx/access.log main;
-
-      sendfile on;
-
-      keepalive_timeout 65;
-
-      server {
-        server_name dyn.vincent-jacques.net;
-        listen 80;  # @todo 443 ssl
-
-        location /turkshead {
-          proxy_pass http://draw-turks-head-demo:80/;
-        }
+      location /turkshead {
+        proxy_pass http://draw-turks-head-demo:80/;
       }
-
-      # @todo Redirect www. to main domain for vjnet, jv6net, and ecvfr
     }
+  home.jacquev6.net.conf: |
+    server {
+      listen 443 ssl;
+      server_name home.jacquev6.net;
+
+      ssl_certificate /etc/letsencrypt/live/home.jacquev6.net/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/home.jacquev6.net/privkey.pem;
+      ssl_trusted_certificate /etc/letsencrypt/live/home.jacquev6.net/chain.pem;
+
+      return 200 'OK';
+    }
+  www.jacquev6.net.conf: |
+    server {
+      listen 443 ssl;
+      server_name www.jacquev6.net;
+
+      ssl_certificate /etc/letsencrypt/live/www.jacquev6.net/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/www.jacquev6.net/privkey.pem;
+      ssl_trusted_certificate /etc/letsencrypt/live/www.jacquev6.net/chain.pem;
+
+      return 301 https://jacquev6.net$request_uri;
+    }
+  www.vincent-jacques.net.conf: |
+    server {
+      listen 443 ssl;
+      server_name www.vincent-jacques.net;
+
+      ssl_certificate /etc/letsencrypt/live/www.vincent-jacques.net/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/www.vincent-jacques.net/privkey.pem;
+      ssl_trusted_certificate /etc/letsencrypt/live/www.vincent-jacques.net/chain.pem;
+
+      return 301 https://vincent-jacques.net$request_uri;
+    }
+  www.etcavole.fr.conf: |
+    server {
+      listen 443 ssl;
+      server_name www.etcavole.fr;
+
+      ssl_certificate /etc/letsencrypt/live/www.etcavole.fr/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/www.etcavole.fr/privkey.pem;
+      ssl_trusted_certificate /etc/letsencrypt/live/www.etcavole.fr/chain.pem;
+
+      return 301 https://etcavole.fr$request_uri;
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: public-fanout-entrypoint
+data:
+  50-copy-conf.sh: |
+    cp /etc/nginx/conf.d.ro/* /etc/nginx/conf.d/
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,6 +76,8 @@ metadata:
   name: public-fanout
 spec:
   replicas: 1
+  strategy:  # Avoid a dead lock with the hostPorts
+    type: Recreate
   selector:
     matchLabels:
       app: public-fanout
@@ -51,28 +86,36 @@ spec:
       labels:
         app: public-fanout
     spec:
+      # Schedule only on the node targeted by the various domains served by this fanout
+      nodeName: pi4b4-1
       containers:
         - name: public-fanout
-          image: nginx:1.19.10
+          image: jonasal/nginx-certbot:1.2.0-nginx1.19.9
           ports:
-            - containerPort: 80  # @todo 443
+            - containerPort: 80
+              hostPort: 10080
+            - containerPort: 443
+              hostPort: 10443
+          env:
+            - name: CERTBOT_EMAIL
+              value: letsencrypt.org@vincent-jacques.net
           volumeMounts:
-            - name: etc-nginx
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
+            - name: public-fanout-conf
+              mountPath: /etc/nginx/conf.d.ro/
+            - name: public-fanout-entrypoint
+              mountPath: /docker-entrypoint.d/50-copy-conf.sh
+              subPath: 50-copy-conf.sh
+            - name: public-fanout-nginx-secrets
+              mountPath: /etc/letsencrypt
       volumes:
-        - name: etc-nginx
+        - name: public-fanout-conf
           configMap:
-            name: public-fanout
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: public-fanout
-spec:
-  type: NodePort
-  selector:
-    app: public-fanout
-  ports:
-    - port: 80  # @todo 443
-      nodePort: 30081  # @todo 30443, and redirect WAN's 443
+            name: public-fanout-conf
+        - name: public-fanout-entrypoint
+          configMap:
+            name: public-fanout-entrypoint
+            defaultMode: 0755
+        - name: public-fanout-nginx-secrets
+          hostPath:
+            path: /hacking_data/nginx_secrets
+            type: DirectoryOrCreate
