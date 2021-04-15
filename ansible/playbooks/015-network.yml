@@ -14,6 +14,29 @@
           [Resolve]
           Domains=home.jacquev6.net
       notify: reload systemd-resolved
+    # Not investigated deeply: enabling IPv6 seems to break DNS resolution after a while.
+    # Based on https://support.purevpn.com/how-to-disable-ipv6-linuxubuntu
+    # @todo Check it fixes the loss of DNS resolution
+    - name: Disable IPv6 - all
+      sysctl:
+        name: net.ipv6.conf.all.disable_ipv6
+        value: '1'
+        reload: yes
+    - name: Disable IPv6 - default
+      sysctl:
+        name: net.ipv6.conf.default.disable_ipv6
+        value: '1'
+        reload: yes
+    - name: Disable IPv6 - lo
+      sysctl:
+        name: net.ipv6.conf.lo.disable_ipv6
+        value: '1'
+        reload: yes
+    - name: Disable IPv6 - eth0
+      sysctl:
+        name: net.ipv6.conf.eth0.disable_ipv6
+        value: '1'
+        reload: yes
   handlers:
     - name: reload systemd-resolved
       systemd:
