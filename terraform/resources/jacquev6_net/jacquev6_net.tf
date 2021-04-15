@@ -111,7 +111,7 @@ locals {
     },
     {
       name = "iphone.claire"
-      mac = "1C:91:48:6A:E8:B4"
+      mac = "9A:F3:A7:55:41:34"
       ip = "192.168.1.63"
       dns = false
     },
