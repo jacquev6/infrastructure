@@ -26,6 +26,7 @@
         channel: 1.20/stable
         name: microk8s
         classic: yes
+    # @todo Google "ansible microk8s", there might be a few helpful contribs
     # @todo - name: Add user 'jacquev6' to group 'microk8s'
     #   user:
     #     name: jacquev6
@@ -34,3 +35,4 @@
     #     append: true
     # @todo Join: https://microk8s.io/docs/clustering
     # @todo Configure the admin shell: https://microk8s.io/docs/working-with-kubectl
+    # @todo Enable the DNS plugin: `LC_ALL=C.UTF-8 LANG=C.UTF-8 ssh pi1 sudo microk8s enable dns` (https://microk8s.io/docs/addon-dns)
