@@ -8,23 +8,26 @@
         # mongodb user's id in mongo image
         opts: force-user=999,force-group=999
         path: /home/jacquev6/Data/Hacking/MyMediaGatherer/MongoDB
-        state: mounted
+        state: absent
     - name: Mount Gathering data at appropriate location
       mount:
         src: /mnt/black/my-media-gathering
         fstype: fuse.bindfs
         path: /home/jacquev6/Data/Hacking/MyMediaGatherer/Gathering
-        state: mounted
+        state: absent
 - hosts: butler
   become: yes
   tasks:
     - name: Copy NGinx configuration file
-      copy:
-        src: my-media-gatherer.nginx.conf
-        dest: /home/jacquev6/Data/Hacking/MyMediaGatherer/nginx.conf
+      # copy:
+      #   src: my-media-gatherer.nginx.conf
+      #   dest: /home/jacquev6/Data/Hacking/MyMediaGatherer/nginx.conf
+      file:
+        path: /home/jacquev6/Data/Hacking/MyMediaGatherer/nginx.conf
+        state: absent
     - name: Run My Media Gatherer
       docker_compose:
-        state: present
+        state: absent
         project_name: my-media-gatherer
         pull: yes
         remove_orphans: yes
