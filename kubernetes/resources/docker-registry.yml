@@ -16,6 +16,14 @@ spec:
           image: registry:2.7
           ports:
             - containerPort: 5000
+          volumeMounts:
+            - name: docker-registry
+              mountPath: /var/lib/registry
+      volumes:
+        - name: docker-registry
+          hostPath:
+            path: /mnt/nas2/HackingData/DockerRegistry
+            type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -27,3 +35,4 @@ spec:
     app: docker-registry
   ports:
     - port: 5000
+# @todo Add a CronJob to run the registry's garbage collector
