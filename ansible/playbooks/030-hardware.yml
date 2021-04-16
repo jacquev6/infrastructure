@@ -1,5 +1,18 @@
-- hosts: pets
+- hosts: ubuntu:&gpu
   become: yes
+  gather_facts: no
+  tasks:
+    - name: Install NVidia drivers and utilities
+      apt:
+        name:
+          - nvidia-headless-440
+          - nvidia-utils-440
+        install_recommends: no
+        state: latest
+
+- hosts: ubuntu
+  become: yes
+  gather_facts: no
   tasks:
     - name: Install file system packages
       apt:
@@ -20,6 +33,11 @@
         opts: credentials=/etc/nas2_credentials,vers=2.0,uid=0,gid=0
         path: /mnt/nas2
         state: mounted
+
+- hosts: ubuntu:&pets
+  become: yes
+  gather_facts: no
+  tasks:
     - name: Mount Black
       mount:
         src: PARTUUID=e8dada69-fb62-4b3b-87b6-b96bcdcbf3b2

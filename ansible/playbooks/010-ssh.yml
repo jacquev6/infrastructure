@@ -1,0 +1,78 @@
+- hosts: ubuntu
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Disable password authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PasswordAuthentication '
+        line: "PasswordAuthentication no"
+      notify: restart sshd
+    - name: Disable root login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitRootLogin '
+        line: "PermitRootLogin no"
+      notify: restart sshd
+    - name: Disable empty password login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^(#\s*)?PermitEmptyPasswords '
+        line: "PermitEmptyPasswords no"
+      notify: restart sshd
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
+
+- hosts: ubuntu
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Add idee to known_hosts
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: idee.home.jacquev6.net
+        key: "idee.home.jacquev6.net,idee,192.168.1.52 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN2pOBLyTwBBUtIR3mxNwo94vbvAmBmSGWPLvmk7wNTWWquhWLmSkhMGUBpgG2Hlos079qjaHDc7nCuQUW0WnhA="
+    - name: Add pi4b4-1 to known_hosts
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: pi4b4-1.home.jacquev6.net
+        key: "pi4b4-1.home.jacquev6.net,pi4b4-1,192.168.1.100 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMlFtCDga3fJR2a+gILZhY44eGHlDAdkIjQHybWSx2JkI6ktUf7k1PnQh1bIx5WxW4Q/ZGmRRguZFiOk7LlfisU="
+    - name: Add pi4b4-2 to known_hosts
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: pi4b4-2.home.jacquev6.net
+        key: "pi4b4-2.home.jacquev6.net,pi4b4-2,192.168.1.101 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNhNlb+32LEr6wAfa1eMGAFLpJOo4CSz66CdJ1t2NX1Zg3mglPRVgaXDrEM8uEf1++IpysUDBOLuOf3RKZtOzmA="
+    - name: Add pi4b4-3 to known_hosts
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: pi4b4-3.home.jacquev6.net
+        key: "pi4b4-3.home.jacquev6.net,pi4b4-3,192.168.1.102 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGwaoG9TcmYqkcYkoiMWwe73WoCdybaksktRmAyxduR2yD+l0oloCK5o8uzBAyC0043h/QFZM/VBc+nYbynAS1U="
+
+    - name: Remove probe from known_hosts (@todo Apply task and remove it)
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: probe.home.jacquev6.net
+        state: absent
+    - name: Remove eeepc from known_hosts (@todo Apply task and remove it)
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: eeepc.home.jacquev6.net
+        state: absent
+    - name: Remove nas2 from known_hosts (@todo Apply task and remove it)
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: nas2.home.jacquev6.net
+        state: absent
+    - name: Remove butler from known_hosts (@todo Apply task and remove it)
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: butler.home.jacquev6.net
+        state: absent
+    - name: Remove media from known_hosts (@todo Apply task and remove it)
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: media.home.jacquev6.net
+        state: absent

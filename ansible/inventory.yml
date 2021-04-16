@@ -7,41 +7,44 @@ all:
   children:
 
     # Groups with one machines used as convenient short aliases
+    idee:
+      hosts:
+        idee.home.jacquev6.net:
+    pi4b4_1:
+      hosts:
+        pi4b4-1.home.jacquev6.net:
+    pi4b4_2:
+      hosts:
+        pi4b4-2.home.jacquev6.net:
+    pi4b4_3:
+      hosts:
+        pi4b4-3.home.jacquev6.net:
+
+    # Groups used as tags to decide which machines get which playbooks
+
+    ## Pets vs. cattle
     pets:
       children:
         idee:
-          hosts:
-            idee.home.jacquev6.net:
-              # Headless AMD64 with a big GPU
-        teuse:
-          hosts:
-            teuse.home.jacquev6.net:
-              # VirtualBox
+
     cattle:
       children:
-        pi4b4:
-          # Headless Raspberry Pis 4 model B with 4GB of RAM
-          children:
-            pi4b4_1:
-              hosts:
-                pi4b4-1.home.jacquev6.net:
-            pi4b4_2:
-              hosts:
-                pi4b4-2.home.jacquev6.net:
-            pi4b4_3:
-              hosts:
-                pi4b4-3.home.jacquev6.net:
+        pi4b4_1:
+        pi4b4_2:
+        pi4b4_3:
 
-    # Groups used as tags to decide which machines get which playbooks
     ## hardware
     pi:
       children:
-        pi4b4:
+        pi4b4:  # Raspberry PI 4 model B, with 4GB RAM
+          children:
+            pi4b4_1:
+            pi4b4_2:
+            pi4b4_3:
 
     pc:
       children:
-        idee:
-        teuse:
+        idee:  # AMD64 with a big GPU
 
     gpu:
       children:
@@ -51,9 +54,7 @@ all:
     ubuntu:
       children:
         idee:
-        media:
-        teuse:
-        pi4b4:
+        cattle:
       vars:
         bootstrap_user: ubuntu
         bootstrap_password: ubuntu
@@ -63,7 +64,6 @@ all:
       children:
         docker:
           children:
-            media:
             idee:
         kubernetes:
           children:

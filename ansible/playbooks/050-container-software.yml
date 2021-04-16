@@ -1,0 +1,83 @@
+- hosts: pi:&ubuntu:&containers
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Enable cgroups
+      lineinfile:
+        path: /boot/firmware/cmdline.txt
+        backrefs: yes
+        regexp: "^(?:cgroup_enable=memory cgroup_memory=1 )*(.*)$"
+        line: 'cgroup_enable=memory cgroup_memory=1 \1'
+      notify: reboot
+  handlers:
+    - name: reboot
+      reboot:
+
+- hosts: ubuntu:&kubernetes
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install network utilities
+      apt:
+        name:
+          - net-tools
+        state: present
+    - name: Install MicroK8s
+      community.general.snap:
+        channel: 1.20/stable
+        name: microk8s
+        classic: yes
+    # @todo Google "ansible microk8s", there might be a few helpful contribs
+    # @todo - name: Add user 'jacquev6' to group 'microk8s'
+    #   user:
+    #     name: jacquev6
+    #     groups:
+    #       - microk8s
+    #     append: true
+    # @todo Join: https://microk8s.io/docs/clustering
+    # @todo Configure the admin shell: https://microk8s.io/docs/working-with-kubectl
+    # @todo Enable the DNS plugin: `LC_ALL=C.UTF-8 LANG=C.UTF-8 ssh pi1 sudo microk8s enable dns` (https://microk8s.io/docs/addon-dns)
+
+- hosts: ubuntu:&docker
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install Docker
+      apt:
+        name:
+          - docker.io
+          - python3-docker
+          - docker-compose
+        state: present
+    - name: Add user 'jacquev6' to group 'docker'
+      user:
+        name: jacquev6
+        groups:
+          - docker
+        append: true
+    - name: Start Docker on boot
+      # https://bugs.launchpad.net/ubuntu/+source/docker/+bug/1858441
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+- hosts: ubuntu:&gpu:&docker
+  become: yes
+  gather_facts: no
+  tasks:
+    - apt_key:
+        url: https://nvidia.github.io/nvidia-container-runtime/gpgkey
+    # Repositories from https://nvidia.github.io/nvidia-container-runtime/ubuntu19.10/nvidia-container-runtime.list
+    - apt_repository:
+        filename: nvidia-container-runtime
+        repo: deb https://nvidia.github.io/libnvidia-container/ubuntu18.04/$(ARCH) /
+    - apt_repository:
+        filename: nvidia-container-runtime
+        repo: deb https://nvidia.github.io/nvidia-container-runtime/ubuntu18.04/$(ARCH) /
+    - name: Install NVidia container runtime
+      apt:
+        name:
+          - nvidia-container-runtime
+        install_recommends: no
+        state: latest

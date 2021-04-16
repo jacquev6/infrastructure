@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: ubuntu
   become: yes
   gather_facts: no
   tasks:
@@ -6,8 +6,7 @@
       file:
         path: /etc/systemd/resolved.conf.d
         state: directory
-    # Allow `ping pi4b4-1` instead of `ping pi4b4-1.home.jacquev6.net`
-    - name: Set DNS suffix
+    - name: Set DNS suffix (allow `ping name` instead of `ping name.home.jacquev6.net`)
       copy:
         dest: /etc/systemd/resolved.conf.d/00-home.jacquev6.net.conf
         content: |
@@ -16,7 +15,6 @@
       notify: reload systemd-resolved
     # Not investigated deeply: enabling IPv6 seems to break DNS resolution after a while.
     # Based on https://support.purevpn.com/how-to-disable-ipv6-linuxubuntu
-    # @todo Check it fixes the loss of DNS resolution
     - name: Disable IPv6 - all
       sysctl:
         name: net.ipv6.conf.all.disable_ipv6
