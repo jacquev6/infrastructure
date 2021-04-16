@@ -84,27 +84,3 @@ resource "uptimerobot_monitor" "https_dyn_vincent_jacques_net_turkshead" {
     id = var.uptimerobot_alert_contact_id
   }
 }
-
-
-module "dyn_vincent_jacques_net_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "dyn.vincent-jacques.net"
-}
-
-module "www_vincent_jacques_net_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "www.vincent-jacques.net"
-}
-
-output "certificates" {
-  value = {
-    "dyn.vincent-jacques.net" = module.dyn_vincent_jacques_net_certificate.certificate
-    "www.vincent-jacques.net" = module.www_vincent_jacques_net_certificate.certificate
-  }
-}
