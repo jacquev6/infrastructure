@@ -103,9 +103,7 @@ echo "------------------------------------------------------"
 # https://www.docker.com/blog/multi-arch-images/
 docker $buildx build $no_cache $platform --tag $name $push .
 
-sed -i "" \
-  -e "s/^  draw_turks_head_demo_version = .*/  draw_turks_head_demo_version = \"$version\"$not_pushed_warning/" \
-  ../terraform/resources/butler_containers/draw_turks_head_demo.tf
+# @todo Update the K8s resource definition (with the not_pushed_warning comment)
 
 if $run
 then
