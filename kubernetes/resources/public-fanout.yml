@@ -100,9 +100,11 @@ metadata:
 data:
   50-copy-conf.sh: |
     cp /etc/nginx/conf.d.ro/* /etc/nginx/conf.d/
-  # Password stored in LastPass, in note "docker.jacquev6.net"
-  # Encoded using `htpasswd -n jacquev6`
-  # Authenticate with `docker login docker.jacquev6.net -u jacquev6`
+  # Password encoded using `htpasswd -n jacquev6`
+  # Plain-text password stored in `docker-registry-credentials.secret.yml`
+  # To use the private registry from:
+  #   - Docker: authenticate with `docker login docker.jacquev6.net -u jacquev6`
+  #   - Kubernetes: add `imagePullSecrets: - name: docker-registry-credentials` to the pod spec
   docker-registry.htpasswd: |
     jacquev6:$apr1$xaA5qdvx$K1ymlSraqCH4bW8r4/00h0
 ---

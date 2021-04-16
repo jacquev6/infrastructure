@@ -14,9 +14,12 @@ spec:
     spec:
       containers:
         - name: draw-turks-head-demo
-          image: jacquev6/draw-turks-head-demo:20200509-142026
+          image: docker.jacquev6.net/draw-turks-head-demo:20210416-135136
           ports:
             - containerPort: 80
+      # @todo Make this secret global: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account
+      imagePullSecrets:
+        - name: docker-registry-credentials
 ---
 apiVersion: v1
 kind: Service

@@ -40,7 +40,7 @@ do
 done
 
 version=$(date "+%Y%m%d-%H%M%S")
-name=jacquev6/draw-turks-head-demo:$version
+name=docker.jacquev6.net/draw-turks-head-demo:$version
 
 
 if $minimize_list
