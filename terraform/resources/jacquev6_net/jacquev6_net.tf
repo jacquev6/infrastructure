@@ -188,14 +188,13 @@ locals {
       # WiFi MAC address is DC:A6:32:6F:D6:80"
       ip = "192.168.1.102"
       dns = true
-# @todo Add 4th Pi
-#    },
-#    {
-#      name = "pi4b4-4"
-#      mac = "DC:A6:32:6F:D6:94"
-#      # WiFi MAC address is DC:A6:32:6F:D6:95
-#      ip = "192.168.1.70"
-#      dns = false
+    },
+    {
+      name = "pi4b4-4"
+      mac = "DC:A6:32:6F:D6:94"
+      # WiFi MAC address is DC:A6:32:6F:D6:95
+      ip = "192.168.1.103"
+      dns = true
     }
   ]
 }

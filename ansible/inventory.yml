@@ -19,6 +19,9 @@ all:
     pi4b4_3:
       hosts:
         pi4b4-3.home.jacquev6.net:
+    pi4b4_4:
+      hosts:
+        pi4b4-4.home.jacquev6.net:
 
     # Groups used as tags to decide which machines get which playbooks
 
@@ -32,6 +35,7 @@ all:
         pi4b4_1:
         pi4b4_2:
         pi4b4_3:
+        pi4b4_4:
 
     ## hardware
     pi:
@@ -41,6 +45,7 @@ all:
             pi4b4_1:
             pi4b4_2:
             pi4b4_3:
+            pi4b4_4:
 
     pc:
       children:
