@@ -232,6 +232,11 @@ module "dns" {
         values = [var.home_ip]
       },
       {
+        type = "A"
+        name = "docker"
+        values = [var.home_ip]
+      },
+      {
         type = "CNAME"
         name = "parents"
         values = ["parents-jacquev6-net.synology.me."]

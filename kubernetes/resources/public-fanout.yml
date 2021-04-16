@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: public-fanout-conf
+  name: public-fanout-servers
 data:
   dyn.vincent-jacques.net.conf: |
     server {
@@ -27,6 +27,37 @@ data:
       ssl_trusted_certificate /etc/letsencrypt/live/home.jacquev6.net/chain.pem;
 
       return 200 'OK';
+    }
+  docker.jacquev6.net.conf: |
+    server {
+      listen 443 ssl;
+      server_name docker.jacquev6.net;
+
+      ssl_certificate /etc/letsencrypt/live/docker.jacquev6.net/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/docker.jacquev6.net/privkey.pem;
+      ssl_trusted_certificate /etc/letsencrypt/live/docker.jacquev6.net/chain.pem;
+      ssl_dhparam /etc/letsencrypt/dhparams/dhparam.pem;
+
+      # https://docs.docker.com/registry/recipes/nginx/
+      client_max_body_size 0;
+      chunked_transfer_encoding on;
+
+      # https://serverfault.com/questions/768693/nginx-how-to-completely-disable-request-body-buffering
+      proxy_http_version 1.1;
+      proxy_request_buffering off;
+
+      location / {
+        proxy_pass http://docker-registry:5000/;
+
+        auth_basic "Docker registry";
+        auth_basic_user_file /etc/nginx/docker-registry.htpasswd;
+
+        # https://docs.docker.com/registry/recipes/nginx/
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
     }
   www.jacquev6.net.conf: |
     server {
@@ -65,10 +96,17 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: public-fanout-entrypoint
+  name: public-fanout
 data:
   50-copy-conf.sh: |
     cp /etc/nginx/conf.d.ro/* /etc/nginx/conf.d/
+  # Password encoded using `htpasswd -n jacquev6`
+  # Plain-text password stored in `docker-registry-credentials.secret.yml`
+  # To use the private registry from:
+  #   - Docker: authenticate with `docker login docker.jacquev6.net -u jacquev6`
+  #   - Kubernetes: add `imagePullSecrets: - name: docker-registry-credentials` to the pod spec
+  docker-registry.htpasswd: |
+    jacquev6:$apr1$xaA5qdvx$K1ymlSraqCH4bW8r4/00h0
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -100,20 +138,23 @@ spec:
             - name: CERTBOT_EMAIL
               value: letsencrypt.org@vincent-jacques.net
           volumeMounts:
-            - name: public-fanout-conf
+            - name: public-fanout-servers
               mountPath: /etc/nginx/conf.d.ro/
-            - name: public-fanout-entrypoint
+            - name: public-fanout
               mountPath: /docker-entrypoint.d/50-copy-conf.sh
               subPath: 50-copy-conf.sh
+            - name: public-fanout
+              mountPath: /etc/nginx/docker-registry.htpasswd
+              subPath: docker-registry.htpasswd
             - name: public-fanout-nginx-secrets
               mountPath: /etc/letsencrypt
       volumes:
-        - name: public-fanout-conf
+        - name: public-fanout-servers
           configMap:
-            name: public-fanout-conf
-        - name: public-fanout-entrypoint
+            name: public-fanout-servers
+        - name: public-fanout
           configMap:
-            name: public-fanout-entrypoint
+            name: public-fanout
             defaultMode: 0755
         - name: public-fanout-nginx-secrets
           hostPath:
