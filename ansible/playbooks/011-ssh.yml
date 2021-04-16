@@ -22,11 +22,11 @@
         path: /etc/ssh/ssh_known_hosts
         name: nas2.home.jacquev6.net
         key: "nas2.home.jacquev6.net,192.168.1.50 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBElrRuUiwpXhin+oBsfVUeLw4yRbvkahJCnZBp19XXa1Oq9ToskAWVr/dpC/RWZ6KqIBXjsRiUX6S8cnCioN2A0="
-    - name: Add butler to known_hosts
+    - name: Remove butler from known_hosts (@todo Apply task and remove it)
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
         name: butler.home.jacquev6.net
-        key: "butler.home.jacquev6.net,192.168.1.70 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL1GtLrB7b1qm4Y1JNe1890FNnPOOtAhvuf9XlotSB/pnVMQeaou+j/EtmRs5X+7g1bcdbJXXfbbhO5MxWxc7lY="
+        state: absent
     - name: Remove media from known_hosts (@todo Apply task and remove it)
       known_hosts:
         path: /etc/ssh/ssh_known_hosts

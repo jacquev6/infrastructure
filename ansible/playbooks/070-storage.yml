@@ -41,13 +41,3 @@
         opts: nofail
         path: /mnt/data1
         state: mounted
-- hosts:
-    - butler
-  become: yes
-  tasks:
-    - name: Mount DockerRegistry
-      mount:
-        src: /mnt/nas2/HackingData/DockerRegistry
-        fstype: fuse.bindfs
-        path: /home/jacquev6/Data/Hacking/DockerRegistry
-        state: mounted

@@ -145,13 +145,6 @@ locals {
       dns = true
     },
     {
-      name = "butler"
-      mac = "DC:A6:32:6F:D6:94"
-      # WiFi MAC address is DC:A6:32:6F:D6:95
-      ip = "192.168.1.70"
-      dns = true
-    },
-    {
       name = "msi.claire"
       mac = "6C:62:6D:1A:36:B9"
       ip = "192.168.1.72"
