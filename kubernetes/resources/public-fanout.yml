@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: public-fanout-conf
+  name: public-fanout-servers
 data:
   dyn.vincent-jacques.net.conf: |
     server {
@@ -49,6 +49,9 @@ data:
       location / {
         proxy_pass http://docker-registry:5000/;
 
+        auth_basic "Docker registry";
+        auth_basic_user_file /etc/nginx/docker-registry.htpasswd;
+
         # https://docs.docker.com/registry/recipes/nginx/
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -93,10 +96,15 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: public-fanout-entrypoint
+  name: public-fanout
 data:
   50-copy-conf.sh: |
     cp /etc/nginx/conf.d.ro/* /etc/nginx/conf.d/
+  # Password stored in LastPass, in note "docker.jacquev6.net"
+  # Encoded using `htpasswd -n jacquev6`
+  # Authenticate with `docker login docker.jacquev6.net -u jacquev6`
+  docker-registry.htpasswd: |
+    jacquev6:$apr1$xaA5qdvx$K1ymlSraqCH4bW8r4/00h0
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -128,20 +136,23 @@ spec:
             - name: CERTBOT_EMAIL
               value: letsencrypt.org@vincent-jacques.net
           volumeMounts:
-            - name: public-fanout-conf
+            - name: public-fanout-servers
               mountPath: /etc/nginx/conf.d.ro/
-            - name: public-fanout-entrypoint
+            - name: public-fanout
               mountPath: /docker-entrypoint.d/50-copy-conf.sh
               subPath: 50-copy-conf.sh
+            - name: public-fanout
+              mountPath: /etc/nginx/docker-registry.htpasswd
+              subPath: docker-registry.htpasswd
             - name: public-fanout-nginx-secrets
               mountPath: /etc/letsencrypt
       volumes:
-        - name: public-fanout-conf
+        - name: public-fanout-servers
           configMap:
-            name: public-fanout-conf
-        - name: public-fanout-entrypoint
+            name: public-fanout-servers
+        - name: public-fanout
           configMap:
-            name: public-fanout-entrypoint
+            name: public-fanout
             defaultMode: 0755
         - name: public-fanout-nginx-secrets
           hostPath:
