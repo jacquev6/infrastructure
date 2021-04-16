@@ -99,20 +99,3 @@ module "vincent_jacques_net" {
   github_pages_ips = local.github_pages_ips
   home_ip = local.home_ip
 }
-
-
-provider "docker" {
-  alias = "butler"
-  # @todo Use an other user
-  host = "ssh://jacquev6@butler.home.jacquev6.net"
-}
-
-module "butler_containers" {
-  source = "./resources/butler_containers"
-
-  providers = {
-    docker = docker.butler
-  }
-
-  certificates = merge(module.jacquev6_net.certificates, module.vincent_jacques_net.certificates, module.etcavole_fr.certificates)
-}

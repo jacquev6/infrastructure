@@ -9,12 +9,6 @@ all:
     # Groups with one machines used as convenient short aliases
     pets:
       children:
-        butler:
-          hosts:
-            butler.home.jacquev6.net:
-              # Headless Raspberry Pi 4 model B with 4GB of RAM
-              # Main entry point from WAN (using port forwarding)
-              # Always on, monitored by Uptime Robot
         idee:
           hosts:
             idee.home.jacquev6.net:
@@ -42,7 +36,6 @@ all:
     ## hardware
     pi:
       children:
-        butler:
         pi4b4:
 
     pc:
@@ -57,7 +50,6 @@ all:
     ## Operating system
     ubuntu:
       children:
-        butler:
         idee:
         media:
         teuse:
@@ -71,7 +63,6 @@ all:
       children:
         docker:
           children:
-            butler:
             media:
             idee:
         kubernetes:

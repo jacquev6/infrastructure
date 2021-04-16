@@ -69,18 +69,3 @@ resource "uptimerobot_monitor" "https_www_etcavole_fr" {
     id = var.uptimerobot_alert_contact_id
   }
 }
-
-
-module "www_etcavole_fr_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "www.etcavole.fr"
-}
-
-output "certificates" {
-  value = {
-    "www.etcavole.fr" = module.www_etcavole_fr_certificate.certificate
-  }
-}

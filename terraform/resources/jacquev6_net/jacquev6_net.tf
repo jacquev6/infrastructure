@@ -20,13 +20,6 @@ variable "home_ip" {
 
 
 locals {
-  butler = {
-    name = "butler"
-    mac = "DC:A6:32:6F:D6:94"
-    # WiFi MAC address is DC:A6:32:6F:D6:95
-    ip = "192.168.1.70"
-    dns = true
-  }
   macbook = {
     name = "macbook"
     mac = "A4:83:E7:5E:19:B1"
@@ -151,7 +144,6 @@ locals {
       ip = "192.168.1.69"
       dns = true
     },
-    local.butler,
     {
       name = "msi.claire"
       mac = "6C:62:6D:1A:36:B9"
@@ -232,17 +224,6 @@ module "dns" {
         values = [var.home_ip]
       },
       {
-        type = "A"
-        name = "infra"
-        values = [local.butler.ip]
-      },
-      {
-        # @todo Rename to docker.jacquev6.net?
-        type = "A"
-        name = "registry"
-        values = [local.butler.ip]
-      },
-      {
         type = "CNAME"
         name = "parents"
         values = ["parents-jacquev6-net.synology.me."]
@@ -298,12 +279,6 @@ resource "multiverse_custom_resource" "host_naming" {
 
 resource "multiverse_custom_resource" "port_forwarding" {
   for_each = {
-    ssh = {
-      protocol = "tcp"
-      external_port = 22
-      internal_machine = local.butler
-      internal_port = 22
-    }
     http = {
       protocol = "tcp"
       external_port = 80
@@ -402,47 +377,5 @@ resource "uptimerobot_monitor" "https_www_jacquev6_net" {
   url = "https://www.jacquev6.net/"
   alert_contact {
     id = var.uptimerobot_alert_contact_id
-  }
-}
-
-
-module "home_jacquev6_net_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "home.jacquev6.net"
-}
-
-module "infra_jacquev6_net_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "infra.jacquev6.net"
-}
-
-module "registry_jacquev6_net_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "registry.jacquev6.net"
-}
-
-module "www_jacquev6_net_certificate" {
-  source = "../../modules/acme_certificate_using_gandi"
-
-  acme_account_key = var.acme_account_key
-  gandi_api_key = var.gandi_api_key
-  domain_name = "www.jacquev6.net"
-}
-
-output "certificates" {
-  value = {
-    "home.jacquev6.net" = module.home_jacquev6_net_certificate.certificate
-    "infra.jacquev6.net" = module.infra_jacquev6_net_certificate.certificate
-    "registry.jacquev6.net" = module.registry_jacquev6_net_certificate.certificate
-    "www.jacquev6.net" = module.www_jacquev6_net_certificate.certificate
   }
 }
