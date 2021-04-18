@@ -24,8 +24,7 @@ kind: Service
 metadata:
   name: draw-turks-head-demo
 spec:
-  # type: ClusterIP
-  type: NodePort
+  type: ClusterIP
   selector:
     app: draw-turks-head-demo
   ports:

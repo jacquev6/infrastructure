@@ -28,7 +28,7 @@ kind: Service
 metadata:
   name: docker-registry
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: docker-registry
   ports:
