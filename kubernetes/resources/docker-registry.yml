@@ -14,8 +14,6 @@ spec:
       containers:
         - name: docker-registry
           image: registry:2.7
-          ports:
-            - containerPort: 5000
           volumeMounts:
             - name: docker-registry
               mountPath: /var/lib/registry
