@@ -34,3 +34,4 @@ spec:
   ports:
     - port: 5000
 # @todo Add a CronJob to run the registry's garbage collector
+# (Stop the world beforehand: https://docs.docker.com/registry/garbage-collection/#more-details-about-garbage-collection)
