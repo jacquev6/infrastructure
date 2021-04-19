@@ -26,12 +26,19 @@
         src: nas2.secret.credentials
         dest: /etc/nas2_credentials
         mode: u=r,g=,o=
-    - name: Mount nas2
+    - name: Mount nas2 (vincent)
       mount:
         src: //nas2.home.jacquev6.net/vincent
         fstype: cifs
         opts: credentials=/etc/nas2_credentials,vers=2.0,uid=0,gid=0
-        path: /mnt/nas2
+        path: /mnt/nas2/vincent
+        state: mounted
+    - name: Mount nas2 (vincent-no-backup)
+      mount:
+        src: //nas2.home.jacquev6.net/vincent-no-backup
+        fstype: cifs
+        opts: credentials=/etc/nas2_credentials,vers=2.0,uid=0,gid=0
+        path: /mnt/nas2/vincent-no-backup
         state: mounted
 
 # Ad-hoc mount of Black into pi4b4-3 until we have a proper provider for persistent

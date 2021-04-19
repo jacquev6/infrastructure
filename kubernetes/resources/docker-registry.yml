@@ -20,7 +20,7 @@ spec:
       volumes:
         - name: docker-registry
           hostPath:
-            path: /mnt/nas2/HackingData/DockerRegistry
+            path: /mnt/nas2/vincent-no-backup/HackingData/DockerRegistry
             type: Directory
 ---
 apiVersion: v1
