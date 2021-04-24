@@ -78,6 +78,12 @@ def bootstrap(groups):
 
 
 @machine.command()
+@click.argument("groups", nargs=-1, required=True)
+def ping(groups):
+    ansible_playbook(groups, ["tasks/ping.yml"])
+
+
+@machine.command()
 @click.argument("groups", nargs=-1)
 @click.option("--playbook", "-pb", multiple=True)
 @click.option("--plan", is_flag=True, default=False)
