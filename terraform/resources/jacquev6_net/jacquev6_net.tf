@@ -42,6 +42,13 @@ locals {
       dns = true
     },
     {
+      name = "media"
+      mac = "E4:5F:01:14:57:FF"
+      # Ethernet mac address is E4:5F:01:14:57:FE
+      ip = "192.168.1.51"
+      dns = true
+    },
+    {
       name = "idee"
       mac = "00:0C:F6:0E:D4:BB"
       ip = "192.168.1.52"

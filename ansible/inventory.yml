@@ -10,6 +10,9 @@ all:
     idee:
       hosts:
         idee.home.jacquev6.net:
+    media:
+      hosts:
+        media.home.jacquev6.net:
     pi4b4_1:
       hosts:
         pi4b4-1.home.jacquev6.net:
@@ -29,6 +32,7 @@ all:
     pets:
       children:
         idee:
+        media:
 
     cattle:
       children:
@@ -40,6 +44,9 @@ all:
     ## hardware
     pi:
       children:
+        pi400:  # Raspberry Pi 400
+          children:
+            media:
         pi4b4:  # Raspberry PI 4 model B, with 4GB RAM
           children:
             pi4b4_1:
@@ -59,6 +66,7 @@ all:
     ubuntu:
       children:
         idee:
+        media:
         cattle:
       vars:
         bootstrap_user: ubuntu

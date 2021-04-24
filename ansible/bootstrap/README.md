@@ -34,7 +34,7 @@ Download "Ubuntu Server 64 bits" from https://ubuntu.com/download/raspberry-pi.
 
 Extract image on SD card:
 
-    sudo dd if=ubuntu-20.04.2-preinstalled-server-arm64+raspi.img of=/dev/rdiskN bs=32m
+    sudo dd if=ubuntu-20.04.2-preinstalled-server-arm64+raspi.img bs=32m of=/dev/rdiskN
     cp $(find ansible/bootstrap/add-to-raspberry-pi-ubuntu-system-boot -type f -not -name "*.tmpl") /Volumes/system-boot
     diskutil umountDisk /dev/diskN
 
