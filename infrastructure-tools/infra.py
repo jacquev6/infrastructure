@@ -56,14 +56,14 @@ def an():
 @click.argument("groups", nargs=-1)
 @click.option("--playbook", "-pb", multiple=True)
 def apply(groups, playbook):
-    ansible_playbook(groups, playbook, ())
+    ansible_playbook(groups, playbook)
 
 
 @an.command()
 @click.argument("groups", nargs=-1)
 @click.option("--playbook", "-pb", multiple=True)
 def plan(groups, playbook):
-    ansible_playbook(groups, playbook, ("--check", "--diff"))
+    ansible_playbook(groups, playbook, plan=True)
 
 
 @cli.group()
@@ -74,7 +74,7 @@ def machine():
 @machine.command()
 @click.argument("groups", nargs=-1, required=True)
 def bootstrap(groups):
-    ansible_playbook(groups, ["bootstrap"], ())
+    ansible_playbook(groups, ["bootstrap"])
 
 
 @machine.command()
@@ -82,30 +82,31 @@ def bootstrap(groups):
 @click.option("--playbook", "-pb", multiple=True)
 @click.option("--plan", is_flag=True, default=False)
 def configure(groups, playbook, plan):
-    options = ("--check", "--diff") if plan else ()
-    ansible_playbook(groups, playbook, options)
+    ansible_playbook(groups, playbook, plan=plan)
 
 
 @machine.command()
 @click.argument("groups", nargs=-1, required=True)
 def freeze(groups):
-    ansible_playbook(groups, ["freeze/freeze.yml"], ())
+    ansible_playbook(groups, ["tasks/freeze.yml"])
 
 
 @machine.command()
 @click.argument("groups", nargs=-1, required=True)
 def unfreeze(groups):
-    ansible_playbook(groups, ["freeze/unfreeze.yml"], ())
+    ansible_playbook(groups, ["tasks/unfreeze.yml"])
 
 
 @machine.command()
 @click.argument("groups", nargs=-1, required=True)
 def reboot(groups):
-    delegate_to("ansible", ",".join(groups), "-b", "-m", "reboot")
+    ansible_playbook(groups, ["tasks/reboot.yml"])
 
 
-def ansible_playbook(groups, playbook_names, options):
-    command = ["ansible-playbook"] + list(options)
+def ansible_playbook(groups, playbook_names, plan=False):
+    command = ["ansible-playbook"]
+    if plan:
+        command += ["--check", "--diff"]
     if groups:
         command += ["--limit", ",".join(groups)]
     if not playbook_names:

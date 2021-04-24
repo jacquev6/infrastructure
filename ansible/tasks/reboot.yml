@@ -1,0 +1,7 @@
+- hosts: ubuntu
+  become: yes
+  gather_facts: no
+  serial: 50%
+  tasks:
+    - name: Reboot
+      reboot:

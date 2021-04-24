@@ -1,6 +1,7 @@
 - hosts: ubuntu
   become: yes
   gather_facts: yes
+  serial: 50%
   tasks:
     - name: Install freeze utilities
       apt:
