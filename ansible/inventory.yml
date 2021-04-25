@@ -81,3 +81,18 @@ all:
         kubernetes:
           children:
             cattle:
+
+    gluster:
+      children:
+        pi4b4_1:
+          vars:
+            small_gluster_brick: 3b4c1835-a5fb-2249-9a65-1e9c8159a4f6
+        pi4b4_2:
+          vars:
+            small_gluster_brick: e41be4b0-cfcd-b446-8063-ed609818c7d7
+        pi4b4_3:
+          vars:
+            small_gluster_brick: 7fcda896-f8c5-c742-8f00-de3650a41070
+        pi4b4_4:
+          vars:
+            small_gluster_brick: 1bbf155a-7a81-d344-8e49-3c12df2ffeaf

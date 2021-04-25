@@ -1,0 +1,43 @@
+- hosts: pi:&ubuntu:&gluster
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Mount small brick
+      mount:
+        src: PARTUUID={{ small_gluster_brick }}
+        fstype: xfs
+        path: /gluster/bricks/small-1
+        state: mounted
+    - name: Install Gluster
+      apt:
+        name:
+          - glusterfs-server
+        state: present
+    - name: Start Gluster
+      systemd:
+        name: glusterd
+        enabled: yes
+        state: started
+    - name: Unify the Gluster cluster
+      gluster.gluster.gluster_peer:
+        state: present
+        nodes:
+          # @todo How can pib4b4-1 be referenced by name instead of IP address?
+          # (For now, I ran
+          # `gluster peer detach 192.168.1.100; gluster peer probe pi4b4-1`
+          # on pi4b4-4, how can I do that via Ansible?)
+          - pi4b4-1
+          - pi4b4-2
+          - pi4b4-3
+          - pi4b4-4
+      run_once: true
+    - name: Create test Gluster volume
+      gluster.gluster.gluster_volume:
+        state: present
+        name: test-1
+        bricks: /gluster/bricks/small-1/test-1
+        cluster:
+          - pi4b4-3
+          - pi4b4-4
+        replicas: 2
+      run_once: true
