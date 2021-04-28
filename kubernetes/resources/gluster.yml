@@ -4,14 +4,6 @@ metadata:
   name: gluster
 subsets:
 - addresses:
-    - ip: 192.168.1.100  # pi4b4-1
-  ports:
-    - port: 1
-- addresses:
-    - ip: 192.168.1.101  # pi4b4-2
-  ports:
-    - port: 1
-- addresses:
     - ip: 192.168.1.102  # pi4b4-3
   ports:
     - port: 1
