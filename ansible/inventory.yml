@@ -86,7 +86,7 @@ all:
       children:
         pi4b4_3:
           vars:
-            large_gluster_brick_1: todo
+            large_gluster_brick: 9972d12e-bddd-e24e-b6a9-ae49d3a6d231
         pi4b4_4:
           vars:
-            large_gluster_brick_1: todo
+            large_gluster_brick: 66892625-77e5-cd4d-abec-0a3c7c49f002
