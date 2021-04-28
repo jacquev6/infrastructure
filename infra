@@ -25,6 +25,7 @@ then
     --mount type=bind,src=$HOME/.ssh/known_hosts,dst=/root/.ssh/known_hosts,ro \
     --mount type=bind,src=$PWD/infrastructure-tools/infra.py,dst=/infra/infra.py,ro \
     --mount type=bind,src=$PWD/infrastructure-tools/terraform-provider-multiverse-freebox.py,dst=/infra/terraform-provider-multiverse-freebox.py,ro \
+    --publish 10443:10443 \
     jacquev6/infrastructure-tools:$infrastructure_tools_version \
     bash -c "tail -f /dev/null" \
   >/dev/null

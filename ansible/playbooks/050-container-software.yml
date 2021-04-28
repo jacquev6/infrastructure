@@ -38,6 +38,18 @@
     # @todo Configure the admin shell: https://microk8s.io/docs/working-with-kubectl
     # @todo Enable the DNS plugin: `LC_ALL=C.UTF-8 LANG=C.UTF-8 ssh pi1 sudo microk8s enable dns` (https://microk8s.io/docs/addon-dns)
 
+    # @todo Enable the Dashboard plugin: `LC_ALL=C.UTF-8 LANG=C.UTF-8 ssh pi1 sudo microk8s enable dashboard` (https://microk8s.io/docs/addon-dashboard)
+    #   This adds the following deployments (and corresponding services):
+    #     - metrics-server
+    #     - dashboard-metrics-scraper
+    #     - kubernetes-dashboard
+    # Proxy with:
+    # `kubectl port-forward -n kube-system --address 0.0.0.0 service/kubernetes-dashboard 10443:443`
+    # and browse to https://localhost:10443/
+    # Authenticate using the token from:
+    # `kubectl -n kube-system describe secret default-token-4fhgj`
+    # @todo Reverse-proxy the dashboard and serve it at https://kubernetes.jacquev6.net/
+
 - hosts: ubuntu:&docker
   become: yes
   gather_facts: no
