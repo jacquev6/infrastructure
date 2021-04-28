@@ -41,28 +41,6 @@
         path: /mnt/nas2/vincent-no-backup
         state: mounted
 
-# Ad-hoc mount of Black into pi4b4-3 until we have a proper provider for persistent
-# volumes in Kubernetes
-- hosts: pi4b4_3
-  become: yes
-  gather_facts: no
-  tasks:
-    - name: Mount Black
-      mount:
-        src: PARTUUID=e8dada69-fb62-4b3b-87b6-b96bcdcbf3b2
-        fstype: exfat
-        opts: nofail
-        path: /mnt/black
-        state: mounted
-    - name: Mount Mongo data with appropriate uid/gid
-      mount:
-        src: /mnt/black/my-media-gathering/MongoDB
-        fstype: fuse.bindfs
-        # mongodb user's id in mongo image
-        opts: force-user=999,force-group=999
-        path: /hacking_data/my_media_gathering/mongo
-        state: mounted
-
 - hosts: ubuntu:&pets
   become: yes
   gather_facts: no
