@@ -1,0 +1,10 @@
+- hosts: idee
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install basic software
+      apt:
+        name:
+          - git-lfs
+          - screen
+        state: present
