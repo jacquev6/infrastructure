@@ -30,11 +30,6 @@
   become: yes
   gather_facts: no
   tasks:
-    - name: Add idee to known_hosts
-      known_hosts:
-        path: /etc/ssh/ssh_known_hosts
-        name: idee.home.jacquev6.net
-        key: "idee.home.jacquev6.net,idee,192.168.1.52 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN2pOBLyTwBBUtIR3mxNwo94vbvAmBmSGWPLvmk7wNTWWquhWLmSkhMGUBpgG2Hlos079qjaHDc7nCuQUW0WnhA="
     - name: Add pi4b4-1 to known_hosts
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
@@ -50,3 +45,8 @@
         path: /etc/ssh/ssh_known_hosts
         name: pi4b4-3.home.jacquev6.net
         key: "pi4b4-3.home.jacquev6.net,pi4b4-3,192.168.1.102 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGwaoG9TcmYqkcYkoiMWwe73WoCdybaksktRmAyxduR2yD+l0oloCK5o8uzBAyC0043h/QFZM/VBc+nYbynAS1U="
+    - name: Add pi4b4-4 to known_hosts
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: pi4b4-4.home.jacquev6.net
+        key: "pi4b4-4.home.jacquev6.net,192.168.1.103 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGEPJv9qg/PHPMNETUw4lH/rZ3CdSEDqwNv4Kj+HAys6Yo9TmLgTotRwPJdKPSdaMFWMODrLJEmgaTvYryXfH2Q="
