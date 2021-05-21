@@ -10,6 +10,8 @@ all:
     idee:
       hosts:
         idee.home.jacquev6.net:
+      vars:
+        network_interface_name: enp4s6
     media:
       hosts:
         media.home.jacquev6.net:
@@ -53,6 +55,8 @@ all:
             pi4b4_2:
             pi4b4_3:
             pi4b4_4:
+      vars:
+        network_interface_name: eth0
 
     pc:
       children:

@@ -30,9 +30,9 @@
         name: net.ipv6.conf.lo.disable_ipv6
         value: '1'
         reload: yes
-    - name: Disable IPv6 - eth0
+    - name: Disable IPv6 - {{ network_interface_name }}
       sysctl:
-        name: net.ipv6.conf.eth0.disable_ipv6
+        name: net.ipv6.conf.{{ network_interface_name }}.disable_ipv6
         value: '1'
         reload: yes
   handlers:
