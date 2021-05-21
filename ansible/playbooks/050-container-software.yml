@@ -80,7 +80,7 @@
   tasks:
     - apt_key:
         url: https://nvidia.github.io/nvidia-container-runtime/gpgkey
-    # Repositories from https://nvidia.github.io/nvidia-container-runtime/ubuntu19.10/nvidia-container-runtime.list
+    # Repositories from https://nvidia.github.io/nvidia-container-runtime/ubuntu20.04/nvidia-container-runtime.list
     - apt_repository:
         filename: nvidia-container-runtime
         repo: deb https://nvidia.github.io/libnvidia-container/ubuntu18.04/$(ARCH) /
