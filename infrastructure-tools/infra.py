@@ -109,6 +109,12 @@ def reboot(groups):
     ansible_playbook(groups, ["tasks/reboot.yml"])
 
 
+@machine.command()
+@click.argument("groups", nargs=-1, required=True)
+def shutdown(groups):
+    ansible_playbook(groups, ["tasks/shutdown.yml"])
+
+
 def ansible_playbook(groups, playbook_names, plan=False):
     command = ["ansible-playbook"]
     if plan:
