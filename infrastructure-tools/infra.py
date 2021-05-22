@@ -121,6 +121,13 @@ def shutdown(groups):
     ansible_playbook(groups, ["tasks/shutdown.yml"])
 
 
+@machine.command()
+@click.argument("groups", nargs=-1, required=True)
+@click.argument("command", nargs=1, required=True)
+def shell(groups, command):
+    delegate_to("ansible", *groups, "-m", "shell", "-a", command)
+
+
 def ansible_playbook(groups, playbook_names, plan=False):
     command = ["ansible-playbook"]
     if plan:
