@@ -105,6 +105,12 @@ def unfreeze(groups):
 
 @machine.command()
 @click.argument("groups", nargs=-1, required=True)
+def is_frozen(groups):
+    delegate_to("ansible", *groups, "-a", "grep '^overlayroot=' /etc/overlayroot.conf")
+
+
+@machine.command()
+@click.argument("groups", nargs=-1, required=True)
 def reboot(groups):
     ansible_playbook(groups, ["tasks/reboot.yml"])
 
