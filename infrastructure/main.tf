@@ -7,6 +7,14 @@ terraform {
       version = "~> 4.57"
     }
   }
+
+  # Remote backend added after using the local backend.
+  # State was migrated by 'terraform init'.
+  backend "s3" {
+    bucket = "jacquev6"
+    key = "cloud-infrastructure/terraform.tfstate"
+    region = "eu-west-3"
+  }
 }
 
 provider "aws" {
