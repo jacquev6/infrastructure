@@ -19,8 +19,8 @@ terraform {
 
 resource "uptimerobot_monitor" "http_root" {
   friendly_name = "http://${var.domain}/"
-  type          = "http"
-  url           = "http://${var.domain}/"
+  type = "http"
+  url = "http://${var.domain}/"
 
   alert_contact {
     id = var.alert_contact_id
@@ -29,8 +29,8 @@ resource "uptimerobot_monitor" "http_root" {
 
 resource "uptimerobot_monitor" "https_root" {
   friendly_name = "https://${var.domain}/"
-  type          = "http"
-  url           = "https://${var.domain}/"
+  type = "http"
+  url = "https://${var.domain}/"
 
   alert_contact {
     id = var.alert_contact_id

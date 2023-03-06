@@ -23,7 +23,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = "eu-west-3"
+  region = "eu-west-3"
 }
 
 resource "uptimerobot_alert_contact" "email" {
