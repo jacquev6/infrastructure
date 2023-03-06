@@ -3,9 +3,13 @@ terraform {
 
   required_providers {
     aws = {
-      # https://registry.terraform.io/providers/hashicorp/aws/4.57.0/docs
       source = "hashicorp/aws"
       version = "~> 4.57"
+    }
+
+    uptimerobot = {
+      source = "Revolgy-Business-Solutions/uptimerobot"
+      version = "~> 0.9"
     }
   }
 
@@ -20,4 +24,10 @@ terraform {
 
 provider "aws" {
   region  = "eu-west-3"
+}
+
+resource "uptimerobot_alert_contact" "email" {
+  friendly_name = "uptimerobot.com@vincent-jacques.net"
+  type = "e-mail"
+  value = "uptimerobot.com@vincent-jacques.net"
 }

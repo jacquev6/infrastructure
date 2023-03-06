@@ -23,3 +23,25 @@ provider "registry.terraform.io/hashicorp/aws" {
     "zh:f84143ee0cff2ad0af8ad40074fb5dcd83bfb8a514c7f43ca23c7422caa42330",
   ]
 }
+
+provider "registry.terraform.io/revolgy-business-solutions/uptimerobot" {
+  version     = "0.9.3"
+  constraints = "~> 0.9"
+  hashes = [
+    "h1:xWHwpGo9YszOPgxc6E7HcfSUfbJwh8GsUU1EUIXDTRM=",
+    "zh:09e23a3f39859e5c17aa1cf41115e7b240090fe654b943b1aa1d77bfd4c3af44",
+    "zh:4609cf2fec509206ed366824618216b734eb71772b406365dd816ee166945ac8",
+    "zh:5af73fe7cb3cec1afe604e9182d865e56d650922d2e11f0ce785914deaed58e9",
+    "zh:6ab8a635d90681dc6b5c71a5edc6805577a29f252908e7fd1604a4c2b7f6fbbc",
+    "zh:7201e582a4c21b9c4e4f03be61875438e4e4b6bdfa8fe859ba52f95da74423c5",
+    "zh:8d6fd3ef98a4e651daf44462c17d4e3eedb8e7b420f0e7e553a694c255bfba49",
+    "zh:916321cad8bf524edada69461e447cc73b6fd4dd176e3f19568fa8c207fbeea9",
+    "zh:9a392627e16c9a833ba0c170dc0a9c920dc0b65439e1881db393ffd2c4ac4f77",
+    "zh:aec371c5b5bb252f659f375a760af115df75ef3dd3a6b041b9ece5189afad511",
+    "zh:bef600c3f25632ec1ea6a19b818d200791950696b3889cd56b37ececf7cb47a6",
+    "zh:dafed8638280aad490e3c3b16313b16d3f3e47a3d3499db91848145bee6cb0d1",
+    "zh:ddc3d8754639b8c068d4c785b18d140cbca73842ddda7bd42bb0e2e84e7f84c0",
+    "zh:e4f4f0b006d8323c884c1b910bb70021afd023732f30261b56b97d27bc4d37b0",
+    "zh:f1729d61f383659138f18093c1939f80683868053847a0981ab62f03421e557c",
+  ]
+}
