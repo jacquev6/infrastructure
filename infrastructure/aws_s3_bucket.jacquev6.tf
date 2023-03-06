@@ -6,7 +6,7 @@
 resource "aws_s3_bucket" "jacquev6" {
   bucket = "jacquev6"
 
-  tags = {}  # Tab "Properties", section "Tags"
+  tags = {} # Tab "Properties", section "Tags"
 }
 
 # See https://github.com/hashicorp/terraform-provider-aws/issues/23106 for more
@@ -37,7 +37,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "jacquev6" {
 # Tab "Properties", section "Requester pays"
 resource "aws_s3_bucket_request_payment_configuration" "jacquev6" {
   bucket = aws_s3_bucket.jacquev6.id
-  payer = "Requester"
+  payer  = "Requester"
 }
 
 # Tab "Properties", section "Website hosting"
@@ -48,9 +48,9 @@ resource "aws_s3_bucket_request_payment_configuration" "jacquev6" {
 resource "aws_s3_bucket_public_access_block" "jacquev6" {
   bucket = aws_s3_bucket.jacquev6.id
 
-  block_public_acls = true
-  block_public_policy = true
-  ignore_public_acls = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
   restrict_public_buckets = true
 }
 
