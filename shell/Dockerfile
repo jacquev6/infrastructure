@@ -8,7 +8,7 @@ RUN set -x \
  && apt-get clean
 
 # Terraform
-# From the "Linux" tab on https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+# From the "Linux" tab on https://developer.hashicorp.com/terraform/downloads
 RUN set -x \
  && wget -O- https://apt.releases.hashicorp.com/gpg \
   | gpg --dearmor \
