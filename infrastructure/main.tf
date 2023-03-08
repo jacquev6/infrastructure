@@ -31,3 +31,17 @@ resource "uptimerobot_alert_contact" "email" {
   type          = "e-mail"
   value         = "uptimerobot.com@vincent-jacques.net"
 }
+
+module "jacquev6_net_monitors" {
+  source = "./modules/monitors"
+
+  alert_contact_id = uptimerobot_alert_contact.email.id
+  domain           = "jacquev6.net"
+}
+
+module "vincent_jacques_net_monitors" {
+  source = "./modules/monitors"
+
+  alert_contact_id = uptimerobot_alert_contact.email.id
+  domain           = "vincent-jacques.net"
+}
