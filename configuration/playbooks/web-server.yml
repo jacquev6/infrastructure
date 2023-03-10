@@ -39,6 +39,8 @@
                 - ./letsencrypt:/etc/letsencrypt
               environment:
                 - CERTBOT_EMAIL=letsencrypt.org@vincent-jacques.net
+            draw-turks-head-demo:
+              image: jacquev6/draw-turks-head-demo:20230310-150439
     - ansible.builtin.copy:
         dest: web-server/50-copy-conf.sh
         content: |
@@ -69,6 +71,21 @@
             ssl_trusted_certificate /etc/letsencrypt/live/www.vincent-jacques.net/chain.pem;
 
             return 301 https://vincent-jacques.net$request_uri;
+          }
+    - ansible.builtin.copy:
+        dest: web-server/conf.d/dyn.vincent-jacques.net.conf
+        content: |
+          server {
+            listen 443 ssl;
+            server_name dyn.vincent-jacques.net;
+
+            ssl_certificate /etc/letsencrypt/live/dyn.vincent-jacques.net/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/dyn.vincent-jacques.net/privkey.pem;
+            ssl_trusted_certificate /etc/letsencrypt/live/dyn.vincent-jacques.net/chain.pem;
+
+            location /turkshead {
+              proxy_pass http://draw-turks-head-demo:80/;
+            }
           }
     - community.docker.docker_compose:
         project_src: web-server

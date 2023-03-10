@@ -189,7 +189,13 @@ resource "gandi_livedns_record" "www_vincent_jacques_net" {
   values = [aws_eip.fanout.public_ip]
 }
 
-# @todo dyn.vincent-jacques.net
+resource "gandi_livedns_record" "dyn_vincent_jacques_net" {
+  zone   = data.gandi_domain.vincent_jacques_net.id
+  name   = "dyn"
+  type   = "A"
+  ttl    = 3600
+  values = [aws_eip.fanout.public_ip]
+}
 
 resource "local_file" "ansible_inventory" {
   content = <<EOT
