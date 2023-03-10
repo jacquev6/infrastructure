@@ -24,6 +24,12 @@ terraform {
 
 provider "aws" {
   region = "eu-west-3"
+
+  default_tags {
+    tags = {
+      Managed = "by Terraform"
+    }
+  }
 }
 
 resource "uptimerobot_alert_contact" "email" {
