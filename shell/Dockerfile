@@ -33,3 +33,10 @@ RUN set -x \
  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
       bind9-dnsutils  `# For dig` \
  && apt-get clean
+
+RUN set -x \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+      python3-pip \
+ && apt-get clean
+RUN pip3 install ansible

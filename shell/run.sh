@@ -20,7 +20,9 @@ docker build shell --tag cloud-infrastructure-shell
 docker run \
   --rm --interactive --tty \
   --volume "$PWD/secrets/main.id_rsa:/root/.ssh/id_rsa:ro" \
-  --volume "$PWD:/wd" --workdir /wd/infrastructure \
+  --volume "$PWD/infrastructure:/project/infrastructure" `# Read-write for 'terraform fmt'` \
+  --volume "$PWD/configuration:/project/configuration:ro" \
+  --volume "$PWD/secrets:/project/secrets:ro" \
+  --workdir /project \
   --env-file secrets/env \
-  cloud-infrastructure-shell \
-    "$@"
+  cloud-infrastructure-shell

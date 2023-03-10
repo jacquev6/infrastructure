@@ -1,0 +1,7 @@
+all:
+  vars:
+    ansible_user: ubuntu
+
+  hosts:
+    # @todo Automatically get the address from the Terraform output
+    15.188.248.48:
