@@ -21,7 +21,7 @@ docker run \
   --rm --interactive --tty \
   --volume "$PWD/secrets/main.id_rsa:/root/.ssh/id_rsa:ro" \
   --volume "$PWD/infrastructure:/project/infrastructure" `# Read-write for 'terraform fmt'` \
-  --volume "$PWD/configuration:/project/configuration:ro" \
+  --volume "$PWD/configuration:/project/configuration" `# Read-write to generate inventory using Terraform` \
   --volume "$PWD/secrets:/project/secrets:ro" \
   --workdir /project \
   --env-file secrets/env \
