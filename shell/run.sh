@@ -19,6 +19,7 @@ docker build shell --tag cloud-infrastructure-shell
 
 docker run \
   --rm --interactive --tty \
+  --volume "$PWD/secrets/main.id_rsa:/root/.ssh/id_rsa:ro" \
   --volume "$PWD:/wd" --workdir /wd/infrastructure \
   --env-file secrets/env \
   cloud-infrastructure-shell \

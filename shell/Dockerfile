@@ -21,3 +21,9 @@ RUN set -x \
  && apt-get clean
 
 RUN terraform -install-autocomplete
+
+RUN set -x \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+      openssh-client  `# For ssh-keygen` \
+ && apt-get clean
