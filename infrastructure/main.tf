@@ -1,3 +1,8 @@
+locals {
+  # https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site
+  github_pages_ips = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"]
+}
+
 terraform {
   required_version = "~> 1.3"
 
@@ -10,6 +15,11 @@ terraform {
     uptimerobot = {
       source  = "Revolgy-Business-Solutions/uptimerobot"
       version = "~> 0.9"
+    }
+
+    gandi = {
+      source  = "go-gandi/gandi"
+      version = "~> 2.2"
     }
   }
 
@@ -129,3 +139,49 @@ resource "aws_eip" "fanout" {
 output "fanout_address" {
   value = aws_eip.fanout.public_ip
 }
+
+data "gandi_domain" "jacquev6_net" {
+  name = "jacquev6.net"
+}
+
+resource "gandi_livedns_record" "jacquev6_net" {
+  zone   = data.gandi_domain.jacquev6_net.id
+  name   = "@"
+  type   = "A"
+  ttl    = 3600
+  values = local.github_pages_ips
+}
+
+resource "gandi_livedns_record" "www_jacquev6_net" {
+  zone   = data.gandi_domain.jacquev6_net.id
+  name   = "www"
+  type   = "A"
+  ttl    = 3600
+  values = [aws_eip.fanout.public_ip]
+}
+
+# {home,parents}.jacquev6.net run on hardware I own so they are outside the scope of this repository.
+
+# @todo Import and manage shared.jacquev6.net (Google Storage bucket)
+
+data "gandi_domain" "vincent_jacques_net" {
+  name = "vincent-jacques.net"
+}
+
+resource "gandi_livedns_record" "vincent_jacques_net" {
+  zone   = data.gandi_domain.vincent_jacques_net.id
+  name   = "@"
+  type   = "A"
+  ttl    = 3600
+  values = local.github_pages_ips
+}
+
+resource "gandi_livedns_record" "www_vincent_jacques_net" {
+  zone   = data.gandi_domain.vincent_jacques_net.id
+  name   = "www"
+  type   = "A"
+  ttl    = 3600
+  values = [aws_eip.fanout.public_ip]
+}
+
+# @todo dyn.vincent-jacques.net
