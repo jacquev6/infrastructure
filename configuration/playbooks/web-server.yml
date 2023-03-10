@@ -1,0 +1,28 @@
+- hosts: web_server
+  become: yes
+  gather_facts: no
+  tasks:
+    - ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+    - ansible.builtin.user:
+        name: ubuntu
+        groups:
+          - docker
+        append: true
+
+- hosts: web_server
+  become: yes
+  gather_facts: no
+  tasks:
+    - community.docker.docker_compose:
+        project_name: web-server
+        remove_orphans: true
+        definition:
+          services:
+            fanout:
+              image: nginx:latest
+              ports:
+                - "80:80"

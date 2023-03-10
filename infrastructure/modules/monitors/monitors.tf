@@ -36,3 +36,13 @@ resource "uptimerobot_monitor" "https_root" {
     id = var.alert_contact_id
   }
 }
+
+resource "uptimerobot_monitor" "http_www" {
+  friendly_name = "http://www.${var.domain}/"
+  type = "http"
+  url = "http://www.${var.domain}/"
+
+  alert_contact {
+    id = var.alert_contact_id
+  }
+}

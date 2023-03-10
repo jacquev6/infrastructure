@@ -20,4 +20,12 @@ First, `cd configuration`.
 
 Ping:
 
-    ansible --inventory inventory.yml all -m ping
+    ansible --inventory inventory.yml web_server -m ping
+
+Plan:
+
+    ansible-playbook --inventory inventory.yml --diff --check playbooks/web-server.yml
+
+Apply:
+
+    ansible-playbook --inventory inventory.yml playbooks/web-server.yml
