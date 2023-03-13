@@ -46,6 +46,11 @@
         content: |
           cp /etc/nginx/conf.d.ro/* /etc/nginx/conf.d/
         mode: "0755"
+# @todo Use a trigger to reload the NGinx config changes
+# In the mean time, run this after changing the NGinx config files:
+#   ansible --inventory inventory.yml web_server -a 'bash -c "cd web-server; docker-compose up --force-recreate --detach"'
+# (Just reloading config changes with `docker-compose exec fanout nginx -s reload` isn't enough when adding a new SSL domain
+# because certificates are emitted during startup)
     - ansible.builtin.copy:
         dest: web-server/conf.d/www.jacquev6.net.conf
         content: |
@@ -58,6 +63,22 @@
             ssl_trusted_certificate /etc/letsencrypt/live/www.jacquev6.net/chain.pem;
 
             return 301 https://jacquev6.net$request_uri;
+          }
+    - ansible.builtin.copy:
+        dest: web-server/conf.d/cloud.jacquev6.net.conf
+        content: |
+          server {
+            listen 443 ssl;
+            server_name cloud.jacquev6.net;
+
+            ssl_certificate /etc/letsencrypt/live/cloud.jacquev6.net/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/cloud.jacquev6.net/privkey.pem;
+            ssl_trusted_certificate /etc/letsencrypt/live/cloud.jacquev6.net/chain.pem;
+
+            location / {
+              default_type text/plain;
+              return 200 'OK';
+            }
           }
     - ansible.builtin.copy:
         dest: web-server/conf.d/www.vincent-jacques.net.conf

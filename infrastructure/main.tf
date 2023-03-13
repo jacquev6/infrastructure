@@ -165,6 +165,14 @@ resource "gandi_livedns_record" "www_jacquev6_net" {
   values = [aws_eip.fanout.public_ip]
 }
 
+resource "gandi_livedns_record" "cloud_jacquev6_net" {
+  zone   = data.gandi_domain.jacquev6_net.id
+  name   = "cloud"
+  type   = "A"
+  ttl    = 3600
+  values = [aws_eip.fanout.public_ip]
+}
+
 # {home,parents}.jacquev6.net run on hardware I own so they are outside the scope of this repository.
 
 # @todo Import and manage shared.jacquev6.net (Google Storage bucket)
