@@ -41,6 +41,8 @@
                 - CERTBOT_EMAIL=letsencrypt.org@vincent-jacques.net
             draw-turks-head-demo:
               image: jacquev6/draw-turks-head-demo:20230310-150439
+            gabby-demo:
+              image: jacquev6/gabby-frontend:20240115-100114
     - ansible.builtin.copy:
         dest: web-server/50-copy-conf.sh
         content: |
@@ -106,6 +108,21 @@
 
             location /turkshead {
               proxy_pass http://draw-turks-head-demo:80/;
+            }
+          }
+    - ansible.builtin.copy:
+        dest: web-server/conf.d/gabby.vincent-jacques.net.conf
+        content: |
+          server {
+            listen 443 ssl;
+            server_name gabby.vincent-jacques.net;
+
+            ssl_certificate /etc/letsencrypt/live/gabby.vincent-jacques.net/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/gabby.vincent-jacques.net/privkey.pem;
+            ssl_trusted_certificate /etc/letsencrypt/live/gabby.vincent-jacques.net/chain.pem;
+
+            location / {
+              proxy_pass http://gabby-demo:8080/;
             }
           }
     - community.docker.docker_compose:
