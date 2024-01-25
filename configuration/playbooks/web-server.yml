@@ -39,10 +39,109 @@
                 - ./letsencrypt:/etc/letsencrypt
               environment:
                 - CERTBOT_EMAIL=letsencrypt.org@vincent-jacques.net
+              depends_on:
+                - gabby-current-frontend
+                - gabby-current-backend
+                - gabby-current-adminer
+                - gabby-next-frontend
+                - gabby-next-backend
+                - gabby-next-adminer
+
             draw-turks-head-demo:
               image: jacquev6/draw-turks-head-demo:20230310-150439
-            gabby-demo:
-              image: jacquev6/gabby-frontend:20240115-100114
+
+            gabby-current-frontend:
+              image: jacquev6/gabby-frontend:20240125-162659
+            gabby-current-backend:
+              image: jacquev6/gabby-backend:20240125-162659
+              environment:
+                GABBY_SECRET_KEY: not-so-secret
+                GABBY_ALLOWED_HOSTS: gabby.vincent-jacques.net
+                GABBY_DB_NAME: gabby-current
+                GABBY_DB_USER: gabby-current
+                GABBY_DB_PASSWORD: not-so-secret-either
+                GABBY_DB_HOST: gabby-current-db
+              depends_on:
+                gabby-current-db:
+                  condition: service_healthy
+            gabby-current-adminer:
+              image: adminer:4
+              environment:
+                ADMINER_DEFAULT_DB_DRIVER: pgsql
+                ADMINER_DEFAULT_DB_HOST: gabby-current-db
+                ADMINER_DEFAULT_DB_NAME: gabby-current
+              depends_on:
+                gabby-current-db:
+                  condition: service_healthy
+            gabby-current-db:
+              image: postgres:16
+              volumes:
+                - gabby-current-db-data:/var/lib/postgresql/data:rw
+              environment:
+                POSTGRES_USER: gabby-current
+                POSTGRES_PASSWORD: not-so-secret-either
+                POSTGRES_DB: gabby-current
+              healthcheck:
+                test: [
+                  "CMD",
+                  "pg_isready",
+                  "--timeout=0",
+                  "--dbname=gabby-current",
+                  "--username=gabby-current",
+                ]
+                start_period: 0s
+                interval: 0.5s
+                timeout: 1s
+                retries: 10
+
+            gabby-next-frontend:
+              image: jacquev6/gabby-frontend:20240125-162659
+            gabby-next-backend:
+              image: jacquev6/gabby-backend:20240125-162659
+              environment:
+                GABBY_SECRET_KEY: not-so-secret
+                GABBY_ALLOWED_HOSTS: gabby-next.vincent-jacques.net
+                GABBY_DB_NAME: gabby-next
+                GABBY_DB_USER: gabby-next
+                GABBY_DB_PASSWORD: not-so-secret-either
+                GABBY_DB_HOST: gabby-next-db
+              depends_on:
+                gabby-next-db:
+                  condition: service_healthy
+            gabby-next-adminer:
+              image: adminer:4
+              environment:
+                ADMINER_DEFAULT_DB_DRIVER: pgsql
+                ADMINER_DEFAULT_DB_HOST: gabby-next-db
+                ADMINER_DEFAULT_DB_NAME: gabby-next
+              depends_on:
+                gabby-next-db:
+                  condition: service_healthy
+            gabby-next-db:
+              image: postgres:16
+              volumes:
+                - gabby-next-db-data:/var/lib/postgresql/data:rw
+              environment:
+                POSTGRES_USER: gabby-next
+                POSTGRES_PASSWORD: not-so-secret-either
+                POSTGRES_DB: gabby-next
+              healthcheck:
+                test: [
+                  "CMD",
+                  "pg_isready",
+                  "--timeout=0",
+                  "--dbname=gabby-next",
+                  "--username=gabby-next",
+                ]
+                start_period: 0s
+                interval: 0.5s
+                timeout: 1s
+                retries: 10
+
+          volumes:
+            gabby-current-db-data:
+            gabby-next-db-data:
+
     - ansible.builtin.copy:
         dest: web-server/50-copy-conf.sh
         content: |
@@ -122,8 +221,52 @@
             ssl_trusted_certificate /etc/letsencrypt/live/gabby.vincent-jacques.net/chain.pem;
 
             location / {
-              proxy_pass http://gabby-demo:8080/;
+              proxy_pass http://gabby-current-frontend/;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "Upgrade";
+              proxy_set_header Host $http_host;
+            }
+
+            location /api/ {
+              proxy_pass http://gabby-current-backend/api/;
+              proxy_set_header Host $http_host;
+            }
+
+            location /api/adminer {
+              proxy_pass http://gabby-current-adminer:8080/api/adminer;
+              proxy_set_header Host $http_host;
+            }
+          }
+    - ansible.builtin.copy:
+        dest: web-server/conf.d/gabby-next.vincent-jacques.net.conf
+        content: |
+          server {
+            listen 443 ssl;
+            server_name gabby-next.vincent-jacques.net;
+
+            ssl_certificate /etc/letsencrypt/live/gabby-next.vincent-jacques.net/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/gabby-next.vincent-jacques.net/privkey.pem;
+            ssl_trusted_certificate /etc/letsencrypt/live/gabby-next.vincent-jacques.net/chain.pem;
+
+            location / {
+              proxy_pass http://gabby-next-frontend/;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "Upgrade";
+              proxy_set_header Host $http_host;
+            }
+
+            location /api/ {
+              proxy_pass http://gabby-next-backend/api/;
+              proxy_set_header Host $http_host;
+            }
+
+            location /api/adminer {
+              proxy_pass http://gabby-next-adminer:8080/api/adminer;
+              proxy_set_header Host $http_host;
             }
           }
     - community.docker.docker_compose:
         project_src: web-server
+        remove_orphans: true
