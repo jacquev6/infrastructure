@@ -22,6 +22,29 @@ RUN set -x \
 
 RUN terraform -install-autocomplete
 
+# AWS CLI
+RUN set -x \
+ && wget -O awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+
+RUN set -x \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+      unzip \
+ && apt-get clean
+
+RUN set -x \
+ && unzip awscliv2.zip \
+ && aws/install
+
+RUN set -x \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+      less \
+ && apt-get clean
+
+RUN wget -O session-manager-plugin.deb "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb"
+RUN dpkg -i session-manager-plugin.deb
+
 RUN set -x \
  && apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
