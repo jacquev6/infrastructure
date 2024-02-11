@@ -128,7 +128,8 @@ resource "aws_key_pair" "main" {
 
 resource "aws_instance" "web_server" {
   ami           = "ami-05b457b541faec0ca"
-  instance_type = "t2.micro"
+  # @todo Switch to an ARM-based instance (e.g. t4g.micro). Requires choosing another AMI.
+  instance_type = "t3a.micro"
 
   key_name        = aws_key_pair.main.key_name
   security_groups = [aws_security_group.web_servers.name]
