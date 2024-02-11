@@ -53,19 +53,20 @@ resource "uptimerobot_alert_contact" "email" {
   value         = "uptimerobot.com@vincent-jacques.net"
 }
 
-module "jacquev6_net_monitors" {
-  source = "./modules/monitors"
+# @todo Manage monitoring in an independent Terraform configuration.
+# module "jacquev6_net_monitors" {
+#   source = "./modules/monitors"
 
-  alert_contact_id = uptimerobot_alert_contact.email.id
-  domain           = "jacquev6.net"
-}
+#   alert_contact_id = uptimerobot_alert_contact.email.id
+#   domain           = "jacquev6.net"
+# }
 
-module "vincent_jacques_net_monitors" {
-  source = "./modules/monitors"
+# module "vincent_jacques_net_monitors" {
+#   source = "./modules/monitors"
 
-  alert_contact_id = uptimerobot_alert_contact.email.id
-  domain           = "vincent-jacques.net"
-}
+#   alert_contact_id = uptimerobot_alert_contact.email.id
+#   domain           = "vincent-jacques.net"
+# }
 
 resource "aws_security_group" "web_servers" {
   name        = "web-servers"
