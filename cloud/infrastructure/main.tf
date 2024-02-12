@@ -4,12 +4,12 @@ locals {
 }
 
 terraform {
-  required_version = "~> 1.3"
+  required_version = "~> 1.7"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.57"
+      version = "~> 5.36"
     }
 
     uptimerobot = {
@@ -19,7 +19,7 @@ terraform {
 
     gandi = {
       source  = "go-gandi/gandi"
-      version = "~> 2.2"
+      version = "~> 2.3"
     }
 
     local = {
