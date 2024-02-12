@@ -20,6 +20,7 @@ docker build shell --tag cloud-infrastructure-shell
 docker run \
   --rm --interactive --tty \
   --volume "$PWD/secrets/main.id_rsa:/root/.ssh/id_rsa:ro" \
+  --volume "$PWD/shell/known_hosts:/root/.ssh/known_hosts" `# Read-write to let 'ssh' write new hosts` \
   --volume "$PWD/cloud/infrastructure:/project/cloud/infrastructure" `# Read-write for 'terraform fmt'` \
   --volume "$PWD/cloud/configuration:/project/cloud/configuration" `# Read-write to generate inventory using Terraform` \
   --volume "$PWD/secrets:/project/secrets:ro" \
