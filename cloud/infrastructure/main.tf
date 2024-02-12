@@ -123,7 +123,7 @@ resource "aws_security_group" "web_servers" {
 
 resource "aws_key_pair" "main" {
   key_name   = "main"
-  public_key = file("../secrets/main.id_rsa.pub")
+  public_key = file("../../secrets/main.id_rsa.pub")
 }
 
 resource "aws_instance" "web_server" {
