@@ -25,4 +25,4 @@ docker run \
   --volume "$PWD/secrets:/project/secrets:ro" \
   --workdir /project \
   --env-file secrets/env \
-  cloud-infrastructure-shell
+  cloud-infrastructure-shell "$@"
