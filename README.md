@@ -4,7 +4,7 @@ It uses [Terraform](https://www.terraform.io/) to create the infrastructure itse
 
 # Usage
 
-All command below are to be run inside `./shell/run.sh`.
+All command below are to be run inside `./shell.sh`.
 
 # Cloud
 
