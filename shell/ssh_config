@@ -1,0 +1,15 @@
+# Specific hosts
+Host doorman
+    HostName 192.168.1.101
+
+Host cloud
+    HostName 15.188.248.48
+
+# For subnet behind doorman: Use https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump
+# Host toto
+#     HostName 10.20.30.40
+#     ProxyJump doorman
+
+
+# Defaults
+Host *

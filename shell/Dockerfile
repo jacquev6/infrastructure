@@ -84,3 +84,6 @@ RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
  && pip3 install \
       ansible \
  && true
+
+# SSH configuration
+ADD ssh_config /etc/ssh/ssh_config
