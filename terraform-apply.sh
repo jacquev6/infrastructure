@@ -12,7 +12,7 @@ set -o nounset
 set -o pipefail
 
 
-cd infrastructure/provisioning
+cd provisioning
 
 terraform apply -refresh=false -auto-approve
 """

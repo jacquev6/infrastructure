@@ -19,7 +19,7 @@ find . -name '*.template' | while read template; do
 done
 $secrets_ok
 
-chmod 600 infrastructure/configuration/ssh/id_rsa
+chmod 600 configuration/ssh/id_rsa
 
 user_name=$(whoami)
 user_id=$(id -u)
@@ -27,7 +27,7 @@ docker build --build-arg USER_NAME=$user_name --build-arg USER_ID=$user_id shell
 
 docker run \
   --rm --interactive --tty \
-  --volume "$PWD/infrastructure/configuration/ssh/:/home/$user_name/.ssh/" \
+  --volume "$PWD/configuration/ssh/:/home/$user_name/.ssh/" \
   --volume "$PWD:/project" --workdir /project \
-  --env-file infrastructure/provisioning/credentials.env \
+  --env-file provisioning/credentials.env \
   infrastructure-shell "$@"

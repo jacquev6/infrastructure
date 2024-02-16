@@ -12,7 +12,7 @@ set -o nounset
 set -o pipefail
 
 
-cd infrastructure/configuration
+cd configuration
 
 ansible-playbook --inventory inventory.yml --diff --check playbooks/web-server.yml
 """

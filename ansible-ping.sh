@@ -12,7 +12,7 @@ set -o nounset
 set -o pipefail
 
 
-cd infrastructure/configuration
+cd configuration
 
 ansible --inventory inventory.yml all -m ping
 """
