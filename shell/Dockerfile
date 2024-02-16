@@ -85,5 +85,11 @@ RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
       ansible \
  && true
 
-# SSH configuration
-ADD ssh_config /etc/ssh/ssh_config
+# # SSH configuration
+# ADD ssh_config /etc/ssh/ssh_config
+
+# User
+ARG USER_NAME
+ARG USER_ID
+RUN useradd $USER_NAME --uid $USER_ID --create-home
+USER $USER_NAME

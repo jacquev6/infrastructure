@@ -13,3 +13,4 @@ Host cloud
 
 # Defaults
 Host *
+    HashKnownHosts no
