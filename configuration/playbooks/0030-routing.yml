@@ -1,0 +1,69 @@
+# Based on https://serverfault.com/a/1013036
+- hosts: v-doorman
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install tool to persist iptables
+      apt:
+        name:
+          - iptables-persistent
+        install_recommends: no
+        state: present
+    - name: Remove default netplan
+      file:
+        path: /etc/netplan/00-installer-config.yaml
+        state: absent
+      notify:
+        - Apply netplan
+    - name: Add custom netplan
+      copy:
+        dest: /etc/netplan/00-ansible-config.yaml
+        content: |
+          network:
+            version: 2
+            ethernets:
+              enp0s3:
+                dhcp4: true
+                optional: false
+              enp0s8:
+                dhcp4: false
+                optional: true
+                addresses:
+                  - "10.20.30.1/24"
+      notify:
+        - Apply netplan
+    - name: Allow IP forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+    - name: Setup forwarding iptables (1/3)
+      iptables:
+        table: nat
+        chain: POSTROUTING
+        out_interface: enp0s3
+        jump: MASQUERADE
+      notify:
+        - Persist iptables
+    - name: Setup forwarding iptables (2/3)
+      iptables:
+        chain: FORWARD
+        in_interface: enp0s8
+        out_interface: enp0s3
+        jump: ACCEPT
+      notify:
+        - Persist iptables
+    - name: Setup forwarding iptables (3/3)
+      iptables:
+        chain: FORWARD
+        in_interface: enp0s3
+        out_interface: enp0s8
+        jump: ACCEPT
+      notify:
+        - Persist iptables
+
+  handlers:
+    - name: Apply netplan
+      command: netplan apply
+    - name: Persist iptables
+      command: netfilter-persistent save

@@ -23,6 +23,7 @@ IP: static DHCP lease in Freebox: 192.168.1.102
 ## Internal interface
 
 Mac: 08:00:27:E5:98:53
+IP: netplan configuration set in Ansible: 10.20.30.1
 
 # `v-node-1`
 
