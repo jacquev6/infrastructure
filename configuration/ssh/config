@@ -13,6 +13,9 @@ Host v-doorman
 #     HostName 10.20.30.40
 #     ProxyJump doorman
 
+Host v-node-1
+    HostName 10.20.30.50
+    ProxyJump ansible@v-doorman
 
 # Defaults
 Host *

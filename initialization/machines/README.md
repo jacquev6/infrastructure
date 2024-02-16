@@ -32,6 +32,7 @@ Virtual Box, 4 CPUs, 4096 MB of RAM
 ## Internal interface
 
 Mac: 08:00:27:02:5A:76
+IP: manual configuration during install: 10.20.30.50
 
 # `v-node-1`
 
