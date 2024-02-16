@@ -14,5 +14,5 @@ set -o pipefail
 
 cd configuration
 
-ansible-playbook --inventory inventory.yml playbooks/web-server.yml
+ansible-playbook --inventory inventory.yml playbooks/*.yml "$@"
 """

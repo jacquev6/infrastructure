@@ -2,9 +2,28 @@
 
 all:
   vars:
-    ansible_user: ubuntu
+    ansible_user: ansible
+
+  hosts:
+    v-doorman:
 
   children:
+    # Special case, not yet in any other group
     web_server:
       hosts:
         15.188.248.48:
+      vars:
+        ansible_user: ubuntu
+
+    # By OS
+    ubuntu:
+      hosts:
+        v-doorman:
+      vars:
+        bootstrap_user: ubuntu
+        bootstrap_password: ubuntu
+
+    # By status
+    bootstrapped:
+      hosts:
+        v-doorman:

@@ -5,6 +5,9 @@ Host doorman
 Host cloud
     HostName 15.188.248.48
 
+Host v-doorman
+    HostName 192.168.1.102
+
 # For subnet behind doorman: Use https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump
 # Host toto
 #     HostName 10.20.30.40

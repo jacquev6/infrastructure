@@ -49,6 +49,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
       openssh-client \
       python3-pip \
       software-properties-common \
+      sshpass \
       wget \
  && true
 
@@ -84,9 +85,6 @@ RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
  && pip3 install \
       ansible \
  && true
-
-# # SSH configuration
-# ADD ssh_config /etc/ssh/ssh_config
 
 # User
 ARG USER_NAME

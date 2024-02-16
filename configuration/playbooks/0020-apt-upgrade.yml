@@ -1,0 +1,14 @@
+- hosts: ubuntu
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Mark automatic packages
+      command: apt-mark minimize-manual --yes
+    - name: Upgrade packages
+      apt:
+        force_apt_get: yes
+        update_cache: yes
+        upgrade: dist
+        purge: yes
+        autoremove: yes
+        autoclean: yes
