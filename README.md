@@ -4,38 +4,4 @@ It uses [Terraform](https://www.terraform.io/) to create the infrastructure itse
 
 # Usage
 
-All command below are to be run inside `./shell.sh`.
-
-# Cloud
-
-## Terraform infrastructure
-
-First, `cd cloud/infrastructure`.
-
-Init, plan, apply:
-
-    terraform init
-    terraform plan -refresh=false
-    terraform apply -refresh=false -auto-approve
-
-Connect to fanout web server:
-
-    ssh ubuntu@$(terraform output -raw fanout_address)
-
-## Ansible configuration
-
-First, `cd cloud/configuration`.
-
-Ping:
-
-    ansible --inventory inventory.yml web_server -m ping
-
-Plan:
-
-    ansible-playbook --inventory inventory.yml --diff --check playbooks/web-server.yml
-
-Apply:
-
-    ansible-playbook --inventory inventory.yml playbooks/web-server.yml
-
-# Home
+Use the scripts in the root directory.
