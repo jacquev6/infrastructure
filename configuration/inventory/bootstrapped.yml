@@ -1,0 +1,7 @@
+all:
+  children:
+    bootstrapped:
+      hosts:
+        v-doorman:
+        v-node-1:
+        v-node-2:

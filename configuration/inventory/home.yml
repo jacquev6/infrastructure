@@ -17,10 +17,3 @@ all:
       vars:
         bootstrap_user: ubuntu
         bootstrap_password: ubuntu
-
-    # By status
-    bootstrapped:
-      hosts:
-        v-doorman:
-        v-node-1:
-        v-node-2:
