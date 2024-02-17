@@ -1,0 +1,21 @@
+- hosts: ubuntu
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: "Ping"
+      ignore_errors: yes
+      ping:
+    - name: "Add reachable hosts into 'reachable' group"
+      delegate_to: localhost
+      run_once: yes
+      become: no
+      copy:
+        dest: ../inventory/reachable.yml
+        content: |
+          all:
+            children:
+              reachable:
+                hosts:
+                {% for host in ansible_play_hosts %}
+            {{ host }}:
+                {% endfor %}

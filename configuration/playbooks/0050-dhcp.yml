@@ -1,4 +1,4 @@
-- hosts: v-doorman:&ubuntu
+- hosts: v-doorman:&ubuntu:&reachable
   become: yes
   gather_facts: no
   tasks:
