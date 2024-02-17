@@ -14,5 +14,5 @@ set -o pipefail
 
 cd configuration
 
-ansible --inventory inventory.yml all -m ping
+ansible --inventory inventory all -m ping
 """

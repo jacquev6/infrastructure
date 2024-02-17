@@ -14,5 +14,5 @@ set -o pipefail
 
 cd configuration
 
-ansible-playbook --inventory inventory.yml --diff --check playbooks/*.yml "$@"
+ansible-playbook --inventory inventory --diff --check playbooks/*.yml "$@"
 """
