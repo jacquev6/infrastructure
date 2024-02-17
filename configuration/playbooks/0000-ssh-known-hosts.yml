@@ -1,0 +1,11 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: "Get v-doorman's SSH key"
+      command: "ssh-keyscan 192.168.1.102"
+      register: keys
+    - name: "Store v-doorman's SSH key"
+      lineinfile:
+        dest: ~/.ssh/known_hosts
+        line: "{{ item }}"
+      with_items: "{{ keys.stdout_lines }}"

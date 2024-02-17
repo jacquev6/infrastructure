@@ -5,6 +5,7 @@ all:
     ansible_user: ansible
 
   hosts:
+    v-doorman:
 
   children:
     # Special case, not yet in any other group
@@ -17,6 +18,7 @@ all:
     # By OS
     ubuntu:
       hosts:
+        v-doorman:
       vars:
         bootstrap_user: ubuntu
         bootstrap_password: ubuntu
@@ -24,3 +26,4 @@ all:
     # By status
     bootstrapped:
       hosts:
+        v-doorman:

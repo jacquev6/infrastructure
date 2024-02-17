@@ -1,5 +1,5 @@
 # Based on https://serverfault.com/a/1013036
-- hosts: v-doorman
+- hosts: v-doorman:&ubuntu
   become: yes
   gather_facts: no
   tasks:
