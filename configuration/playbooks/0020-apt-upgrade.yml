@@ -2,8 +2,13 @@
   become: yes
   gather_facts: no
   tasks:
+    - name: Check last upgrade
+      command: find /tmp -mtime -1 -name last-upgrade
+      register: check_result
+      changed_when: no
     - name: Mark automatic packages
       command: apt-mark minimize-manual --yes
+      when: check_result.stdout == ''
     - name: Upgrade packages
       apt:
         force_apt_get: yes
@@ -12,3 +17,7 @@
         purge: yes
         autoremove: yes
         autoclean: yes
+      when: check_result.stdout == ''
+    - name: Mark last upgrade
+      command: touch /tmp/last-upgrade
+      when: check_result.stdout == ''
