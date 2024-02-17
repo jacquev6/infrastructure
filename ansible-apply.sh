@@ -17,6 +17,6 @@ cd configuration
 find playbooks -name '*.yml' | sort -n | while read playbook
 do
   echo "PLAYBOOK [$playbook] ****************************************************"
-  ansible-playbook --inventory inventory $playbook || [ $playbook == playbooks/0010-detect-reachable.yml ]
+  ansible-playbook --inventory inventory $playbook || [ $playbook == playbooks/0030-detect-reachable.yml ]
 done
 '''

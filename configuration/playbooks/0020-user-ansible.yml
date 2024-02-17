@@ -1,7 +1,7 @@
 # This  playbook's second play removes the user used for its first play.
 # So, it's not idempotent, and so it must be run exactly once on a fresh install.
 # We ensure that by automatically adding the host in group 'bootstrapped' at the end of this playbook.
-- hosts: ubuntu:!bootstrapped:&reachable
+- hosts: ubuntu:!bootstrapped
   become: yes
   gather_facts: no
   vars:
@@ -31,7 +31,7 @@
         create: yes
         mode: 0440
         validate: visudo -c -f %s
-- hosts: ubuntu:!bootstrapped:&reachable
+- hosts: ubuntu:!bootstrapped
   become: yes
   gather_facts: no
   tasks:
