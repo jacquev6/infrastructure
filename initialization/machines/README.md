@@ -32,7 +32,7 @@ Virtual Box, 4 CPUs, 4096 MB of RAM
 ## Internal interface
 
 Mac: 08:00:27:02:5A:76
-IP: manual configuration during install: 10.20.30.50
+IP: static DHCP lease in doorman's Kea: 10.20.30.100
 
 # `v-node-1`
 
@@ -41,3 +41,4 @@ Virtual Box, 4 CPUs, 4096 MB of RAM
 ## Internal interface
 
 Mac: 08:00:27:CA:26:50
+IP: static DHCP lease in doorman's Kea: 10.20.30.101

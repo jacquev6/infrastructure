@@ -8,13 +8,14 @@ Host cloud
 Host v-doorman
     HostName 192.168.1.102
 
-# For subnet behind doorman: Use https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump
-# Host toto
-#     HostName 10.20.30.40
-#     ProxyJump doorman
+# ProxyJump: https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump
 
 Host v-node-1
-    HostName 10.20.30.50
+    HostName 10.20.30.100
+    ProxyJump ansible@v-doorman
+
+Host v-node-2
+    HostName 10.20.30.101
     ProxyJump ansible@v-doorman
 
 # Defaults

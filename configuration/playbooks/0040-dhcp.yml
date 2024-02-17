@@ -1,0 +1,72 @@
+- hosts: v-doorman
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install Kea
+      apt:
+        name:
+          - kea-dhcp4-server
+        install_recommends: no
+        state: present
+    - name: Configure Kea
+      copy:
+        dest: /etc/kea/kea-dhcp4.conf
+        content: |
+          {
+            "Dhcp4": {
+              "interfaces-config": {
+                "interfaces": [ "enp0s8" ]
+              },
+              "control-socket": {
+                  "socket-type": "unix",
+                  "socket-name": "/run/kea/kea4-ctrl-socket"
+              },
+              "lease-database": {
+                  "type": "memfile",
+                  "lfc-interval": 3600
+              },
+              "valid-lifetime": 600,
+              "max-valid-lifetime": 7200,
+              "subnet4": [
+                {
+                  "id": 1,
+                  "subnet": "10.20.30.0/24",
+                  "pools": [
+                    {
+                      "pool": "10.20.30.50 - 10.20.30.99"
+                    }
+                  ],
+                  "reservations": [
+                    {
+                        "hw-address": "08:00:27:02:5A:76",
+                        "ip-address": "10.20.30.100"
+                    },
+                    {
+                        "hw-address": "08:00:27:CA:26:50",
+                        "ip-address": "10.20.30.101"
+                    }
+                  ],
+                  "option-data": [
+                    {
+                      "name": "routers",
+                      "data": "10.20.30.1"
+                    },
+                    {
+                      "name": "domain-name-servers",
+                      "data": "8.8.8.8, 8.8.4.4"
+                    },
+                    {
+                      "name": "domain-name",
+                      "data": "mydomain.example"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+      notify: Restart DHCP4
+  handlers:
+    - name: Restart DHCP4
+      systemd_service:
+        name: kea-dhcp4-server
+        state: restarted
