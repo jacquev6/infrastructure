@@ -14,9 +14,11 @@ set -o pipefail
 
 cd configuration
 
+detect_reachable_playbook=$(find playbooks -name '????-detect-reachable.yml')
+
 find playbooks -name '*.yml' | sort -n | while read playbook
 do
   echo "PLAYBOOK [$playbook] ****************************************************"
-  ansible-playbook --inventory inventory $playbook || [ $playbook == playbooks/0030-detect-reachable.yml ]
+  ansible-playbook --inventory inventory $playbook || [ $playbook == $detect_reachable_playbook ]
 done
 '''
