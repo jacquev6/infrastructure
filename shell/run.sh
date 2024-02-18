@@ -8,8 +8,8 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 secrets_ok=true
 echo "# Secrets" > .gitignore
-find . -name '*.template' | while read template; do
-  secret="${template%.template}"
+find . -name '*.secret_template' | while read template; do
+  secret="${template%.secret_template}"
   secret="${secret#./}"
   echo "$secret" >> .gitignore
   if [[ ! -f "$secret" ]]; then
