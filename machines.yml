@@ -1,0 +1,40 @@
+machines:
+  # Virtual machines on sam
+  - name: v-doorman  # Virtual Box, 4 CPUs, 4096 MB of RAM
+    networks:
+      home:
+        hw_address: 08:00:27:1F:CE:56
+        interface: enp0s3
+        ip_address: "192.168.1.102"  # DHCP reservation in Freebox
+      v-internal:
+        hw_address: 08:00:27:E5:98:53
+        interface: enp0s8
+        ip_address: "10.20.30.1"  # Static netplan configuration set in Ansible
+  - name: v-node-1  # Virtual Box, 4 CPUs, 4096 MB of RAM
+    networks:
+      v-internal:
+        hw_address: 08:00:27:02:5A:76
+        interface: enp0s3
+        ip_address: "10.20.30.100"  # DHCP reservation in v-doorman's Kea
+  - name: v-node-2  # Virtual Box, 4 CPUs, 4096 MB of RAM
+    networks:
+      v-internal:
+        hw_address: 08:00:27:CA:26:50
+        interface: enp0s3
+        ip_address: "10.20.30.101"  # DHCP reservation in v-doorman's Kea
+
+  - name: doorman  # Raspberry PI 3
+    networks:
+      home:
+        hw_address: B8:27:EB:21:C9:E7
+        interface:
+        ip_address: "192.168.1.101"  # DHCP reservation in Freebox
+      v-internal:
+        hw_address: B8:27:EB:74:9C:B2
+        interface: enp0s8
+        ip_address: "10.20.40.1"  # Static netplan configuration set in Ansible
+
+networks:
+  - name: home  # Physical network (WiFi and Ethernet) managed by Freebox
+  - name: v-internal  # Virtual network on sam, managed by v-doorman
+  - name: internal  # Physical network (Ethernet), managed by doorman
