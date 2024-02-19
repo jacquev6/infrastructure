@@ -22,14 +22,14 @@
           network:
             version: 2
             ethernets:
-              enp0s3:
+              {{ vars['networks']['home']['interface'] }}:
                 dhcp4: true
                 optional: false
-              enp0s8:
+              {{ vars['networks']['v-internal']['interface'] }}:
                 dhcp4: false
                 optional: true
                 addresses:
-                  - "10.20.30.1/24"
+                  - "{{ vars['networks']['v-internal']['ip_address'] }}/24"
       notify:
         - Apply netplan
     - name: Allow IP forwarding
@@ -41,23 +41,23 @@
       iptables:
         table: nat
         chain: POSTROUTING
-        out_interface: enp0s3
+        out_interface: "{{ vars['networks']['home']['interface'] }}"
         jump: MASQUERADE
       notify:
         - Persist iptables
     - name: Setup forwarding iptables (2/3)
       iptables:
         chain: FORWARD
-        in_interface: enp0s8
-        out_interface: enp0s3
+        in_interface: "{{ vars['networks']['v-internal']['interface'] }}"
+        out_interface: "{{ vars['networks']['home']['interface'] }}"
         jump: ACCEPT
       notify:
         - Persist iptables
     - name: Setup forwarding iptables (3/3)
       iptables:
         chain: FORWARD
-        in_interface: enp0s3
-        out_interface: enp0s8
+        in_interface: "{{ vars['networks']['home']['interface'] }}"
+        out_interface: "{{ vars['networks']['v-internal']['interface'] }}"
         jump: ACCEPT
       notify:
         - Persist iptables

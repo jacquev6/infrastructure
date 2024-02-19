@@ -1,13 +1,56 @@
 all:
-  vars:
-    ansible_user: ansible
-
-  hosts:
-    v-doorman:
-    v-node-1:
-    v-node-2:
-
   children:
+    home:
+      vars:
+        ansible_user: ansible
+        all_networks:
+          home:  # Physical network (WiFi and Ethernet) managed by Freebox
+          v-internal:  # Virtual network on sam, managed by v-doorman
+            subnet: "10.20.30.0/24"
+            dhcp_pool: "10.20.30.50 - 10.20.30.99"
+          internal:  # Physical network (Ethernet), managed by doorman
+            subnet: "10.20.40.0/24"
+            dhcp_pool: "10.20.40.50 - 10.20.40.99"
+
+      children:
+        virtual:
+          hosts:
+            v-doorman:
+              networks:
+                home:
+                  hw_address: 08:00:27:1F:CE:56
+                  interface: enp0s3
+                  ip_address: "192.168.1.102"  # DHCP reservation in Freebox
+                v-internal:
+                  hw_address: 08:00:27:E5:98:53
+                  interface: enp0s8
+                  ip_address: "10.20.30.1"  # Static netplan configuration set in Ansible
+            v-node-1:
+              networks:
+                v-internal:
+                  hw_address: 08:00:27:02:5A:76
+                  interface: enp0s3
+                  ip_address: "10.20.30.100"  # DHCP reservation in v-doorman's Kea
+            v-node-2:
+              networks:
+                v-internal:
+                  hw_address: 08:00:27:CA:26:50
+                  interface: enp0s3
+                  ip_address: "10.20.30.101"  # DHCP reservation in v-doorman's Kea
+
+        physical:
+          hosts:
+            doorman:
+              networks:
+                home:
+                  hw_address: B8:27:EB:21:C9:E7
+                  interface:
+                  ip_address: "192.168.1.101"  # DHCP reservation in Freebox
+                internal:
+                  hw_address: B8:27:EB:74:9C:B2
+                  interface: enp0s8
+                  ip_address: "10.20.40.1"  # Static netplan configuration set in Ansible
+
     # By OS
     ubuntu:
       hosts:

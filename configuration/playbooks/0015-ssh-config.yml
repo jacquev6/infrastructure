@@ -1,0 +1,30 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - copy:
+        dest: ../ssh/config
+        content: |
+          # Specific hosts
+          Host cloud
+              HostName 15.188.248.48
+
+          # @todo Fill with a loop on 'hostvars'
+          # ProxyJump: https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump
+
+          Host doorman
+              HostName 192.168.1.101
+
+          Host v-doorman
+              HostName 192.168.1.102
+
+          Host v-node-1
+              HostName 10.20.30.100
+              ProxyJump ansible@v-doorman
+
+          Host v-node-2
+              HostName 10.20.30.101
+              ProxyJump ansible@v-doorman
+
+          # Defaults
+          Host *
+              HashKnownHosts no
