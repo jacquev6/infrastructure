@@ -48,11 +48,11 @@
               image: jacquev6/draw-turks-head-demo:20230310-150439
 
             gabby-current-frontend:
-              image: jacquev6/gabby-frontend:20240125-162659
+              image: jacquev6/gabby-frontend:20240221-075646
             gabby-current-backend:
-              image: jacquev6/gabby-backend:20240125-162659
+              image: jacquev6/gabby-backend:20240221-075646
               environment:
-                GABBY_SECRET_KEY: not-so-secret
+                GABBY_SECRET_KEY: not-so-secret-not-so-secret-not-so-secret-not-so-secret-not-so-secret
                 GABBY_ALLOWED_HOSTS: gabby.vincent-jacques.net
                 GABBY_DB_NAME: gabby-current
                 GABBY_DB_USER: gabby-current
@@ -174,10 +174,7 @@
 
             location / {
               proxy_pass http://gabby-current-frontend/;
-              proxy_http_version 1.1;
-              proxy_set_header Upgrade $http_upgrade;
-              proxy_set_header Connection "Upgrade";
-              proxy_set_header Host $http_host;
+              proxy_redirect http://gabby-current-frontend/ http://$http_host/;
             }
 
             location /api/ {
