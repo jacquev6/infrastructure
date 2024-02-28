@@ -48,9 +48,9 @@
               image: jacquev6/draw-turks-head-demo:20230310-150439
 
             gabby-current-frontend:
-              image: jacquev6/gabby-frontend:20240221-075646
+              image: jacquev6/gabby-frontend:20240228-163737
             gabby-current-backend:
-              image: jacquev6/gabby-backend:20240221-075646
+              image: jacquev6/gabby-backend:20240228-163737
               environment:
                 GABBY_SECRET_KEY: not-so-secret-not-so-secret-not-so-secret-not-so-secret-not-so-secret
                 GABBY_ALLOWED_HOSTS: gabby.vincent-jacques.net
