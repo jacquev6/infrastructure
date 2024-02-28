@@ -1,11 +1,19 @@
 - hosts: ubuntu:&bootstrapped
   gather_facts: no
   tasks:
+    - name: "Mark hosts as not reachable by default"
+      delegate_to: localhost
+      run_once: yes
+      become: no
+      copy:
+        dest: ../inventory/reachable.yml
+        content: |
+          all:
+            children:
+              reachable:
     - name: "Ping"
       ignore_errors: yes
       ping:
-    # This breaks when no hosts are reachable because Ansible just stops executing the play.
-    # But we'll live with that restriction; there is not much to do if no host is reachable anyway.
     - name: "Add reachable hosts into 'reachable' group"
       delegate_to: localhost
       run_once: yes
