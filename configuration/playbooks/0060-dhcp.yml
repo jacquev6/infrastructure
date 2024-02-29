@@ -52,7 +52,7 @@
                     },
                     {
                       "name": "domain-name-servers",
-                      "data": "8.8.8.8, 8.8.4.4"
+                      "data": "{{ hostvars['v-doorman'].networks['v-internal'].ip_address }}"
                     }
                   ]
                 }

@@ -1,0 +1,33 @@
+- hosts: v-doorman:&ubuntu:&reachable
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install BIND
+      apt:
+        name:
+          - bind9
+        install_recommends: no
+        state: present
+    - name: Configure BIND as a caching name server
+      copy:
+        dest: /etc/bind/named.conf.options
+        content: |
+          options {
+            directory "/var/cache/bind";
+
+            // Google DNS servers
+            forwarders {
+              8.8.8.8;
+              8.8.4.4;
+            };
+
+            dnssec-validation auto;
+
+            listen-on-v6 { any; };
+          };
+      notify: Restart BIND
+  handlers:
+    - name: Restart BIND
+      systemd_service:
+        name: bind9
+        state: restarted
