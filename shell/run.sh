@@ -8,7 +8,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 secrets_ok=true
 echo "# Secrets" > .gitignore
-find . -name '*.secret_template' | while read template; do
+while read template; do
   secret="${template%.secret_template}"
   secret="${secret#./}"
   echo "$secret" >> .gitignore
@@ -16,7 +16,7 @@ find . -name '*.secret_template' | while read template; do
     echo "Please create $secret according to $template"
     secrets_ok=false
   fi
-done
+done < <(find . -name '*.secret_template')
 $secrets_ok
 
 chmod 600 configuration/ssh/id_rsa
