@@ -25,6 +25,12 @@
         path: web-server/conf.d
         state: directory
     - ansible.builtin.copy:
+        dest: web-server/gabby-db-secrets.env
+        src: web-server/gabby-db-secrets.env
+    - ansible.builtin.copy:
+        dest: web-server/gabby-backend-secrets.env
+        src: web-server/gabby-backend-secrets.env
+    - ansible.builtin.copy:
         dest: web-server/docker-compose.yml
         content: |
           services:
@@ -40,51 +46,52 @@
               environment:
                 - CERTBOT_EMAIL=letsencrypt.org@vincent-jacques.net
               depends_on:
-                - gabby-current-frontend
-                - gabby-current-backend
-                - gabby-current-adminer
+                - gabby-frontend
+                - gabby-backend
+                - gabby-adminer
 
             draw-turks-head-demo:
               image: jacquev6/draw-turks-head-demo:20230310-150439
 
-            gabby-current-frontend:
-              image: jacquev6/gabby-frontend:20240228-163737
-            gabby-current-backend:
-              image: jacquev6/gabby-backend:20240228-163737
+            gabby-frontend:
+              image: jacquev6/gabby:20240620-140702-frontend
+            gabby-backend:
+              image: jacquev6/gabby:20240620-140702-backend
               environment:
-                GABBY_SECRET_KEY: not-so-secret-not-so-secret-not-so-secret-not-so-secret-not-so-secret
+                GABBY_ROOT_URL: https://gabby.vincent-jacques.net
                 GABBY_ALLOWED_HOSTS: gabby.vincent-jacques.net
-                GABBY_DB_NAME: gabby-current
-                GABBY_DB_USER: gabby-current
-                GABBY_DB_PASSWORD: not-so-secret-either
-                GABBY_DB_HOST: gabby-current-db
+                GABBY_DATABASE_BACKUPS_URL: s3://jacquev6/gabby/prod/backups
+                GABBY_MAIL_SENDER: "Vincent Jacques <vincent@vincent-jacques.net>"
+              env_file:
+                - gabby-backend-secrets.env
               depends_on:
-                gabby-current-db:
+                gabby-db:
                   condition: service_healthy
-            gabby-current-adminer:
+            gabby-adminer:
               image: adminer:4
               environment:
                 ADMINER_DEFAULT_DB_DRIVER: pgsql
-                ADMINER_DEFAULT_DB_HOST: gabby-current-db
-                ADMINER_DEFAULT_DB_NAME: gabby-current
+                ADMINER_DEFAULT_DB_HOST: gabby-db
+                ADMINER_DEFAULT_DB_NAME: gabby
               depends_on:
-                gabby-current-db:
+                gabby-db:
                   condition: service_healthy
-            gabby-current-db:
-              image: postgres:16
+            gabby-db:
+              image: postgres:15
               volumes:
-                - gabby-current-db-data:/var/lib/postgresql/data:rw
+                - gabby-db-data:/var/lib/postgresql/data:rw
               environment:
-                POSTGRES_USER: gabby-current
-                POSTGRES_PASSWORD: not-so-secret-either
-                POSTGRES_DB: gabby-current
+                POSTGRES_USER: gabby
+                POSTGRES_DB: gabby
+              env_file:
+                - gabby-db-secrets.env
               healthcheck:
                 test: [
                   "CMD",
                   "pg_isready",
                   "--timeout=0",
-                  "--dbname=gabby-current",
-                  "--username=gabby-current",
+                  "--dbname=gabby",
+                  "--username=gabby",
                 ]
                 start_period: 0s
                 interval: 0.5s
@@ -92,8 +99,7 @@
                 retries: 10
 
           volumes:
-            gabby-current-db-data:
-
+            gabby-db-data:
     - ansible.builtin.copy:
         dest: web-server/50-copy-conf.sh
         content: |
@@ -173,20 +179,31 @@
             ssl_trusted_certificate /etc/letsencrypt/live/gabby.vincent-jacques.net/chain.pem;
 
             location / {
-              proxy_pass http://gabby-current-frontend/;
-              proxy_redirect http://gabby-current-frontend/ http://$http_host/;
+              proxy_pass http://gabby-frontend/;
+              proxy_redirect http://gabby-frontend/ https://$http_host/;
+            }
+
+            location /api/static/ {
+              proxy_pass http://gabby-frontend/api/static/;
+              proxy_set_header Host $http_host;
             }
 
             location /api/ {
-              proxy_pass http://gabby-current-backend/api/;
+              proxy_pass http://gabby-backend/api/;
               proxy_set_header Host $http_host;
             }
 
             location /api/adminer {
-              proxy_pass http://gabby-current-adminer:8080/api/adminer;
+              proxy_pass http://gabby-adminer:8080/api/adminer;
               proxy_set_header Host $http_host;
             }
           }
     - community.docker.docker_compose:
         project_src: web-server
         remove_orphans: true
+    - name: Backup Gabby DB
+      ansible.builtin.cron:
+        name: "Backup Gabby DB"
+        minute: "42"
+        user: ubuntu
+        job: "cd web-server && docker-compose exec -T gabby-backend python -m gabby backup-database >last-gabby-db-backup.stdout 2>last-gabby-db-backup.stderr"
