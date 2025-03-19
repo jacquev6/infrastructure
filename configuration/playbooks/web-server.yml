@@ -25,6 +25,9 @@
         path: web-server/conf.d
         state: directory
     - ansible.builtin.copy:
+        dest: web-server/patty-backend-secrets.env
+        src: web-server/patty-backend-secrets.env
+    - ansible.builtin.copy:
         dest: web-server/gabby-db-secrets.env
         src: web-server/gabby-db-secrets.env
     - ansible.builtin.copy:
@@ -46,12 +49,21 @@
               environment:
                 - CERTBOT_EMAIL=letsencrypt.org@vincent-jacques.net
               depends_on:
+                - patty-frontend
+                - patty-backend
                 - gabby-frontend
                 - gabby-backend
                 - gabby-adminer
 
             draw-turks-head-demo:
               image: jacquev6/draw-turks-head-demo:20230310-150439
+
+            patty-frontend:
+              image: jacquev6/patty:20250319-090127-frontend
+            patty-backend:
+              image: jacquev6/patty:20250319-090127-backend
+              env_file:
+                - patty-backend-secrets.env
 
             # To upgrade Gabby's DB schema:
             # ./ssh.sh ubuntu@cloud
@@ -199,6 +211,27 @@
 
             location /api/adminer {
               proxy_pass http://gabby-adminer:8080/api/adminer;
+              proxy_set_header Host $http_host;
+            }
+          }
+    - ansible.builtin.copy:
+        dest: web-server/conf.d/patty.vincent-jacques.net.conf
+        content: |
+          server {
+            listen 443 ssl;
+            server_name patty.vincent-jacques.net;
+
+            ssl_certificate /etc/letsencrypt/live/patty.vincent-jacques.net/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/patty.vincent-jacques.net/privkey.pem;
+            ssl_trusted_certificate /etc/letsencrypt/live/patty.vincent-jacques.net/chain.pem;
+
+            location / {
+              proxy_pass http://patty-frontend/;
+              proxy_redirect http://patty-frontend/ https://$http_host/;
+            }
+
+            location /api/ {
+              proxy_pass http://patty-backend/api/;
               proxy_set_header Host $http_host;
             }
           }
