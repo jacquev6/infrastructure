@@ -58,9 +58,9 @@
             # cd web-server
             # docker-compose exec --workdir /app/gabby gabby-backend alembic upgrade head
             gabby-frontend:
-              image: jacquev6/gabby:20241014-090349-frontend
+              image: jacquev6/gabby:20250306-143722-frontend
             gabby-backend:
-              image: jacquev6/gabby:20241014-090349-backend
+              image: jacquev6/gabby:20250306-143722-backend
               environment:
                 GABBY_ROOT_URL: https://gabby.vincent-jacques.net
                 GABBY_ALLOWED_HOSTS: gabby.vincent-jacques.net
