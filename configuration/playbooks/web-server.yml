@@ -116,9 +116,9 @@
             # cd web-server
             # docker-compose exec --workdir /app/patty patty-backend alembic upgrade head
             patty-frontend:
-              image: jacquev6/patty:20250402-145125-frontend
+              image: jacquev6/patty:20250403-111229-frontend
             patty-backend:
-              image: jacquev6/patty:20250402-145125-backend
+              image: jacquev6/patty:20250403-111229-backend
               env_file:
                 - patty-backend-secrets.env
               depends_on:
