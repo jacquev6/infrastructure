@@ -116,9 +116,11 @@
             # cd web-server
             # docker-compose exec --workdir /app/patty patty-backend alembic upgrade head
             patty-frontend:
-              image: jacquev6/patty:20250403-111229-frontend
+              image: jacquev6/patty:20250416-174303-frontend
             patty-backend:
-              image: jacquev6/patty:20250403-111229-backend
+              image: jacquev6/patty:20250416-174303-backend
+              environment:
+                PATTY_DATABASE_BACKUPS_URL: s3://jacquev6/patty/prod/backups
               env_file:
                 - patty-backend-secrets.env
               depends_on:
@@ -287,3 +289,9 @@
         minute: "42"
         user: ubuntu
         job: "cd web-server && docker-compose exec -T gabby-backend python -m gabby backup-database >last-gabby-db-backup.stdout 2>last-gabby-db-backup.stderr"
+    - name: Backup patty DB
+      ansible.builtin.cron:
+        name: "Backup patty DB"
+        minute: "12"
+        user: ubuntu
+        job: "cd web-server && docker-compose exec -T patty-backend python -m patty backup-database >last-patty-db-backup.stdout 2>last-patty-db-backup.stderr"
