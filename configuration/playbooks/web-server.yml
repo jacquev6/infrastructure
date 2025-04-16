@@ -292,6 +292,6 @@
     - name: Backup patty DB
       ansible.builtin.cron:
         name: "Backup patty DB"
-        minute: "12"
+        minute: "24"
         user: ubuntu
         job: "cd web-server && docker-compose exec -T patty-backend python -m patty backup-database >last-patty-db-backup.stdout 2>last-patty-db-backup.stderr"
